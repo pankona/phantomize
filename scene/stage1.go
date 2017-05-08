@@ -4,8 +4,8 @@ import (
 	"image"
 	"image/color"
 
-	"github.com/pankona/gomo-simra/examples/sample3/scene/config"
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/phantomize/scene/config"
 )
 
 type gameState int

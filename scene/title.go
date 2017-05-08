@@ -4,8 +4,8 @@ import (
 	"image"
 	"image/color"
 
-	"github.com/pankona/gomo-simra/examples/sample2/scene/config"
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/phantomize/scene/config"
 )
 
 // Title represents a scene object for Title
@@ -31,15 +31,15 @@ func (title *Title) Initialize() {
 
 func (title *Title) initialize() {
 	// add background sprite
-	title.background.W = float32(config.ScreenWidth)
-	title.background.H = float32(config.ScreenHeight)
+	title.background.W = config.ScreenWidth
+	title.background.H = config.ScreenHeight
 
 	// put center of screen
 	title.background.X = config.ScreenWidth / 2
 	title.background.Y = config.ScreenHeight / 2
 
 	simra.GetInstance().AddSprite("title.png",
-		image.Rect(0, 0, int(title.background.W), int(title.background.H)),
+		image.Rect(0, 0, 960, 540),
 		&title.background)
 
 	title.text.W = 320

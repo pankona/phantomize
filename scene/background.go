@@ -1,8 +1,8 @@
 package scene
 
 import (
-	"github.com/pankona/gomo-simra/examples/sample2/scene/config"
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/phantomize/scene/config"
 )
 
 // Background represents a sprite for background
