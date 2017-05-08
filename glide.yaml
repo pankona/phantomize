@@ -1,0 +1,7 @@
+package: github.com/pankona/phantomize
+import:
+- package: github.com/pankona/gomo-simra
+  subpackages:
+  - examples/sample2/scene/config
+  - examples/sample3/scene/config
+  - simra
