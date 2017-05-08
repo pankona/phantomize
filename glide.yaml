@@ -3,3 +3,7 @@ import:
 - package: github.com/pankona/gomo-simra
   subpackages:
   - simra
+- package: golang.org/x/mobile
+  repo: https://github.com/pankona/mobile
+  vcs: git
+  version: change_screen_size_720
