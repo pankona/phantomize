@@ -1,1 +1,1 @@
-![wireframe](http://www.plantuml.com/plantuml/uml/1S713O0m2030LNI1ydSRf6WR2pGKOkBqtkrTQMJbzB6rYBaE0CUtt3rQdhdOoJHOev09JDJ7564sr33f7uFW2dQeHl1svyjHkAIC7m00)
+![wireframe](http://www.plantuml.com/plantuml/svg/1S713O0m2030LNI1ydSRf6WR2pGKOkBqtkrTQMJbzB6rYBaE0CUtt3rQdhdOoJHOev09JDJ7564sr33f7uFW2dQeHl1svyjHkAIC7m00)
