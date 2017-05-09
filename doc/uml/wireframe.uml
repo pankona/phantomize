@@ -1,8 +1,35 @@
 @startuml
+title scene transition
+
 hide footbox
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+[*]      -right-> title
+title    -right-> menu : tap
+menu     --> help : how to play
+help     --> menu : tap
+menu     -right-> briefing : start
+briefing --> game : auto transition\nafter briefing
+game     --> result : gameover
+result   --> game : try again
+result   --> briefing : next\n(if previous stage was cleared)
+
+title: show title back
+title: show version
+title: + tap
+
+menu: + start
+menu: + how to play
+
+help: show how to play\n(by picture)
+help: + tap
+
+briefing: explain about next stage
+briefing: + auto transition
+
+game: game play
+game: + auto transition at gameover
+
+result: + try again
+result: + next
+
 @enduml
