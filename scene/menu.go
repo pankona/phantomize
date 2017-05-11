@@ -10,7 +10,9 @@ import (
 
 // menu represents a scene object for menu
 type menu struct {
-	text simra.Sprite
+	menu  simra.Sprite
+	start simra.Sprite
+	howto simra.Sprite
 }
 
 // Initialize initializes menu scene
@@ -28,17 +30,25 @@ func (menu *menu) Initialize() {
 	simra.LogDebug("[OUT]")
 }
 
-func (menu *menu) initialize() {
-	menu.text.W = config.ScreenWidth
-	menu.text.H = 80
-	menu.text.X = config.ScreenWidth / 2
-	menu.text.Y = config.ScreenHeight / 2
-	simra.GetInstance().AddTextSprite("menu",
-		60, // fontsize
-		color.RGBA{255, 0, 0, 255},
-		image.Rect(0, 0, int(menu.text.W), int(menu.text.H)),
-		&menu.text)
+func initTextSprite(sprite *simra.Sprite, text string, w, h, x, y float32, fontsize float64, color color.RGBA) {
+	sprite.W, sprite.H, sprite.X, sprite.Y = w, h, x, y
+	simra.GetInstance().AddTextSprite(text,
+		fontsize, // fontsize
+		color,
+		image.Rect(0, 0, int(sprite.W), int(sprite.H)),
+		sprite)
+}
 
+func (menu *menu) initialize() {
+	initTextSprite(&menu.menu, "menu",
+		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*4/6,
+		60, color.RGBA{255, 0, 0, 255})
+	initTextSprite(&menu.start, "Start",
+		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*2/6,
+		60, color.RGBA{255, 0, 0, 255})
+	initTextSprite(&menu.howto, "How to play",
+		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*1/6,
+		60, color.RGBA{255, 0, 0, 255})
 	simra.GetInstance().AddTouchListener(menu)
 }
 
