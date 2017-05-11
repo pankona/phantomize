@@ -59,5 +59,5 @@ func (title *Title) OnTouchMove(x, y float32) {
 // OnTouchEnd is called when Title scene is Touched and it is released.
 func (title *Title) OnTouchEnd(x, y float32) {
 	// scene end. go to next scene
-	simra.GetInstance().SetScene(&Stage1{})
+	simra.GetInstance().SetScene(&menu{})
 }
