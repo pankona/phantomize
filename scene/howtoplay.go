@@ -9,7 +9,8 @@ import (
 )
 
 type howtoplay struct {
-	text simra.Sprite
+	text      simra.Sprite
+	nextScene simra.Driver
 }
 
 // Initialize initializes howtoplay scene
@@ -57,6 +58,9 @@ func (howtoplay *howtoplay) initialize() {
 // This is used to update sprites position.
 // This will be called 60 times per sec.
 func (howtoplay *howtoplay) Drive() {
+	if howtoplay.nextScene != nil {
+		simra.GetInstance().SetScene(howtoplay.nextScene)
+	}
 }
 
 // OnTouchBegin is called when howtoplay scene is Touched.
@@ -70,5 +74,5 @@ func (howtoplay *howtoplay) OnTouchMove(x, y float32) {
 // OnTouchEnd is called when howtoplay scene is Touched and it is released.
 func (howtoplay *howtoplay) OnTouchEnd(x, y float32) {
 	// scene end. go to next scene
-	simra.GetInstance().SetScene(&menu{})
+	howtoplay.nextScene = &menu{}
 }

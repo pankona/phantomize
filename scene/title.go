@@ -10,7 +10,8 @@ import (
 
 // Title represents a scene object for Title
 type Title struct {
-	text simra.Sprite
+	text      simra.Sprite
+	nextScene simra.Driver
 }
 
 // Initialize initializes title scene
@@ -46,6 +47,9 @@ func (title *Title) initialize() {
 // This is used to update sprites position.
 // This will be called 60 times per sec.
 func (title *Title) Drive() {
+	if title.nextScene != nil {
+		simra.GetInstance().SetScene(title.nextScene)
+	}
 }
 
 // OnTouchBegin is called when Title scene is Touched.
@@ -59,5 +63,5 @@ func (title *Title) OnTouchMove(x, y float32) {
 // OnTouchEnd is called when Title scene is Touched and it is released.
 func (title *Title) OnTouchEnd(x, y float32) {
 	// scene end. go to next scene
-	simra.GetInstance().SetScene(&menu{})
+	title.nextScene = &menu{}
 }
