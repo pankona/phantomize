@@ -1,5 +1,5 @@
 hash: 40d333b3d721af6ea8d0a6c2c9a368e013293e6eb6c7e24fd86ee663ed946ac6
-updated: 2017-05-12T10:22:56.667198775+09:00
+updated: 2017-05-12T13:02:09.050276316+09:00
 imports:
 - name: github.com/boltdb/bolt
   version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
@@ -9,7 +9,7 @@ imports:
   - raster
   - truetype
 - name: github.com/pankona/gomo-simra
-  version: de0e4d39963e3efb13933ff30d06ec5ad259ffb0
+  version: 209a59a8036f05bdc4073cf12ce6468d44144b4b
   subpackages:
   - simra
   - simra/config
