@@ -10,9 +10,10 @@ import (
 
 // menu represents a scene object for menu
 type menu struct {
-	menu  simra.Sprite
-	start simra.Sprite
-	howto simra.Sprite
+	menu      simra.Sprite
+	start     simra.Sprite
+	howto     simra.Sprite
+	nextScene simra.Driver
 }
 
 // Initialize initializes menu scene
@@ -50,8 +51,8 @@ func (menu *menu) initialize() {
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*1/6,
 		60, color.RGBA{255, 0, 0, 255})
 	//simra.GetInstance().AddTouchListener(menu)
-	menu.start.AddTouchListener(&startListener{})
-	menu.howto.AddTouchListener(&howToPlayListener{})
+	menu.start.AddTouchListener(&startListener{menu: menu})
+	menu.howto.AddTouchListener(&howToPlayListener{menu: menu})
 }
 
 // Drive is called from simra.
@@ -59,6 +60,9 @@ func (menu *menu) initialize() {
 // This will be called 60 times per sec.
 func (menu *menu) Drive() {
 	// nop
+	if menu.nextScene != nil {
+		simra.GetInstance().SetScene(menu.nextScene)
+	}
 }
 
 // OnTouchBegin is called when menu scene is Touched.
@@ -77,17 +81,17 @@ func (menu *menu) OnTouchEnd(x, y float32) {
 }
 
 type startListener struct {
-	menu
+	*menu
 }
 type howToPlayListener struct {
-	menu
+	*menu
 }
 
 func (start *startListener) OnTouchEnd(x, y float32) {
 	// scene end. go to next scene
-	simra.GetInstance().SetScene(&Stage1{})
+	start.menu.nextScene = &briefing{currentStage: 1}
 }
 
 func (howto *howToPlayListener) OnTouchEnd(x, y float32) {
-	simra.GetInstance().SetScene(&howtoplay{})
+	howto.menu.nextScene = &howtoplay{}
 }
