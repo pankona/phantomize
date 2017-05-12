@@ -10,9 +10,9 @@ import (
 
 // menu represents a scene object for menu
 type menu struct {
-	menu      simra.Sprite
-	start     simra.Sprite
-	howtoplay simra.Sprite
+	menu  simra.Sprite
+	start simra.Sprite
+	howto simra.Sprite
 }
 
 // Initialize initializes menu scene
@@ -46,12 +46,12 @@ func (menu *menu) initialize() {
 	initTextSprite(&menu.start, "Start",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*2/6,
 		60, color.RGBA{255, 0, 0, 255})
-	initTextSprite(&menu.howtoplay, "How to play",
+	initTextSprite(&menu.howto, "How to play",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*1/6,
 		60, color.RGBA{255, 0, 0, 255})
 	//simra.GetInstance().AddTouchListener(menu)
 	menu.start.AddTouchListener(&startListener{})
-	menu.howtoplay.AddTouchListener(&howToPlayListener{})
+	menu.howto.AddTouchListener(&howToPlayListener{})
 }
 
 // Drive is called from simra.
@@ -88,6 +88,6 @@ func (start *startListener) OnTouchEnd(x, y float32) {
 	simra.GetInstance().SetScene(&Stage1{})
 }
 
-func (howtoplay *howToPlayListener) OnTouchEnd(x, y float32) {
-	simra.LogDebug("How To Play touched!")
+func (howto *howToPlayListener) OnTouchEnd(x, y float32) {
+	simra.GetInstance().SetScene(&howtoplay{})
 }
