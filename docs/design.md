@@ -16,8 +16,8 @@
 * enemies spawn on right edge of screen, and toword "you"
 * "you" must be placed to start game. in other word, game starts at placing "you".
 * ally units (that are summoned by player) will fight automatically.
-* if ally units are tapped, they will back to 3. stocked units
-  * ready to re-summon
+* if ally units are long tapped, they will back to 3. stocked units
+  * unsummon, it will take short time, then ready to re-summon
 
 ### 2. resources
 
