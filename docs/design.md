@@ -40,3 +40,17 @@
 * list of units they can start to generate
 * unit generation takes short time.
 * when unit generation completed, it will be listed on 3. stocked units
+
+### stage configuration
+
+* JSON string to represent each stage's enemy's amount, kind, when to appear, from where ...
+  * consider to use go-bindata.
+* JSON string to represent player's ability (summonable unit, initial money ...)
+  * also consider to use go-bindata.
+
+### unit configuration
+
+* JSON string to represent each unit's status, capability, ...
+  * attack range, move speed, HP, MP, ...
+* enemies' too
+* consider to use go-bindata
