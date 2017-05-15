@@ -34,20 +34,6 @@ func (game *game) Initialize() {
 	simra.LogDebug("[OUT]")
 }
 
-func (game *game) initTempText() {
-	// temporary text (will be removed)
-	temporary := &simra.Sprite{}
-	temporary.W = config.ScreenWidth
-	temporary.H = 80
-	temporary.X = config.ScreenWidth / 2
-	temporary.Y = config.ScreenHeight * 2 / 5
-	simra.GetInstance().AddTextSprite("(click to go to result scene)",
-		60, // fontsize
-		color.RGBA{255, 0, 0, 255},
-		image.Rect(0, 0, int(temporary.W), int(temporary.H)),
-		temporary)
-}
-
 func (game *game) initCtrlPanel() {
 	game.ctrlPanel.W = config.ScreenWidth
 	game.ctrlPanel.H = 180
@@ -88,7 +74,6 @@ func (game *game) initialize() {
 	// temporary text (will be removed)
 	game.initField()
 	game.initCtrlPanel()
-	game.initTempText()
 	game.initPlayer()
 	simra.GetInstance().AddTouchListener(game)
 }
