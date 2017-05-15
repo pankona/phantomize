@@ -16,6 +16,7 @@ type game struct {
 	nextScene    simra.Driver
 	field        simra.Sprite
 	ctrlPanel    simra.Sprite
+	player       simra.Sprite
 }
 
 // Initialize initializes game scene
@@ -65,7 +66,19 @@ func (game *game) initField() {
 	simra.GetInstance().AddSprite("field1.png",
 		image.Rect(0, 0, 1280, 720),
 		&game.field)
+}
 
+func (game *game) initPlayer() {
+	simra.GetInstance().AddSprite("player.png",
+		image.Rect(0, 0, 384, 384),
+		&game.player)
+}
+
+func (game *game) summonPlayer(x, y float32) {
+	game.player.W = 64
+	game.player.H = 64
+	game.player.X = x
+	game.player.Y = y
 }
 
 func (game *game) initialize() {
@@ -73,9 +86,10 @@ func (game *game) initialize() {
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*4/6,
 		60, color.RGBA{255, 0, 0, 255})
 	// temporary text (will be removed)
-	game.initTempText()
 	game.initField()
 	game.initCtrlPanel()
+	game.initTempText()
+	game.initPlayer()
 	simra.GetInstance().AddTouchListener(game)
 }
 
@@ -101,5 +115,8 @@ func (game *game) OnTouchMove(x, y float32) {
 
 // OnTouchEnd is called when game scene is Touched and it is released.
 func (game *game) OnTouchEnd(x, y float32) {
-	game.nextScene = &result{currentStage: game.currentStage}
+	if y > 180 {
+		game.summonPlayer(x, y)
+	}
+	//game.nextScene = &result{currentStage: game.currentStage}
 }
