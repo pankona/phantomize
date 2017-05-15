@@ -9,30 +9,30 @@ import (
 	"github.com/pankona/phantomize/scene/config"
 )
 
-// briefing represents a scene object for briefing
-type briefing struct {
+// game represents a scene object for game
+type game struct {
 	text         simra.Sprite
 	currentStage int
 	nextScene    simra.Driver
 }
 
-// Initialize initializes briefing scene
+// Initialize initializes game scene
 // This is called from simra.
 // simra.GetInstance().SetDesiredScreenSize should be called to determine
 // screen size of this scene.
-func (briefing *briefing) Initialize() {
+func (game *game) Initialize() {
 	simra.LogDebug("[IN]")
 
 	simra.GetInstance().SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
 
 	// initialize sprites
-	briefing.initialize()
+	game.initialize()
 
 	simra.LogDebug("[OUT]")
 }
 
-func (briefing *briefing) initialize() {
-	initTextSprite(&briefing.text, "briefing for stage "+strconv.Itoa(briefing.currentStage),
+func (game *game) initialize() {
+	initTextSprite(&game.text, "game for stage "+strconv.Itoa(game.currentStage),
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*4/6,
 		60, color.RGBA{255, 0, 0, 255})
 
@@ -42,37 +42,36 @@ func (briefing *briefing) initialize() {
 	temporary.H = 80
 	temporary.X = config.ScreenWidth / 2
 	temporary.Y = config.ScreenHeight * 2 / 5
-	simra.GetInstance().AddTextSprite("(click to go to next scene)",
+	simra.GetInstance().AddTextSprite("(click to go to result scene)",
 		60, // fontsize
 		color.RGBA{255, 0, 0, 255},
 		image.Rect(0, 0, int(temporary.W), int(temporary.H)),
 		temporary)
 
-	simra.GetInstance().AddTouchListener(briefing)
+	simra.GetInstance().AddTouchListener(game)
 }
 
 // Drive is called from simra.
 // This is used to update sprites position.
 // This will be called 60 times per sec.
-func (briefing *briefing) Drive() {
+func (game *game) Drive() {
 	// nop
-	if briefing.nextScene != nil {
-		simra.GetInstance().SetScene(briefing.nextScene)
+	if game.nextScene != nil {
+		simra.GetInstance().SetScene(game.nextScene)
 	}
 }
 
-// OnTouchBegin is called when briefing scene is Touched.
-func (briefing *briefing) OnTouchBegin(x, y float32) {
+// OnTouchBegin is called when game scene is Touched.
+func (game *game) OnTouchBegin(x, y float32) {
 	// nop
 }
 
-// OnTouchMove is called when briefing scene is Touched and moved.
-func (briefing *briefing) OnTouchMove(x, y float32) {
+// OnTouchMove is called when game scene is Touched and moved.
+func (game *game) OnTouchMove(x, y float32) {
 	// nop
 }
 
-// OnTouchEnd is called when briefing scene is Touched and it is released.
-func (briefing *briefing) OnTouchEnd(x, y float32) {
-	// nop
-	briefing.nextScene = &game{currentStage: briefing.currentStage}
+// OnTouchEnd is called when game scene is Touched and it is released.
+func (game *game) OnTouchEnd(x, y float32) {
+	game.nextScene = &result{currentStage: game.currentStage}
 }
