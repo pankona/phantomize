@@ -14,6 +14,7 @@ type game struct {
 	text         simra.Sprite
 	currentStage int
 	nextScene    simra.Driver
+	field        simra.Sprite
 	ctrlPanel    simra.Sprite
 }
 
@@ -48,12 +49,23 @@ func (game *game) initTempText() {
 
 func (game *game) initCtrlPanel() {
 	game.ctrlPanel.W = config.ScreenWidth
-	game.ctrlPanel.H = 240
+	game.ctrlPanel.H = 180
 	game.ctrlPanel.X = config.ScreenWidth / 2
-	game.ctrlPanel.Y = 120
+	game.ctrlPanel.Y = game.ctrlPanel.H / 2
 	simra.GetInstance().AddSprite("ctrl_panel.png",
 		image.Rect(0, 0, 1280, 240),
 		&game.ctrlPanel)
+}
+
+func (game *game) initField() {
+	game.field.W = config.ScreenWidth
+	game.field.H = config.ScreenHeight
+	game.field.X = config.ScreenWidth / 2
+	game.field.Y = config.ScreenHeight / 2
+	simra.GetInstance().AddSprite("field1.png",
+		image.Rect(0, 0, 1280, 720),
+		&game.field)
+
 }
 
 func (game *game) initialize() {
@@ -62,6 +74,7 @@ func (game *game) initialize() {
 		60, color.RGBA{255, 0, 0, 255})
 	// temporary text (will be removed)
 	game.initTempText()
+	game.initField()
 	game.initCtrlPanel()
 	simra.GetInstance().AddTouchListener(game)
 }
