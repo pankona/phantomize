@@ -2,8 +2,6 @@ package scene
 
 import (
 	"image"
-	"image/color"
-	"strconv"
 
 	"github.com/pankona/gomo-simra/simra"
 	"github.com/pankona/phantomize/scene/config"
@@ -11,7 +9,6 @@ import (
 
 // game represents a scene object for game
 type game struct {
-	text         simra.Sprite
 	currentStage int
 	nextScene    simra.Driver
 	field        simra.Sprite
@@ -68,10 +65,6 @@ func (game *game) summonPlayer(x, y float32) {
 }
 
 func (game *game) initialize() {
-	initTextSprite(&game.text, "game for stage "+strconv.Itoa(game.currentStage),
-		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*4/6,
-		60, color.RGBA{255, 0, 0, 255})
-	// temporary text (will be removed)
 	game.initField()
 	game.initCtrlPanel()
 	game.initPlayer()
