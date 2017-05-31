@@ -14,6 +14,8 @@ type game struct {
 	field        simra.Sprite
 	ctrlPanel    simra.Sprite
 	player       simra.Sprite
+	currentFrame int64
+	enemies      enemies
 }
 
 // Initialize initializes game scene
@@ -68,6 +70,7 @@ func (game *game) initialize() {
 	game.initField()
 	game.initCtrlPanel()
 	game.initPlayer()
+	game.enemies = jsonToEnemyConfig("stage1.json").initEnemies()
 	simra.GetInstance().AddTouchListener(game)
 }
 
@@ -75,10 +78,28 @@ func (game *game) initialize() {
 // This is used to update sprites position.
 // This will be called 60 times per sec.
 func (game *game) Drive() {
-	// nop
+	defer func() {
+		game.currentFrame++
+	}()
+
 	if game.nextScene != nil {
 		simra.GetInstance().SetScene(game.nextScene)
 	}
+
+	enemiesToPop := game.enemies.getEnemiesToPop(game.currentFrame)
+	enemiesToPop.spawn()
+
+	for _, v := range game.enemies {
+		v.action()
+		// player.action()
+	}
+}
+
+type eventer interface {
+	// TODO: implement
+}
+
+func (game *game) eventCallback(event eventer) {
 }
 
 // OnTouchBegin is called when game scene is Touched.
