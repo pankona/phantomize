@@ -1,22 +1,22 @@
 hash: 40d333b3d721af6ea8d0a6c2c9a368e013293e6eb6c7e24fd86ee663ed946ac6
-updated: 2017-05-19T10:13:09.664065615+09:00
+updated: 2017-06-21T12:24:16.913629676+09:00
 imports:
 - name: github.com/boltdb/bolt
   version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
 - name: github.com/golang/freetype
-  version: bcfeb16b74e8aea9e2fe043406f2ef74b1cb0759
+  version: e2365dfdc4a05e4b8299a783240d4a7d5a65d4e4
   subpackages:
   - raster
   - truetype
 - name: github.com/pankona/gomo-simra
-  version: 7a18855b15ea27003d3242516085fe05dce7397f
+  version: 6dbbd2a7b20c3d715b105164ab1daab20509fbf2
   subpackages:
   - simra
   - simra/config
   - simra/gomo
   - simra/peer
 - name: golang.org/x/exp
-  version: 239d448f23a0d683c1ab7225da01af038355f5e9
+  version: be79676510e5ce293c77bb087cdab4796a461bdb
   subpackages:
   - shiny/driver/gldriver
   - shiny/driver/internal/drawer
@@ -27,7 +27,7 @@ imports:
   - shiny/driver/internal/x11key
   - shiny/screen
 - name: golang.org/x/image
-  version: f483456c9f61fd7c1e170033d58ef22ff5ffe291
+  version: 426cfd8eeb6e08ab1932954e09e3c2cb2bc6e36d
   subpackages:
   - font
   - font/gofont/goregular
@@ -57,7 +57,7 @@ imports:
   - gl
   - internal/mobileinit
 - name: golang.org/x/sys
-  version: a2e06a18b0d52d8cb2010e04b372a1965d8e3439
+  version: fb4cac33e3196ff7f507ab9b2d2a44b0142f5b5a
   subpackages:
   - unix
   - windows
