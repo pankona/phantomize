@@ -9,7 +9,6 @@ import (
 // Uniter is an interface of unit
 type Uniter interface {
 	GetID() string
-	GetBase() *unitBase
 	simra.Subscriber
 	SetPosition(p position)
 	GetPosition() position
@@ -28,11 +27,6 @@ type unitBase struct {
 
 func (u *unitBase) GetID() string {
 	return u.id
-}
-
-func (u *unitBase) GetBase() *unitBase {
-	// nop
-	return nil
 }
 
 // NewUnit returns a uniter

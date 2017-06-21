@@ -8,10 +8,6 @@ type sampleUnit struct {
 	*unitBase
 }
 
-func (u *sampleUnit) GetBase() *unitBase {
-	return u.unitBase
-}
-
 func (u *sampleUnit) SetPosition(p position) {
 	u.position = p
 }
