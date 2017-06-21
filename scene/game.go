@@ -9,13 +9,15 @@ import (
 
 // game represents a scene object for game
 type game struct {
-	currentStage int
-	nextScene    simra.Driver
-	field        simra.Sprite
-	ctrlPanel    simra.Sprite
-	player       simra.Sprite
-	currentFrame int64
-	enemies      enemies
+	currentStage     int
+	nextScene        simra.Driver
+	field            simra.Sprite
+	ctrlPanel        simra.Sprite
+	player           simra.Sprite
+	currentFrame     int64
+	uniters          map[string]Uniter
+	unitPopTimeTable unitPopTimeTable
+	pubsub           *simra.PubSub
 }
 
 // Initialize initializes game scene
@@ -59,6 +61,35 @@ func (game *game) initPlayer() {
 		&game.player)
 }
 
+type unitPopTime struct {
+	popTime int64
+	unitID  string
+}
+
+type unitPopTimeTable []*unitPopTime
+
+const (
+	fps = 60
+)
+
+func (game *game) initUnits(json string) {
+	// TODO: implement
+	units := make(map[string]Uniter)
+	units["unit1"] = NewUnit("unit1", "")
+	units["unit2"] = NewUnit("unit2", "")
+	units["unit3"] = NewUnit("unit3", "")
+
+	// TODO: unitpopTimeTable should be sorted by popTime
+	game.unitPopTimeTable = append(game.unitPopTimeTable,
+		&unitPopTime{3 * fps, "unit1"})
+	game.unitPopTimeTable = append(game.unitPopTimeTable,
+		&unitPopTime{5 * fps, "unit2"})
+	game.unitPopTimeTable = append(game.unitPopTimeTable,
+		&unitPopTime{7 * fps, "unit3"})
+
+	game.uniters = units
+}
+
 func (game *game) summonPlayer(x, y float32) {
 	game.player.W = 64
 	game.player.H = 64
@@ -66,11 +97,32 @@ func (game *game) summonPlayer(x, y float32) {
 	game.player.Y = y
 }
 
+func (game *game) popUnits() []Uniter {
+	poppedUnits := make([]Uniter, 0)
+	for _, v := range game.unitPopTimeTable {
+		if v.popTime <= game.currentFrame {
+			// pop unit
+			u := game.uniters[v.unitID]
+			poppedUnits = append(poppedUnits, u)
+			continue
+		}
+
+	}
+
+	if len(poppedUnits) != 0 {
+		// remove popped units from unitPopTimeTable
+		game.unitPopTimeTable = game.unitPopTimeTable[len(poppedUnits):]
+	}
+
+	return poppedUnits
+}
+
 func (game *game) initialize() {
 	game.initField()
 	game.initCtrlPanel()
 	game.initPlayer()
-	game.enemies = jsonToEnemyConfig("stage1.json").initEnemies()
+	game.initUnits("") // TODO: input JSON string
+	game.pubsub = simra.NewPubSub()
 	simra.GetInstance().AddTouchListener(game)
 }
 
@@ -86,13 +138,28 @@ func (game *game) Drive() {
 		simra.GetInstance().SetScene(game.nextScene)
 	}
 
-	enemiesToPop := game.enemies.getEnemiesToPop(game.currentFrame)
-	enemiesToPop.spawn()
+	poppedUnits := game.popUnits()
+	for _, v := range poppedUnits {
+		err := game.pubsub.Subscribe(v.GetID(), v)
+		if err != nil {
+			panic("failed to subscribe. fatal.")
+		}
 
-	for _, v := range game.enemies {
-		v.action()
-		// player.action()
+		// generate unit pop command
+		c := newCommand()
+		c.commandtype = SPAWN
+		c.data = v
+
+		// publish unit pop command
+		game.pubsub.Publish(c)
 	}
+
+	// pop all events from event queue
+	// this event should be done within 1 frame
+
+	// generate command by each event
+
+	// broadcast event to all units
 }
 
 type eventer interface {

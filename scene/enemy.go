@@ -1,9 +1,5 @@
 package scene
 
-const (
-	fps = 60
-)
-
 type position struct {
 	x int
 	y int
