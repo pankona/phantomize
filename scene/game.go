@@ -85,19 +85,19 @@ func (game *game) initUnits(json string) {
 		&unitPopTime{
 			unitID:          "unit1",
 			popTime:         3 * fps,
-			initialPosition: position{50, 50},
+			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 5},
 		})
 	game.unitPopTimeTable = append(game.unitPopTimeTable,
 		&unitPopTime{
 			unitID:          "unit2",
-			popTime:         5 * fps,
-			initialPosition: position{150, 50},
+			popTime:         3 * fps,
+			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 4},
 		})
 	game.unitPopTimeTable = append(game.unitPopTimeTable,
 		&unitPopTime{
 			unitID:          "unit3",
-			popTime:         7 * fps,
-			initialPosition: position{250, 50},
+			popTime:         3 * fps,
+			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 3},
 		})
 
 	game.uniters = units

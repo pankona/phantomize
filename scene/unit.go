@@ -8,6 +8,7 @@ import (
 
 // Uniter is an interface of unit
 type Uniter interface {
+	Initialize()
 	GetID() string
 	simra.Subscriber
 	SetPosition(p position)
@@ -33,11 +34,14 @@ func (u *unitBase) GetID() string {
 func NewUnit(id, unittype string) Uniter {
 	// TODO: sample unit implemenation
 	// unit type should be specified and switch here
+	var u Uniter
 	switch unittype {
 	default:
 		// TODO: remove later
-		return &sampleUnit{unitBase: &unitBase{id: id}}
+		u = &sampleUnit{unitBase: &unitBase{id: id}}
 	}
+	u.Initialize()
+	return u
 }
 
 type commandtype int
