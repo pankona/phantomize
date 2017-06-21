@@ -30,12 +30,22 @@ func (u *unitBase) GetID() string {
 	return u.id
 }
 
+func (u *unitBase) SetPosition(p position) {
+	u.position = p
+}
+
+func (u *unitBase) GetPosition() position {
+	return u.position
+}
+
 // NewUnit returns a uniter
 func NewUnit(id, unittype string) Uniter {
 	// TODO: sample unit implemenation
 	// unit type should be specified and switch here
 	var u Uniter
 	switch unittype {
+	case "player":
+		u = &player{unitBase: &unitBase{id: id}}
 	default:
 		// TODO: remove later
 		u = &sampleUnit{unitBase: &unitBase{id: id}}

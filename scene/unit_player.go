@@ -1,32 +1,23 @@
 package scene
 
 import (
-	"fmt"
 	"image"
 
 	"github.com/pankona/gomo-simra/simra"
 )
 
-type sampleUnit struct {
+type player struct {
 	*unitBase
 	sprite simra.Sprite
 }
 
-func (u *sampleUnit) Initialize() {
+func (u *player) Initialize() {
 	simra.GetInstance().AddSprite("player.png",
 		image.Rect(0, 0, 384, 384),
 		&u.sprite)
 }
 
-func (u *sampleUnit) SetPosition(p position) {
-	u.position = p
-}
-
-func (u *sampleUnit) GetPosition() position {
-	return u.position
-}
-
-func (u *sampleUnit) OnEvent(i interface{}) {
+func (u *player) OnEvent(i interface{}) {
 	c, ok := i.(*command)
 	if !ok {
 		panic("unexpected command received. fatal.")
@@ -34,12 +25,13 @@ func (u *sampleUnit) OnEvent(i interface{}) {
 
 	switch c.commandtype {
 	case SPAWN:
-		d, ok := c.data.(*sampleUnit)
+		d, ok := c.data.(*player)
 		if !ok {
-			panic("unexpected command received. fatal.")
+			// unhandled event. ignore
+			return
 		}
 		if u.id != d.GetID() {
-			// nop
+			// this spawn event is not for me. nop.
 			return
 		}
 
@@ -47,9 +39,8 @@ func (u *sampleUnit) OnEvent(i interface{}) {
 		u.sprite.H = 64
 		u.sprite.X = (float32)(d.position.x)
 		u.sprite.Y = (float32)(d.position.y)
+		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
 
-		// TODO: spawn myself
-		fmt.Printf("@@@@@@ [SPAWN] i'm %s\n", u.GetID())
 	default:
 		// nop
 	}

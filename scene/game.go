@@ -2,6 +2,7 @@ package scene
 
 import (
 	"image"
+	"sync"
 
 	"github.com/pankona/gomo-simra/simra"
 	"github.com/pankona/phantomize/scene/config"
@@ -13,12 +14,22 @@ type game struct {
 	nextScene        simra.Driver
 	field            simra.Sprite
 	ctrlPanel        simra.Sprite
-	player           simra.Sprite
+	player           Uniter
 	currentFrame     int64
 	uniters          map[string]Uniter
 	unitPopTimeTable unitPopTimeTable
 	pubsub           *simra.PubSub
+	gameState        gameState
+	currentRunLoop   func()
+	runLoopMutex     sync.Mutex
 }
+
+type gameState int
+
+const (
+	gameStateInitial gameState = iota
+	gameStateRunning
+)
 
 // Initialize initializes game scene
 // This is called from simra.
@@ -33,6 +44,24 @@ func (game *game) Initialize() {
 	game.initialize()
 
 	simra.LogDebug("[OUT]")
+}
+
+func (game *game) updateGameState(newState gameState) {
+	game.runLoopMutex.Lock()
+	defer game.runLoopMutex.Unlock()
+
+	game.gameState = newState
+	switch newState {
+	case gameStateInitial:
+		game.currentRunLoop = game.initialRunLoop
+	case gameStateRunning:
+		game.currentRunLoop = game.runningRunLoop
+	default:
+		//nop
+	}
+
+	// reset frame
+	game.currentFrame = 0
 }
 
 func (game *game) initCtrlPanel() {
@@ -56,9 +85,9 @@ func (game *game) initField() {
 }
 
 func (game *game) initPlayer() {
-	simra.GetInstance().AddSprite("player.png",
-		image.Rect(0, 0, 384, 384),
-		&game.player)
+	p := NewUnit("player", "player")
+	game.player = p
+	game.pubsub.Subscribe(p.GetID(), p)
 }
 
 type unitPopTime struct {
@@ -103,13 +132,6 @@ func (game *game) initUnits(json string) {
 	game.uniters = units
 }
 
-func (game *game) summonPlayer(x, y float32) {
-	game.player.W = 64
-	game.player.H = 64
-	game.player.X = x
-	game.player.Y = y
-}
-
 func (game *game) popUnits() []Uniter {
 	poppedUnits := make([]Uniter, 0)
 	for _, v := range game.unitPopTimeTable {
@@ -132,12 +154,41 @@ func (game *game) popUnits() []Uniter {
 }
 
 func (game *game) initialize() {
+	game.pubsub = simra.NewPubSub()
 	game.initField()
 	game.initCtrlPanel()
 	game.initPlayer()
 	game.initUnits("") // TODO: input JSON string
-	game.pubsub = simra.NewPubSub()
 	simra.GetInstance().AddTouchListener(game)
+	game.updateGameState(gameStateInitial)
+}
+
+func (game *game) initialRunLoop() {
+}
+
+func (game *game) runningRunLoop() {
+	poppedUnits := game.popUnits()
+	for _, v := range poppedUnits {
+		err := game.pubsub.Subscribe(v.GetID(), v)
+		if err != nil {
+			panic("failed to subscribe. fatal.")
+		}
+
+		// generate spawn command
+		c := newCommand()
+		c.commandtype = SPAWN
+		c.data = v
+
+		// publish spawn command
+		game.pubsub.Publish(c)
+	}
+
+	// pop all events from event queue
+	// this event should be done within 1 frame
+
+	// generate command by each event
+
+	// broadcast event to all units
 }
 
 // Drive is called from simra.
@@ -152,28 +203,9 @@ func (game *game) Drive() {
 		simra.GetInstance().SetScene(game.nextScene)
 	}
 
-	poppedUnits := game.popUnits()
-	for _, v := range poppedUnits {
-		err := game.pubsub.Subscribe(v.GetID(), v)
-		if err != nil {
-			panic("failed to subscribe. fatal.")
-		}
-
-		// generate unit pop command
-		c := newCommand()
-		c.commandtype = SPAWN
-		c.data = v
-
-		// publish unit pop command
-		game.pubsub.Publish(c)
-	}
-
-	// pop all events from event queue
-	// this event should be done within 1 frame
-
-	// generate command by each event
-
-	// broadcast event to all units
+	game.runLoopMutex.Lock()
+	game.currentRunLoop()
+	game.runLoopMutex.Unlock()
 }
 
 type eventer interface {
@@ -195,8 +227,17 @@ func (game *game) OnTouchMove(x, y float32) {
 
 // OnTouchEnd is called when game scene is Touched and it is released.
 func (game *game) OnTouchEnd(x, y float32) {
-	if y > 180 {
-		game.summonPlayer(x, y)
+	if game.gameState == gameStateInitial {
+		if y > 180 {
+			// TODO: don't publish here. use event queue
+			c := newCommand()
+			c.commandtype = SPAWN
+			game.player.SetPosition(position{(int)(x), (int)(y)})
+			c.data = game.player
+			game.pubsub.Publish(c)
+
+			game.updateGameState(gameStateRunning)
+		}
 	}
 	//game.nextScene = &result{currentStage: game.currentStage}
 }
