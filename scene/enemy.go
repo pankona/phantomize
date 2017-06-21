@@ -1,10 +1,5 @@
 package scene
 
-type position struct {
-	x int
-	y int
-}
-
 type enemy struct {
 	eID     string
 	isAlive bool

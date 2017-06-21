@@ -1,8 +1,6 @@
 package scene
 
 import (
-	"fmt"
-
 	"github.com/pankona/gomo-simra/simra"
 )
 
@@ -13,11 +11,19 @@ type Uniter interface {
 	GetID() string
 	GetBase() *unitBase
 	simra.Subscriber
+	SetPosition(p position)
+	GetPosition() position
+}
+
+type position struct {
+	x int
+	y int
 }
 
 type unitBase struct {
 	id string
 	simra.Subscriber
+	position position
 }
 
 func (u *unitBase) GetID() string {
@@ -37,33 +43,6 @@ func NewUnit(id, unittype string) Uniter {
 	default:
 		// TODO: remove later
 		return &sampleUnit{unitBase: &unitBase{id: id}}
-	}
-}
-
-type sampleUnit struct {
-	*unitBase
-}
-
-func (u *sampleUnit) GetBase() *unitBase {
-	return u.unitBase
-}
-
-func (u *sampleUnit) OnEvent(i interface{}) {
-	c, ok := i.(*command)
-	if !ok {
-		panic("unexpected command received. fatal.")
-	}
-
-	switch c.commandtype {
-	case SPAWN:
-		u, ok := c.data.(*sampleUnit)
-		if !ok {
-			panic("unexpected command received. fatal.")
-		}
-		// TODO: spawn myself
-		fmt.Printf("@@@@@@ [SPAWN] i'm %s\n", u.GetID())
-	default:
-		// nop
 	}
 }
 

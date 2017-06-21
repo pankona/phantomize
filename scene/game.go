@@ -62,8 +62,9 @@ func (game *game) initPlayer() {
 }
 
 type unitPopTime struct {
-	popTime int64
-	unitID  string
+	unitID          string
+	popTime         int64
+	initialPosition position
 }
 
 type unitPopTimeTable []*unitPopTime
@@ -81,11 +82,23 @@ func (game *game) initUnits(json string) {
 
 	// TODO: unitpopTimeTable should be sorted by popTime
 	game.unitPopTimeTable = append(game.unitPopTimeTable,
-		&unitPopTime{3 * fps, "unit1"})
+		&unitPopTime{
+			unitID:          "unit1",
+			popTime:         3 * fps,
+			initialPosition: position{50, 50},
+		})
 	game.unitPopTimeTable = append(game.unitPopTimeTable,
-		&unitPopTime{5 * fps, "unit2"})
+		&unitPopTime{
+			unitID:          "unit2",
+			popTime:         5 * fps,
+			initialPosition: position{150, 50},
+		})
 	game.unitPopTimeTable = append(game.unitPopTimeTable,
-		&unitPopTime{7 * fps, "unit3"})
+		&unitPopTime{
+			unitID:          "unit3",
+			popTime:         7 * fps,
+			initialPosition: position{250, 50},
+		})
 
 	game.uniters = units
 }
@@ -103,6 +116,7 @@ func (game *game) popUnits() []Uniter {
 		if v.popTime <= game.currentFrame {
 			// pop unit
 			u := game.uniters[v.unitID]
+			u.SetPosition(v.initialPosition)
 			poppedUnits = append(poppedUnits, u)
 			continue
 		}
