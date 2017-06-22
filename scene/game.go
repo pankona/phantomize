@@ -166,14 +166,13 @@ func (game *game) initialize() {
 }
 
 func (game *game) eventFetch() {
-eventFetch:
-	for {
-		select {
-		case c := <-game.eventqueue:
-			game.pubsub.Publish(c)
-		default:
-			break eventFetch
-		}
+	// note:
+	// if new events are pushed while fetching,
+	// they should be fetched next run loop to
+	// avoid inifinite event fetching.
+	for i := 0; i < len(game.eventqueue); i++ {
+		c := <-game.eventqueue
+		game.pubsub.Publish(c)
 	}
 }
 
