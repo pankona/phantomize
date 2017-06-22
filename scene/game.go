@@ -22,7 +22,7 @@ type game struct {
 	gameState        gameState
 	currentRunLoop   func()
 	runLoopMutex     sync.Mutex
-	eq               chan *command
+	eventqueue       chan *command
 }
 
 type gameState int
@@ -156,7 +156,7 @@ func (game *game) popUnits() []Uniter {
 
 func (game *game) initialize() {
 	game.pubsub = simra.NewPubSub()
-	game.eq = make(chan *command, 256)
+	game.eventqueue = make(chan *command, 256)
 	game.initField()
 	game.initCtrlPanel()
 	game.initPlayer()
@@ -169,7 +169,7 @@ func (game *game) eventFetch() {
 eventFetch:
 	for {
 		select {
-		case c := <-game.eq:
+		case c := <-game.eventqueue:
 			game.pubsub.Publish(c)
 		default:
 			break eventFetch
@@ -194,7 +194,7 @@ func (game *game) runningRunLoop() {
 		c.commandtype = SPAWN
 		c.data = v
 
-		game.eq <- c
+		game.eventqueue <- c
 	}
 
 	// pop all events from event queue
@@ -250,7 +250,7 @@ func (game *game) OnTouchEnd(x, y float32) {
 			game.player.SetPosition(position{(int)(x), (int)(y)})
 			c.data = game.player
 
-			game.eq <- c
+			game.eventqueue <- c
 			game.updateGameState(gameStateRunning)
 		}
 	}
