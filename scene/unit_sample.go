@@ -24,7 +24,7 @@ func (u *sampleUnit) OnEvent(i interface{}) {
 	}
 
 	switch c.commandtype {
-	case SPAWN:
+	case commandSpawn:
 		d, ok := c.data.(*sampleUnit)
 		if !ok {
 			// unhandled event. ignore.
@@ -35,12 +35,28 @@ func (u *sampleUnit) OnEvent(i interface{}) {
 			return
 		}
 
+		u.mutex.Lock()
+		u.action = newAction(actionSpawn, d)
+		u.mutex.Unlock()
+
+	default:
+		// nop
+	}
+}
+
+func (u *sampleUnit) DoAction() {
+	u.mutex.Lock()
+	a := u.action
+	u.mutex.Unlock()
+
+	switch a.actiontype {
+	case actionSpawn:
+		d := a.data.(*player)
 		u.sprite.W = 64
 		u.sprite.H = 64
 		u.sprite.X = (float32)(d.position.x)
 		u.sprite.Y = (float32)(d.position.y)
 		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
-
 	default:
 		// nop
 	}

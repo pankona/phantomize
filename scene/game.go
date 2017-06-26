@@ -165,15 +165,17 @@ func (game *game) initialize() {
 	game.updateGameState(gameStateInitial)
 }
 
-func (game *game) eventFetch() {
+func (game *game) eventFetch() []*command {
 	// note:
 	// if new events are pushed while fetching,
 	// they should be fetched next run loop to
 	// avoid inifinite event fetching.
+
+	c := make([]*command, len(game.eventqueue))
 	for i := 0; i < len(game.eventqueue); i++ {
-		c := <-game.eventqueue
-		game.pubsub.Publish(c)
+		c = append(c, <-game.eventqueue)
 	}
+	return c
 }
 
 func (game *game) initialRunLoop() {
@@ -190,19 +192,22 @@ func (game *game) runningRunLoop() {
 
 		// generate spawn command
 		c := newCommand()
-		c.commandtype = SPAWN
+		c.commandtype = commandSpawn
 		c.data = v
 
 		game.eventqueue <- c
 	}
 
-	// pop all events from event queue
-	// this event should be done within 1 frame
-	game.eventFetch()
+	// event fetch and publish to all subscribers
+	commands := game.eventFetch()
+	for _, v := range commands {
+		game.pubsub.Publish(v)
+	}
 
-	// generate command by each event
-
-	// broadcast event to all units
+	// invoke action for all units
+	for _, v := range game.uniters {
+		v.DoAction()
+	}
 }
 
 // Drive is called from simra.
@@ -245,7 +250,7 @@ func (game *game) OnTouchEnd(x, y float32) {
 		if y > 180 {
 			// TODO: don't publish here. use event queue
 			c := newCommand()
-			c.commandtype = SPAWN
+			c.commandtype = commandSpawn
 			game.player.SetPosition(position{(int)(x), (int)(y)})
 			c.data = game.player
 

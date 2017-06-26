@@ -1,6 +1,8 @@
 package scene
 
 import (
+	"sync"
+
 	"github.com/pankona/gomo-simra/simra"
 )
 
@@ -13,6 +15,7 @@ type Uniter interface {
 	simra.Subscriber
 	SetPosition(p position)
 	GetPosition() position
+	DoAction()
 }
 
 type position struct {
@@ -20,10 +23,31 @@ type position struct {
 	y int
 }
 
+type actiontype int
+
+const (
+	// SPAWN spawns an unit
+	actionSpawn actiontype = iota
+)
+
+type action struct {
+	actiontype actiontype
+	data       interface{}
+}
+
+func newAction(a actiontype, d interface{}) *action {
+	return &action{
+		actiontype: a,
+		data:       d,
+	}
+}
+
 type unitBase struct {
-	id string
 	simra.Subscriber
+	id       string
 	position position
+	action   *action
+	mutex    sync.Mutex
 }
 
 func (u *unitBase) GetID() string {
@@ -58,7 +82,7 @@ type commandtype int
 
 const (
 	// SPAWN spawns an unit
-	SPAWN commandtype = iota
+	commandSpawn commandtype = iota
 )
 
 type command struct {
