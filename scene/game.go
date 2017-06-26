@@ -48,9 +48,6 @@ func (game *game) Initialize() {
 }
 
 func (game *game) updateGameState(newState gameState) {
-	game.runLoopMutex.Lock()
-	defer game.runLoopMutex.Unlock()
-
 	game.gameState = newState
 	switch newState {
 	case gameStateInitial:
@@ -86,7 +83,7 @@ func (game *game) initField() {
 }
 
 func (game *game) initPlayer() {
-	p := NewUnit("player", "player")
+	p := NewUnit("player", "player", game)
 	game.player = p
 	game.pubsub.Subscribe(p.GetID(), p)
 }
@@ -106,9 +103,9 @@ const (
 func (game *game) initUnits(json string) {
 	// TODO: implement
 	units := make(map[string]Uniter)
-	units["unit1"] = NewUnit("unit1", "")
-	units["unit2"] = NewUnit("unit2", "")
-	units["unit3"] = NewUnit("unit3", "")
+	units["unit1"] = NewUnit("unit1", "", game)
+	units["unit2"] = NewUnit("unit2", "", game)
+	units["unit3"] = NewUnit("unit3", "", game)
 
 	// TODO: unitpopTimeTable should be sorted by popTime
 	game.unitPopTimeTable = append(game.unitPopTimeTable,
@@ -143,7 +140,6 @@ func (game *game) popUnits() []Uniter {
 			poppedUnits = append(poppedUnits, u)
 			continue
 		}
-
 	}
 
 	if len(poppedUnits) != 0 {
@@ -162,6 +158,7 @@ func (game *game) initialize() {
 	game.initPlayer()
 	game.initUnits("") // TODO: input JSON string
 	simra.GetInstance().AddTouchListener(game)
+	game.pubsub.Subscribe("god", game)
 	game.updateGameState(gameStateInitial)
 }
 
@@ -171,15 +168,45 @@ func (game *game) eventFetch() []*command {
 	// they should be fetched next run loop to
 	// avoid inifinite event fetching.
 
-	c := make([]*command, len(game.eventqueue))
-	for i := 0; i < len(game.eventqueue); i++ {
-		c = append(c, <-game.eventqueue)
+	qlen := len(game.eventqueue)
+	if qlen == 0 {
+		return nil
+	}
+
+	c := make([]*command, qlen)
+	for i := 0; i < qlen; i++ {
+		c[i] = <-game.eventqueue
 	}
 	return c
 }
 
+func (g *game) OnEvent(i interface{}) {
+	c, ok := i.(*command)
+	if !ok {
+		// should be a command. ignore.
+		return
+	}
+
+	_, ok = c.data.(*game)
+	if !ok {
+		// this is not for me
+		return
+	}
+
+	switch c.commandtype {
+	case commandGoToInitialState:
+		g.updateGameState(gameStateInitial)
+	case commandGoToRunningState:
+		g.updateGameState(gameStateRunning)
+	}
+}
+
 func (game *game) initialRunLoop() {
-	game.eventFetch()
+	commands := game.eventFetch()
+	for _, v := range commands {
+		game.pubsub.Publish(v)
+	}
+	game.player.DoAction()
 }
 
 func (game *game) runningRunLoop() {
@@ -191,8 +218,7 @@ func (game *game) runningRunLoop() {
 		}
 
 		// generate spawn command
-		c := newCommand()
-		c.commandtype = commandSpawn
+		c := newCommand(commandSpawn, v)
 		c.data = v
 
 		game.eventqueue <- c
@@ -227,13 +253,6 @@ func (game *game) Drive() {
 	game.runLoopMutex.Unlock()
 }
 
-type eventer interface {
-	// TODO: implement
-}
-
-func (game *game) eventCallback(event eventer) {
-}
-
 // OnTouchBegin is called when game scene is Touched.
 func (game *game) OnTouchBegin(x, y float32) {
 	// nop
@@ -248,14 +267,13 @@ func (game *game) OnTouchMove(x, y float32) {
 func (game *game) OnTouchEnd(x, y float32) {
 	if game.gameState == gameStateInitial {
 		if y > 180 {
-			// TODO: don't publish here. use event queue
-			c := newCommand()
-			c.commandtype = commandSpawn
 			game.player.SetPosition(position{(int)(x), (int)(y)})
-			c.data = game.player
 
+			c := newCommand(commandSpawn, game.player)
 			game.eventqueue <- c
-			game.updateGameState(gameStateRunning)
+
+			c = newCommand(commandGoToRunningState, game)
+			game.eventqueue <- c
 		}
 	}
 	//game.nextScene = &result{currentStage: game.currentStage}

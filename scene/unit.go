@@ -1,8 +1,6 @@
 package scene
 
 import (
-	"sync"
-
 	"github.com/pankona/gomo-simra/simra"
 )
 
@@ -47,7 +45,7 @@ type unitBase struct {
 	id       string
 	position position
 	action   *action
-	mutex    sync.Mutex
+	game     *game
 }
 
 func (u *unitBase) GetID() string {
@@ -63,17 +61,19 @@ func (u *unitBase) GetPosition() position {
 }
 
 // NewUnit returns a uniter
-func NewUnit(id, unittype string) Uniter {
+func NewUnit(id, unittype string, game *game) Uniter {
 	// TODO: sample unit implemenation
 	// unit type should be specified and switch here
 	var u Uniter
 	switch unittype {
 	case "player":
-		u = &player{unitBase: &unitBase{id: id}}
+		u = &player{unitBase: &unitBase{id: id, game: game}}
 	default:
 		// TODO: remove later
-		u = &sampleUnit{unitBase: &unitBase{id: id}}
+		u = &sampleUnit{unitBase: &unitBase{id: id, game: game}}
 	}
+
+	// call each unit's initialize function
 	u.Initialize()
 	return u
 }
@@ -83,6 +83,8 @@ type commandtype int
 const (
 	// SPAWN spawns an unit
 	commandSpawn commandtype = iota
+	commandGoToInitialState
+	commandGoToRunningState
 )
 
 type command struct {
@@ -90,6 +92,6 @@ type command struct {
 	data        interface{}
 }
 
-func newCommand() *command {
-	return &command{}
+func newCommand(c commandtype, d interface{}) *command {
+	return &command{commandtype: c, data: d}
 }

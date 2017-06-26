@@ -34,10 +34,7 @@ func (u *player) OnEvent(i interface{}) {
 			// this spawn event is not for me. nop.
 			return
 		}
-
-		u.mutex.Lock()
 		u.action = newAction(actionSpawn, d)
-		u.mutex.Unlock()
 
 	default:
 		// nop
@@ -45,9 +42,11 @@ func (u *player) OnEvent(i interface{}) {
 }
 
 func (u *player) DoAction() {
-	u.mutex.Lock()
 	a := u.action
-	u.mutex.Unlock()
+	if a == nil {
+		// idle
+		return
+	}
 
 	switch a.actiontype {
 	case actionSpawn:
@@ -57,6 +56,7 @@ func (u *player) DoAction() {
 		u.sprite.X = (float32)(d.position.x)
 		u.sprite.Y = (float32)(d.position.y)
 		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
+		u.action = nil
 	default:
 		// nop
 	}
