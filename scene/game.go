@@ -2,7 +2,6 @@ package scene
 
 import (
 	"image"
-	"sync"
 
 	"github.com/pankona/gomo-simra/simra"
 	"github.com/pankona/phantomize/scene/config"
@@ -21,7 +20,6 @@ type game struct {
 	pubsub           *simra.PubSub
 	gameState        gameState
 	currentRunLoop   func()
-	runLoopMutex     sync.Mutex
 	eventqueue       chan *command
 }
 
@@ -247,10 +245,7 @@ func (game *game) Drive() {
 	if game.nextScene != nil {
 		simra.GetInstance().SetScene(game.nextScene)
 	}
-
-	game.runLoopMutex.Lock()
 	game.currentRunLoop()
-	game.runLoopMutex.Unlock()
 }
 
 // OnTouchBegin is called when game scene is Touched.
