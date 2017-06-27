@@ -57,6 +57,8 @@ func (u *sampleUnit) DoAction() {
 		u.sprite.Y = (float32)(d.position.y)
 		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
 		u.action = nil
+
+		// TODO start to lookup player
 	default:
 		// nop
 	}
