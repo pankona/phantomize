@@ -43,10 +43,11 @@ func newAction(a actiontype, d interface{}) *action {
 
 type unitBase struct {
 	simra.Subscriber
-	id       string
-	position position
-	action   *action
-	game     *game
+	id        string
+	position  position
+	action    *action
+	game      *game
+	moveSpeed float32
 }
 
 func (u *unitBase) GetID() string {
@@ -68,10 +69,10 @@ func NewUnit(id, unittype string, game *game) Uniter {
 	var u Uniter
 	switch unittype {
 	case "player":
-		u = &player{unitBase: &unitBase{id: id, game: game}}
+		u = &player{unitBase: &unitBase{id: id, game: game, moveSpeed: 0}}
 	default:
 		// TODO: remove later
-		u = &sampleUnit{unitBase: &unitBase{id: id, game: game}}
+		u = &sampleUnit{unitBase: &unitBase{id: id, game: game, moveSpeed: 0.5}}
 	}
 
 	// call each unit's initialize function

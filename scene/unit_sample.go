@@ -79,10 +79,9 @@ func (u *sampleUnit) moveToNearestTarget() {
 
 	// calculate which way to go
 	// move speed is temporary
-	moveSpeed := 0.3
 	dx, dy := px-ux, py-uy
-	newx := (float64)(moveSpeed) / math.Sqrt((float64)(dx*dx+dy*dy)) * (float64)(dx)
-	newy := (float64)(moveSpeed) / math.Sqrt((float64)(dx*dx+dy*dy)) * (float64)(dy)
+	newx := (float64)(u.moveSpeed) / math.Sqrt((float64)(dx*dx+dy*dy)) * (float64)(dx)
+	newy := (float64)(u.moveSpeed) / math.Sqrt((float64)(dx*dx+dy*dy)) * (float64)(dy)
 	u.sprite.X += (float32)(newx)
 	u.sprite.Y += (float32)(newy)
 }
