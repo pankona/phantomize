@@ -26,6 +26,7 @@ type actiontype int
 const (
 	// SPAWN spawns an unit
 	actionSpawn actiontype = iota
+	actionMoveToNearestTarget
 )
 
 type action struct {

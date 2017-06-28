@@ -2,6 +2,7 @@ package scene
 
 import (
 	"image"
+	"math"
 
 	"github.com/pankona/gomo-simra/simra"
 )
@@ -56,9 +57,27 @@ func (u *sampleUnit) DoAction() {
 		u.sprite.X = (float32)(d.position.x)
 		u.sprite.Y = (float32)(d.position.y)
 		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
-		u.action = nil
 
-		// TODO start to lookup player
+		// start moving to target
+		u.action = newAction(actionMoveToNearestTarget, u)
+
+	case actionMoveToNearestTarget:
+		// get my position
+		ux, uy := u.sprite.X, u.sprite.Y
+
+		// get target (player's) position
+		p := u.game.player.(*player)
+		px, py := p.sprite.X, p.sprite.Y
+
+		// calculate which way to go
+		// move speed is temporary
+		moveSpeed := 1
+		dx, dy := px-ux, py-uy
+		newx := (float64)(moveSpeed) / math.Sqrt((float64)(dx*dx+dy*dy)) * (float64)(dx)
+		newy := (float64)(moveSpeed) / math.Sqrt((float64)(dx*dx+dy*dy)) * (float64)(dy)
+		u.sprite.X += (float32)(newx)
+		u.sprite.Y += (float32)(newy)
+
 	default:
 		// nop
 	}
