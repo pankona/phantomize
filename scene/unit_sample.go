@@ -62,23 +62,27 @@ func (u *sampleUnit) DoAction() {
 		u.action = newAction(actionMoveToNearestTarget, u)
 
 	case actionMoveToNearestTarget:
-		// get my position
-		ux, uy := u.sprite.X, u.sprite.Y
-
-		// get target (player's) position
-		p := u.game.player.(*player)
-		px, py := p.sprite.X, p.sprite.Y
-
-		// calculate which way to go
-		// move speed is temporary
-		moveSpeed := 1
-		dx, dy := px-ux, py-uy
-		newx := (float64)(moveSpeed) / math.Sqrt((float64)(dx*dx+dy*dy)) * (float64)(dx)
-		newy := (float64)(moveSpeed) / math.Sqrt((float64)(dx*dx+dy*dy)) * (float64)(dy)
-		u.sprite.X += (float32)(newx)
-		u.sprite.Y += (float32)(newy)
+		u.moveToNearestTarget()
 
 	default:
 		// nop
 	}
+}
+
+func (u *sampleUnit) moveToNearestTarget() {
+	// get my position
+	ux, uy := u.sprite.X, u.sprite.Y
+
+	// get target (player's) position
+	p := u.game.player.(*player)
+	px, py := p.sprite.X, p.sprite.Y
+
+	// calculate which way to go
+	// move speed is temporary
+	moveSpeed := 0.3
+	dx, dy := px-ux, py-uy
+	newx := (float64)(moveSpeed) / math.Sqrt((float64)(dx*dx+dy*dy)) * (float64)(dx)
+	newy := (float64)(moveSpeed) / math.Sqrt((float64)(dx*dx+dy*dy)) * (float64)(dy)
+	u.sprite.X += (float32)(newx)
+	u.sprite.Y += (float32)(newy)
 }
