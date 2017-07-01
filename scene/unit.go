@@ -6,8 +6,7 @@ import (
 
 // unit base implementation
 
-// Uniter is an interface of unit
-type Uniter interface {
+type uniter interface {
 	Initialize()
 	GetID() string
 	simra.Subscriber
@@ -63,10 +62,10 @@ func (u *unitBase) GetPosition() position {
 }
 
 // NewUnit returns a uniter
-func NewUnit(id, unittype string, game *game) Uniter {
+func NewUnit(id, unittype string, game *game) uniter {
 	// TODO: sample unit implemenation
 	// unit type should be specified and switch here
-	var u Uniter
+	var u uniter
 	switch unittype {
 	case "player":
 		u = &player{unitBase: &unitBase{id: id, game: game, moveSpeed: 0}}

@@ -13,9 +13,9 @@ type game struct {
 	nextScene        simra.Driver
 	field            simra.Sprite
 	ctrlPanel        simra.Sprite
-	player           Uniter
+	player           uniter
 	currentFrame     int64
-	uniters          map[string]Uniter
+	uniters          map[string]uniter
 	unitPopTimeTable unitPopTimeTable
 	pubsub           *simra.PubSub
 	gameState        gameState
@@ -100,7 +100,7 @@ const (
 
 func (game *game) initUnits(json string) {
 	// TODO: implement
-	units := make(map[string]Uniter)
+	units := make(map[string]uniter)
 	units["unit1"] = NewUnit("unit1", "", game)
 	units["unit2"] = NewUnit("unit2", "", game)
 	units["unit3"] = NewUnit("unit3", "", game)
@@ -128,8 +128,8 @@ func (game *game) initUnits(json string) {
 	game.uniters = units
 }
 
-func (game *game) popUnits() []Uniter {
-	poppedUnits := make([]Uniter, 0)
+func (game *game) popUnits() []uniter {
+	poppedUnits := make([]uniter, 0)
 	for _, v := range game.unitPopTimeTable {
 		if v.popTime <= game.currentFrame {
 			// pop unit
