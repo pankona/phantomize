@@ -34,56 +34,56 @@ const (
 // This is called from simra.
 // simra.GetInstance().SetDesiredScreenSize should be called to determine
 // screen size of this scene.
-func (game *game) Initialize() {
+func (g *game) Initialize() {
 	simra.LogDebug("[IN]")
 
 	simra.GetInstance().SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
 
 	// initialize sprites
-	game.initialize()
+	g.initialize()
 
 	simra.LogDebug("[OUT]")
 }
 
-func (game *game) updateGameState(newState gameState) {
-	game.gameState = newState
+func (g *game) updateGameState(newState gameState) {
+	g.gameState = newState
 	switch newState {
 	case gameStateInitial:
-		game.currentRunLoop = game.initialRunLoop
+		g.currentRunLoop = g.initialRunLoop
 	case gameStateRunning:
-		game.currentRunLoop = game.runningRunLoop
+		g.currentRunLoop = g.runningRunLoop
 	default:
 		//nop
 	}
 
 	// reset frame
-	game.currentFrame = 0
+	g.currentFrame = 0
 }
 
-func (game *game) initCtrlPanel() {
-	game.ctrlPanel.W = config.ScreenWidth
-	game.ctrlPanel.H = 180
-	game.ctrlPanel.X = config.ScreenWidth / 2
-	game.ctrlPanel.Y = game.ctrlPanel.H / 2
+func (g *game) initCtrlPanel() {
+	g.ctrlPanel.W = config.ScreenWidth
+	g.ctrlPanel.H = 180
+	g.ctrlPanel.X = config.ScreenWidth / 2
+	g.ctrlPanel.Y = g.ctrlPanel.H / 2
 	simra.GetInstance().AddSprite("ctrl_panel.png",
 		image.Rect(0, 0, 1280, 240),
-		&game.ctrlPanel)
+		&g.ctrlPanel)
 }
 
-func (game *game) initField() {
-	game.field.W = config.ScreenWidth
-	game.field.H = config.ScreenHeight
-	game.field.X = config.ScreenWidth / 2
-	game.field.Y = config.ScreenHeight / 2
+func (g *game) initField() {
+	g.field.W = config.ScreenWidth
+	g.field.H = config.ScreenHeight
+	g.field.X = config.ScreenWidth / 2
+	g.field.Y = config.ScreenHeight / 2
 	simra.GetInstance().AddSprite("field1.png",
 		image.Rect(0, 0, 1280, 720),
-		&game.field)
+		&g.field)
 }
 
-func (game *game) initPlayer() {
-	p := newUnit("player", "player", game)
-	game.player = p
-	game.pubsub.Subscribe(p.GetID(), p)
+func (g *game) initPlayer() {
+	p := newUnit("player", "player", g)
+	g.player = p
+	g.pubsub.Subscribe(p.GetID(), p)
 }
 
 type unitPopTime struct {
@@ -98,15 +98,15 @@ const (
 	fps = 60
 )
 
-func (game *game) initUnits(json string) {
+func (g *game) initUnits(json string) {
 	// TODO: implement
 	units := make(map[string]uniter)
-	units["unit1"] = newUnit("unit1", "", game)
+	units["unit1"] = newUnit("unit1", "", g)
 	//units["unit2"] = newUnit("unit2", "", game)
 	//units["unit3"] = newUnit("unit3", "", game)
 
 	// TODO: unitpopTimeTable should be sorted by popTime
-	game.unitPopTimeTable = append(game.unitPopTimeTable,
+	g.unitPopTimeTable = append(g.unitPopTimeTable,
 		&unitPopTime{
 			unitID:          "unit1",
 			popTime:         3 * fps,
@@ -127,15 +127,15 @@ func (game *game) initUnits(json string) {
 			})
 	*/
 
-	game.uniters = units
+	g.uniters = units
 }
 
-func (game *game) popUnits() []uniter {
+func (g *game) popUnits() []uniter {
 	poppedUnits := make([]uniter, 0)
-	for _, v := range game.unitPopTimeTable {
-		if v.popTime <= game.currentFrame {
+	for _, v := range g.unitPopTimeTable {
+		if v.popTime <= g.currentFrame {
 			// pop unit
-			u := game.uniters[v.unitID]
+			u := g.uniters[v.unitID]
 			u.SetPosition(v.initialPosition.x, v.initialPosition.y)
 			poppedUnits = append(poppedUnits, u)
 			continue
@@ -144,38 +144,38 @@ func (game *game) popUnits() []uniter {
 
 	if len(poppedUnits) != 0 {
 		// remove popped units from unitPopTimeTable
-		game.unitPopTimeTable = game.unitPopTimeTable[len(poppedUnits):]
+		g.unitPopTimeTable = g.unitPopTimeTable[len(poppedUnits):]
 	}
 
 	return poppedUnits
 }
 
-func (game *game) initialize() {
-	game.pubsub = simra.NewPubSub()
-	game.eventqueue = make(chan *command, 256)
-	game.initField()
-	game.initCtrlPanel()
-	game.initPlayer()
-	game.initUnits("") // TODO: input JSON string
-	simra.GetInstance().AddTouchListener(game)
-	game.pubsub.Subscribe("god", game)
-	game.updateGameState(gameStateInitial)
+func (g *game) initialize() {
+	g.pubsub = simra.NewPubSub()
+	g.eventqueue = make(chan *command, 256)
+	g.initField()
+	g.initCtrlPanel()
+	g.initPlayer()
+	g.initUnits("") // TODO: input JSON string
+	simra.GetInstance().AddTouchListener(g)
+	g.pubsub.Subscribe("god", g)
+	g.updateGameState(gameStateInitial)
 }
 
-func (game *game) eventFetch() []*command {
+func (g *game) eventFetch() []*command {
 	// note:
 	// if new events are pushed while fetching,
 	// they should be fetched next run loop to
 	// avoid inifinite event fetching.
 
-	qlen := len(game.eventqueue)
+	qlen := len(g.eventqueue)
 	if qlen == 0 {
 		return nil
 	}
 
 	c := make([]*command, qlen)
 	for i := 0; i < qlen; i++ {
-		c[i] = <-game.eventqueue
+		c[i] = <-g.eventqueue
 	}
 	return c
 }
@@ -201,18 +201,18 @@ func (g *game) OnEvent(i interface{}) {
 	}
 }
 
-func (game *game) initialRunLoop() {
-	commands := game.eventFetch()
+func (g *game) initialRunLoop() {
+	commands := g.eventFetch()
 	for _, v := range commands {
-		game.pubsub.Publish(v)
+		g.pubsub.Publish(v)
 	}
-	game.player.DoAction()
+	g.player.DoAction()
 }
 
-func (game *game) runningRunLoop() {
-	poppedUnits := game.popUnits()
+func (g *game) runningRunLoop() {
+	poppedUnits := g.popUnits()
 	for _, v := range poppedUnits {
-		err := game.pubsub.Subscribe(v.GetID(), v)
+		err := g.pubsub.Subscribe(v.GetID(), v)
 		if err != nil {
 			panic("failed to subscribe. fatal.")
 		}
@@ -221,17 +221,17 @@ func (game *game) runningRunLoop() {
 		c := newCommand(commandSpawn, v)
 		c.data = v
 
-		game.eventqueue <- c
+		g.eventqueue <- c
 	}
 
 	// event fetch and publish to all subscribers
-	commands := game.eventFetch()
+	commands := g.eventFetch()
 	for _, v := range commands {
-		game.pubsub.Publish(v)
+		g.pubsub.Publish(v)
 	}
 
 	// invoke action for all units
-	for _, v := range game.uniters {
+	for _, v := range g.uniters {
 		v.DoAction()
 	}
 }
@@ -239,39 +239,39 @@ func (game *game) runningRunLoop() {
 // Drive is called from simra.
 // This is used to update sprites position.
 // This will be called 60 times per sec.
-func (game *game) Drive() {
+func (g *game) Drive() {
 	defer func() {
-		game.currentFrame++
+		g.currentFrame++
 	}()
 
-	if game.nextScene != nil {
-		simra.GetInstance().SetScene(game.nextScene)
+	if g.nextScene != nil {
+		simra.GetInstance().SetScene(g.nextScene)
 	}
-	game.currentRunLoop()
+	g.currentRunLoop()
 }
 
 // OnTouchBegin is called when game scene is Touched.
-func (game *game) OnTouchBegin(x, y float32) {
+func (g *game) OnTouchBegin(x, y float32) {
 	// nop
 }
 
 // OnTouchMove is called when game scene is Touched and moved.
-func (game *game) OnTouchMove(x, y float32) {
+func (g *game) OnTouchMove(x, y float32) {
 	// nop
 }
 
 // OnTouchEnd is called when game scene is Touched and it is released.
-func (game *game) OnTouchEnd(x, y float32) {
-	if game.gameState == gameStateInitial {
+func (g *game) OnTouchEnd(x, y float32) {
+	if g.gameState == gameStateInitial {
 		if y > 180 {
-			game.player.SetPosition(x, y)
+			g.player.SetPosition(x, y)
 
-			c := newCommand(commandSpawn, game.player)
-			game.eventqueue <- c
+			c := newCommand(commandSpawn, g.player)
+			g.eventqueue <- c
 
-			c = newCommand(commandGoToRunningState, game)
-			game.eventqueue <- c
+			c = newCommand(commandGoToRunningState, g)
+			g.eventqueue <- c
 		}
 	}
-	//game.nextScene = &result{currentStage: game.currentStage}
+	//g.nextScene = &result{currentStage: g.currentStage}
 }
