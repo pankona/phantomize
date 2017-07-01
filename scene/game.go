@@ -81,7 +81,7 @@ func (game *game) initField() {
 }
 
 func (game *game) initPlayer() {
-	p := NewUnit("player", "player", game)
+	p := newUnit("player", "player", game)
 	game.player = p
 	game.pubsub.Subscribe(p.GetID(), p)
 }
@@ -101,9 +101,9 @@ const (
 func (game *game) initUnits(json string) {
 	// TODO: implement
 	units := make(map[string]uniter)
-	units["unit1"] = NewUnit("unit1", "", game)
-	//units["unit2"] = NewUnit("unit2", "", game)
-	//units["unit3"] = NewUnit("unit3", "", game)
+	units["unit1"] = newUnit("unit1", "", game)
+	//units["unit2"] = newUnit("unit2", "", game)
+	//units["unit3"] = newUnit("unit3", "", game)
 
 	// TODO: unitpopTimeTable should be sorted by popTime
 	game.unitPopTimeTable = append(game.unitPopTimeTable,

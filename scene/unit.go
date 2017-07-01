@@ -70,8 +70,7 @@ func (u *unitBase) GetPosition() (float32, float32) {
 	return u.sprite.X, u.sprite.Y
 }
 
-// NewUnit returns a uniter
-func NewUnit(id, unittype string, game *game) uniter {
+func newUnit(id, unittype string, game *game) uniter {
 	// TODO: sample unit implemenation
 	// unit type should be specified and switch here
 	var u uniter
