@@ -62,20 +62,20 @@ func (u *sampleUnit) DoAction() {
 		u.action = newAction(actionMoveToNearestTarget, u)
 
 	case actionMoveToNearestTarget:
-		u.moveToNearestTarget()
+		u.moveToTarget(u.game.player)
 
 	default:
 		// nop
 	}
 }
 
-func (u *sampleUnit) moveToNearestTarget() {
+func (u *sampleUnit) moveToTarget(target uniter) {
 	// get my position
 	ux, uy := u.sprite.X, u.sprite.Y
 
 	// get target (player's) position
-	p := u.game.player.(*player)
-	px, py := p.sprite.X, p.sprite.Y
+	p := target.GetPosition()
+	px, py := (float32)(p.x), (float32)(p.y)
 
 	// calculate which way to go
 	// move speed is temporary
