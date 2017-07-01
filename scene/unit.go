@@ -10,14 +10,20 @@ type uniter interface {
 	Initialize()
 	GetID() string
 	simra.Subscriber
-	SetPosition(p position)
-	GetPosition() position
+	SetPosition(float32, float32)
+	GetPosition() (float32, float32)
 	DoAction()
 }
 
+type attackInfo struct {
+	attackRange int
+	power       int
+	speed       int
+}
+
 type position struct {
-	x int
-	y int
+	x float32
+	y float32
 }
 
 type actiontype int
@@ -26,6 +32,7 @@ const (
 	// SPAWN spawns an unit
 	actionSpawn actiontype = iota
 	actionMoveToNearestTarget
+	actionAttack
 )
 
 type action struct {
@@ -42,8 +49,8 @@ func newAction(a actiontype, d interface{}) *action {
 
 type unitBase struct {
 	simra.Subscriber
+	sprite    simra.Sprite
 	id        string
-	position  position
 	action    *action
 	game      *game
 	moveSpeed float32
@@ -53,12 +60,13 @@ func (u *unitBase) GetID() string {
 	return u.id
 }
 
-func (u *unitBase) SetPosition(p position) {
-	u.position = p
+func (u *unitBase) SetPosition(x, y float32) {
+	u.sprite.X = x
+	u.sprite.Y = y
 }
 
-func (u *unitBase) GetPosition() position {
-	return u.position
+func (u *unitBase) GetPosition() (float32, float32) {
+	return u.sprite.X, u.sprite.Y
 }
 
 // NewUnit returns a uniter
@@ -68,10 +76,15 @@ func NewUnit(id, unittype string, game *game) uniter {
 	var u uniter
 	switch unittype {
 	case "player":
-		u = &player{unitBase: &unitBase{id: id, game: game, moveSpeed: 0}}
+		u = &player{
+			unitBase: &unitBase{id: id, game: game, moveSpeed: 0},
+		}
 	default:
 		// TODO: remove later
-		u = &sampleUnit{unitBase: &unitBase{id: id, game: game, moveSpeed: 0.5}}
+		u = &sampleUnit{
+			unitBase:   &unitBase{id: id, game: game, moveSpeed: 0.5},
+			attackinfo: &attackInfo{attackRange: 5, power: 5, speed: 10},
+		}
 	}
 
 	// call each unit's initialize function

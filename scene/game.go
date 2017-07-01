@@ -102,8 +102,8 @@ func (game *game) initUnits(json string) {
 	// TODO: implement
 	units := make(map[string]uniter)
 	units["unit1"] = NewUnit("unit1", "", game)
-	units["unit2"] = NewUnit("unit2", "", game)
-	units["unit3"] = NewUnit("unit3", "", game)
+	//units["unit2"] = NewUnit("unit2", "", game)
+	//units["unit3"] = NewUnit("unit3", "", game)
 
 	// TODO: unitpopTimeTable should be sorted by popTime
 	game.unitPopTimeTable = append(game.unitPopTimeTable,
@@ -112,18 +112,20 @@ func (game *game) initUnits(json string) {
 			popTime:         3 * fps,
 			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 5},
 		})
-	game.unitPopTimeTable = append(game.unitPopTimeTable,
-		&unitPopTime{
-			unitID:          "unit2",
-			popTime:         3 * fps,
-			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 4},
-		})
-	game.unitPopTimeTable = append(game.unitPopTimeTable,
-		&unitPopTime{
-			unitID:          "unit3",
-			popTime:         3 * fps,
-			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 3},
-		})
+	/*
+		game.unitPopTimeTable = append(game.unitPopTimeTable,
+			&unitPopTime{
+				unitID:          "unit2",
+				popTime:         3 * fps,
+				initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 4},
+			})
+		game.unitPopTimeTable = append(game.unitPopTimeTable,
+			&unitPopTime{
+				unitID:          "unit3",
+				popTime:         3 * fps,
+				initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 3},
+			})
+	*/
 
 	game.uniters = units
 }
@@ -134,7 +136,7 @@ func (game *game) popUnits() []uniter {
 		if v.popTime <= game.currentFrame {
 			// pop unit
 			u := game.uniters[v.unitID]
-			u.SetPosition(v.initialPosition)
+			u.SetPosition(v.initialPosition.x, v.initialPosition.y)
 			poppedUnits = append(poppedUnits, u)
 			continue
 		}
@@ -262,7 +264,7 @@ func (game *game) OnTouchMove(x, y float32) {
 func (game *game) OnTouchEnd(x, y float32) {
 	if game.gameState == gameStateInitial {
 		if y > 180 {
-			game.player.SetPosition(position{(int)(x), (int)(y)})
+			game.player.SetPosition(x, y)
 
 			c := newCommand(commandSpawn, game.player)
 			game.eventqueue <- c

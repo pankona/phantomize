@@ -9,7 +9,7 @@ import (
 
 type sampleUnit struct {
 	*unitBase
-	sprite simra.Sprite
+	attackinfo *attackInfo
 }
 
 func (u *sampleUnit) Initialize() {
@@ -54,34 +54,55 @@ func (u *sampleUnit) DoAction() {
 		d := a.data.(*sampleUnit)
 		u.sprite.W = 64
 		u.sprite.H = 64
-		u.sprite.X = (float32)(d.position.x)
-		u.sprite.Y = (float32)(d.position.y)
+		u.SetPosition(d.GetPosition())
 		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
 
 		// start moving to target
-		u.action = newAction(actionMoveToNearestTarget, u)
+		u.action = newAction(actionMoveToNearestTarget, nil)
 
 	case actionMoveToNearestTarget:
+		// TODO: lookup nearest target
 		u.moveToTarget(u.game.player)
 
+		if u.canAttackToTarget(u.game.player) {
+			u.action = newAction(actionAttack, u.game.player)
+		}
+
+	case actionAttack:
+		// TODO: start animation
+
+		// TODO: do attack
+
+		// TODO: spend cool time (reflect attack speed)
 	default:
 		// nop
 	}
 }
 
 func (u *sampleUnit) moveToTarget(target uniter) {
-	// get my position
-	ux, uy := u.sprite.X, u.sprite.Y
-
-	// get target (player's) position
-	p := target.GetPosition()
-	px, py := (float32)(p.x), (float32)(p.y)
+	ux, uy := u.GetPosition()
+	tx, ty := target.GetPosition()
 
 	// calculate which way to go
 	// move speed is temporary
-	dx, dy := px-ux, py-uy
-	newx := (float64)(u.moveSpeed) / math.Sqrt((float64)(dx*dx+dy*dy)) * (float64)(dx)
-	newy := (float64)(u.moveSpeed) / math.Sqrt((float64)(dx*dx+dy*dy)) * (float64)(dy)
+	dx, dy := tx-ux, ty-uy
+	newx := (float64)(u.moveSpeed) / getDistance(ux, uy, tx, ty) * (float64)(dx)
+	newy := (float64)(u.moveSpeed) / getDistance(ux, uy, tx, ty) * (float64)(dy)
 	u.sprite.X += (float32)(newx)
 	u.sprite.Y += (float32)(newy)
+}
+
+func (u *sampleUnit) canAttackToTarget(target uniter) bool {
+	ux, uy := u.GetPosition()
+	tx, ty := target.GetPosition()
+
+	if (float64)(u.attackinfo.attackRange) >= getDistance(ux, uy, tx, ty) {
+		return true
+	}
+	return false
+}
+
+func getDistance(ax, ay, bx, by float32) float64 {
+	dx, dy := ax-bx, ay-by
+	return math.Sqrt((float64)(dx*dx + dy*dy))
 }

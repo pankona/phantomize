@@ -8,7 +8,6 @@ import (
 
 type player struct {
 	*unitBase
-	sprite simra.Sprite
 }
 
 func (u *player) Initialize() {
@@ -53,8 +52,7 @@ func (u *player) DoAction() {
 		d := a.data.(*player)
 		u.sprite.W = 64
 		u.sprite.H = 64
-		u.sprite.X = (float32)(d.position.x)
-		u.sprite.Y = (float32)(d.position.y)
+		u.SetPosition(d.GetPosition())
 		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
 		u.action = nil
 	default:
