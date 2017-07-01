@@ -71,9 +71,11 @@ func (u *sampleUnit) DoAction() {
 	case actionAttack:
 		// TODO: start animation
 
-		// TODO: do attack
-
-		// TODO: spend cool time (reflect attack speed)
+		// TODO: do attack if cool time is over
+		if u.game.currentFrame-u.attackinfo.lastAttackTime >= (int64)(u.attackinfo.cooltime*fps) {
+			simra.LogDebug("attack!")
+			u.attackinfo.lastAttackTime = u.game.currentFrame
+		}
 	default:
 		// nop
 	}

@@ -16,9 +16,10 @@ type uniter interface {
 }
 
 type attackInfo struct {
-	attackRange int
-	power       int
-	speed       int
+	attackRange    int
+	power          int
+	cooltime       float32 // second
+	lastAttackTime int64   // frame
 }
 
 type position struct {
@@ -83,7 +84,7 @@ func NewUnit(id, unittype string, game *game) uniter {
 		// TODO: remove later
 		u = &sampleUnit{
 			unitBase:   &unitBase{id: id, game: game, moveSpeed: 0.5},
-			attackinfo: &attackInfo{attackRange: 5, power: 5, speed: 10},
+			attackinfo: &attackInfo{attackRange: 50, power: 5, cooltime: 4},
 		}
 	}
 
