@@ -71,9 +71,14 @@ func (u *sampleUnit) DoAction() {
 	case actionAttack:
 		// TODO: start animation
 
-		// TODO: do attack if cool time is over
-		if u.game.currentFrame-u.attackinfo.lastAttackTime >= (int64)(u.attackinfo.cooltime*fps) {
-			simra.LogDebug("attack!")
+		if !u.canAttackToTarget(u.game.player) {
+			u.action = newAction(actionMoveToNearestTarget, nil)
+			break
+		}
+
+		if u.game.currentFrame-u.attackinfo.lastAttackTime >=
+			(int64)(u.attackinfo.cooltime*fps) {
+			simra.LogDebug("[ATTACK] i'm %s", u.GetID())
 			u.attackinfo.lastAttackTime = u.game.currentFrame
 		}
 	default:

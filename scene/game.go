@@ -102,8 +102,8 @@ func (g *game) initUnits(json string) {
 	// TODO: implement
 	units := make(map[string]uniter)
 	units["unit1"] = newUnit("unit1", "", g)
-	//units["unit2"] = newUnit("unit2", "", game)
-	//units["unit3"] = newUnit("unit3", "", game)
+	units["unit2"] = newUnit("unit2", "", g)
+	units["unit3"] = newUnit("unit3", "", g)
 
 	// TODO: unitpopTimeTable should be sorted by popTime
 	g.unitPopTimeTable = append(g.unitPopTimeTable,
@@ -112,20 +112,18 @@ func (g *game) initUnits(json string) {
 			popTime:         3 * fps,
 			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 5},
 		})
-	/*
-		game.unitPopTimeTable = append(game.unitPopTimeTable,
-			&unitPopTime{
-				unitID:          "unit2",
-				popTime:         3 * fps,
-				initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 4},
-			})
-		game.unitPopTimeTable = append(game.unitPopTimeTable,
-			&unitPopTime{
-				unitID:          "unit3",
-				popTime:         3 * fps,
-				initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 3},
-			})
-	*/
+	g.unitPopTimeTable = append(g.unitPopTimeTable,
+		&unitPopTime{
+			unitID:          "unit2",
+			popTime:         4 * fps,
+			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 4},
+		})
+	g.unitPopTimeTable = append(g.unitPopTimeTable,
+		&unitPopTime{
+			unitID:          "unit3",
+			popTime:         5 * fps,
+			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 3},
+		})
 
 	g.uniters = units
 }
