@@ -99,7 +99,7 @@ const (
 )
 
 func (g *game) initUnits(json string) {
-	// TODO: implement
+	// TODO: load from json file
 	units := make(map[string]uniter)
 	units["unit1"] = newUnit("unit1", "", g)
 	units["unit2"] = newUnit("unit2", "", g)
