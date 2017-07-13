@@ -72,7 +72,6 @@ func (g *game) initCtrlPanel() {
 
 	g.ctrlButton = make([]simra.Sprite, 9)
 	for i, _ := range g.ctrlButton {
-		simra.LogDebug("@@@@@@ %v", &g.ctrlButton[i])
 		g.ctrlButton[i].W = 64
 		g.ctrlButton[i].H = 64
 		g.ctrlButton[i].X = (float32)(1010 + (64+45)*(i%3))
