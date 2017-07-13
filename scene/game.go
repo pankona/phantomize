@@ -7,6 +7,10 @@ import (
 	"github.com/pankona/phantomize/scene/config"
 )
 
+const (
+	ctrlPanelHeight = 220
+)
+
 // game represents a scene object for game
 type game struct {
 	currentStage     int
@@ -80,7 +84,7 @@ func (c *ctrlButtonTouchListener) OnTouchEnd(x, y float32) {
 
 func (g *game) initCtrlPanel() {
 	g.ctrlPanel.W = config.ScreenWidth
-	g.ctrlPanel.H = 220
+	g.ctrlPanel.H = ctrlPanelHeight
 	g.ctrlPanel.X = config.ScreenWidth / 2
 	g.ctrlPanel.Y = g.ctrlPanel.H / 2
 	simra.GetInstance().AddSprite("ctrl_panel.png",
@@ -293,7 +297,7 @@ func (g *game) OnTouchMove(x, y float32) {
 // OnTouchEnd is called when game scene is Touched and it is released.
 func (g *game) OnTouchEnd(x, y float32) {
 	if g.gameState == gameStateInitial {
-		if y > 220 {
+		if y > ctrlPanelHeight {
 			g.player.SetPosition(x, y)
 
 			c := newCommand(commandSpawn, g.player)
