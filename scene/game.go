@@ -13,6 +13,7 @@ type game struct {
 	nextScene        simra.Driver
 	field            simra.Sprite
 	ctrlPanel        simra.Sprite
+	ctrlButton       []simra.Sprite
 	player           uniter
 	currentFrame     int64
 	uniters          map[string]uniter
@@ -62,12 +63,24 @@ func (g *game) updateGameState(newState gameState) {
 
 func (g *game) initCtrlPanel() {
 	g.ctrlPanel.W = config.ScreenWidth
-	g.ctrlPanel.H = 180
+	g.ctrlPanel.H = 220
 	g.ctrlPanel.X = config.ScreenWidth / 2
 	g.ctrlPanel.Y = g.ctrlPanel.H / 2
 	simra.GetInstance().AddSprite("ctrl_panel.png",
 		image.Rect(0, 0, 1280, 240),
 		&g.ctrlPanel)
+
+	g.ctrlButton = make([]simra.Sprite, 9)
+	for i, _ := range g.ctrlButton {
+		simra.LogDebug("@@@@@@ %v", &g.ctrlButton[i])
+		g.ctrlButton[i].W = 64
+		g.ctrlButton[i].H = 64
+		g.ctrlButton[i].X = (float32)(1010 + (64+45)*(i%3))
+		g.ctrlButton[i].Y = (float32)(44 + (64+5)*(i/3))
+		simra.GetInstance().AddSprite("player.png",
+			image.Rect(0, 0, 384, 384),
+			&g.ctrlButton[i])
+	}
 }
 
 func (g *game) initField() {
