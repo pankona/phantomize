@@ -61,6 +61,23 @@ func (g *game) updateGameState(newState gameState) {
 	g.currentFrame = 0
 }
 
+type ctrlButtonTouchListener struct {
+	id int
+	g  *game
+}
+
+func (c *ctrlButtonTouchListener) OnTouchBegin(x, y float32) {
+	// nop
+}
+
+func (c *ctrlButtonTouchListener) OnTouchMove(x, y float32) {
+	// nop
+}
+
+func (c *ctrlButtonTouchListener) OnTouchEnd(x, y float32) {
+	simra.LogDebug("@@@@@@ %d is touched!", c.id)
+}
+
 func (g *game) initCtrlPanel() {
 	g.ctrlPanel.W = config.ScreenWidth
 	g.ctrlPanel.H = 220
@@ -79,7 +96,10 @@ func (g *game) initCtrlPanel() {
 		simra.GetInstance().AddSprite("player.png",
 			image.Rect(0, 0, 384, 384),
 			&g.ctrlButton[i])
+
+		g.ctrlButton[i].AddTouchListener(&ctrlButtonTouchListener{id: i, g: g})
 	}
+
 }
 
 func (g *game) initField() {
@@ -273,7 +293,7 @@ func (g *game) OnTouchMove(x, y float32) {
 // OnTouchEnd is called when game scene is Touched and it is released.
 func (g *game) OnTouchEnd(x, y float32) {
 	if g.gameState == gameStateInitial {
-		if y > 180 {
+		if y > 220 {
 			g.player.SetPosition(x, y)
 
 			c := newCommand(commandSpawn, g.player)
