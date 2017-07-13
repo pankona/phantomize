@@ -37,6 +37,13 @@ func (u *sampleUnit) OnEvent(i interface{}) {
 		}
 		u.action = newAction(actionSpawn, d)
 
+	case commandDead:
+		_, ok := c.data.(*player)
+		if !ok {
+			return
+		}
+		simra.LogDebug("i'm %s, we won!", u.GetID())
+		u.action = nil
 	default:
 		// nop
 	}
@@ -80,6 +87,9 @@ func (u *sampleUnit) DoAction() {
 			(int64)(u.attackinfo.cooltime*fps) {
 			simra.LogDebug("[ATTACK] i'm %s", u.GetID())
 			u.attackinfo.lastAttackTime = u.game.currentFrame
+
+			u.game.eventqueue <- newCommand(commandDamage, &damage{u.game.player, u.attackinfo.power})
+
 		}
 	default:
 		// nop

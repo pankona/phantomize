@@ -83,7 +83,7 @@ func newUnit(id, unittype string, game *game) uniter {
 		// TODO: remove later
 		u = &sampleUnit{
 			unitBase:   &unitBase{id: id, game: game, moveSpeed: 0.5},
-			attackinfo: &attackInfo{attackRange: 50, power: 5, cooltime: 4},
+			attackinfo: &attackInfo{attackRange: 50, power: 15, cooltime: 2},
 		}
 	}
 
@@ -97,6 +97,9 @@ type commandtype int
 const (
 	// SPAWN spawns an unit
 	commandSpawn commandtype = iota
+	// Damage to specified unit
+	commandDamage
+	commandDead
 	commandGoToInitialState
 	commandGoToRunningState
 )
@@ -104,6 +107,11 @@ const (
 type command struct {
 	commandtype commandtype
 	data        interface{}
+}
+
+type damage struct {
+	unit   uniter
+	damage int
 }
 
 func newCommand(c commandtype, d interface{}) *command {

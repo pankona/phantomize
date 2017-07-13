@@ -8,12 +8,14 @@ import (
 
 type player struct {
 	*unitBase
+	hp int
 }
 
 func (u *player) Initialize() {
 	simra.GetInstance().AddSprite("player.png",
 		image.Rect(0, 0, 384, 384),
 		&u.sprite)
+	u.hp = 100
 }
 
 func (u *player) OnEvent(i interface{}) {
@@ -34,6 +36,23 @@ func (u *player) OnEvent(i interface{}) {
 			return
 		}
 		u.action = newAction(actionSpawn, d)
+
+	case commandDamage:
+		d, ok := c.data.(*damage)
+		if !ok {
+			return
+		}
+		if u.id != d.unit.GetID() {
+			return
+		}
+
+		// TODO: reduce HP of unit
+		u.hp -= d.damage
+		simra.LogDebug("[DAMAGE] i'm [player], HP = %d", u.hp)
+		if u.hp <= 0 {
+			simra.LogDebug("[DEAD] i'm %s", u.GetID())
+			u.game.eventqueue <- newCommand(commandDead, u.game.player)
+		}
 
 	default:
 		// nop
