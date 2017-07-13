@@ -9,6 +9,7 @@ import (
 
 const (
 	ctrlPanelHeight = 220
+	fps             = 60
 )
 
 // game represents a scene object for game
@@ -92,7 +93,7 @@ func (g *game) initCtrlPanel() {
 		&g.ctrlPanel)
 
 	g.ctrlButton = make([]simra.Sprite, 9)
-	for i, _ := range g.ctrlButton {
+	for i := range g.ctrlButton {
 		g.ctrlButton[i].W = 64
 		g.ctrlButton[i].H = 64
 		g.ctrlButton[i].X = (float32)(1010 + (64+45)*(i%3))
@@ -129,10 +130,6 @@ type unitPopTime struct {
 }
 
 type unitPopTimeTable []*unitPopTime
-
-const (
-	fps = 60
-)
 
 func (g *game) initUnits(json string) {
 	// TODO: load from json file
