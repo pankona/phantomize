@@ -104,7 +104,6 @@ func (g *game) initCtrlPanel() {
 
 		g.ctrlButton[i].AddTouchListener(&ctrlButtonTouchListener{id: i, g: g})
 	}
-
 }
 
 func (g *game) initField() {
