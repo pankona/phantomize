@@ -27,6 +27,7 @@ type game struct {
 	gameState        gameState
 	currentRunLoop   func()
 	eventqueue       chan *command
+	selection        *selection
 }
 
 type gameState int
@@ -66,9 +67,30 @@ func (g *game) updateGameState(newState gameState) {
 	g.currentFrame = 0
 }
 
+type selection struct {
+	sprite *simra.Sprite
+	action action
+}
+
+func (s *selection) OnEvent(i interface{}) {
+	c, ok := i.(*command)
+	if !ok {
+		panic("unexpected command received. fatal.")
+	}
+
+	switch c.commandtype {
+	case commandUpdateSelection:
+		s.sprite = c.data.(*simra.Sprite)
+	case commandUnsetSelection:
+		s.sprite = nil
+	default:
+		// nop
+	}
+}
+
 type ctrlButtonTouchListener struct {
-	id int
-	g  *game
+	id   int
+	game *game
 }
 
 func (c *ctrlButtonTouchListener) OnTouchBegin(x, y float32) {
@@ -81,6 +103,8 @@ func (c *ctrlButtonTouchListener) OnTouchMove(x, y float32) {
 
 func (c *ctrlButtonTouchListener) OnTouchEnd(x, y float32) {
 	simra.LogDebug("@@@@@@ %d is touched!", c.id)
+	command := newCommand(commandUpdateSelection, &c.game.ctrlButton[c.id])
+	c.game.pubsub.Publish(command)
 }
 
 func (g *game) initCtrlPanel() {
@@ -102,7 +126,7 @@ func (g *game) initCtrlPanel() {
 			image.Rect(0, 0, 384, 384),
 			&g.ctrlButton[i])
 
-		g.ctrlButton[i].AddTouchListener(&ctrlButtonTouchListener{id: i, g: g})
+		g.ctrlButton[i].AddTouchListener(&ctrlButtonTouchListener{id: i, game: g})
 	}
 }
 
@@ -187,8 +211,10 @@ func (g *game) initialize() {
 	g.initCtrlPanel()
 	g.initPlayer()
 	g.initUnits("") // TODO: input JSON string
+	g.selection = &selection{}
 	simra.GetInstance().AddTouchListener(g)
 	g.pubsub.Subscribe("god", g)
+	g.pubsub.Subscribe("selection", g.selection)
 	g.updateGameState(gameStateInitial)
 }
 

@@ -102,6 +102,8 @@ const (
 	commandDead
 	commandGoToInitialState
 	commandGoToRunningState
+	commandUpdateSelection
+	commandUnsetSelection
 )
 
 type command struct {
