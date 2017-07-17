@@ -188,9 +188,12 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 	}
 
 	if id != "" {
+		simra.LogDebug("@@@@@@@ new unit summoning!!!")
 		p := newUnit(id, "player", f.game)
+		p.SetPosition(x, y)
 		f.game.players[id] = p
 		f.game.pubsub.Subscribe(p.GetID(), p)
+		f.game.eventqueue <- newCommand(commandSpawn, p)
 	}
 }
 
@@ -339,6 +342,9 @@ func (g *game) runningRunLoop() {
 	}
 
 	// invoke action for all units
+	for _, v := range g.players {
+		v.DoAction()
+	}
 	for _, v := range g.uniters {
 		v.DoAction()
 	}
@@ -373,12 +379,8 @@ func (g *game) OnTouchEnd(x, y float32) {
 	if g.gameState == gameStateInitial {
 		if y > ctrlPanelHeight {
 			g.players["player"].SetPosition(x, y)
-
-			c := newCommand(commandSpawn, g.players["player"])
-			g.eventqueue <- c
-
-			c = newCommand(commandGoToRunningState, g)
-			g.eventqueue <- c
+			g.eventqueue <- newCommand(commandSpawn, g.players["player"])
+			g.eventqueue <- newCommand(commandGoToRunningState, g)
 		}
 	}
 	//g.nextScene = &result{currentStage: g.currentStage}
