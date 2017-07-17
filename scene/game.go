@@ -274,10 +274,7 @@ func (g *game) runningRunLoop() {
 		}
 
 		// generate spawn command
-		c := newCommand(commandSpawn, v)
-		c.data = v
-
-		g.eventqueue <- c
+		g.eventqueue <- newCommand(commandSpawn, v)
 	}
 
 	// event fetch and publish to all subscribers
