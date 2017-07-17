@@ -188,7 +188,8 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 	}
 
 	if id != "" {
-		simra.LogDebug("@@@@@@@ new unit summoning!!!")
+		// TODO: every alley spawn occurs file I/O. lol
+		// loading texture in advance is needed.
 		p := newUnit(id, "player", f.game)
 		p.SetPosition(x, y)
 		f.game.players[id] = p
