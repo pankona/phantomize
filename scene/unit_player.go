@@ -51,7 +51,7 @@ func (u *player) OnEvent(i interface{}) {
 		simra.LogDebug("[DAMAGE] i'm [player], HP = %d", u.hp)
 		if u.hp <= 0 {
 			simra.LogDebug("[DEAD] i'm %s", u.GetID())
-			u.game.eventqueue <- newCommand(commandDead, u.game.player)
+			u.game.eventqueue <- newCommand(commandDead, u.game.players["player"])
 		}
 
 	default:

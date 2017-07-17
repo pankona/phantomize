@@ -19,8 +19,8 @@ type game struct {
 	field            simra.Sprite
 	ctrlPanel        simra.Sprite
 	ctrlButton       []simra.Sprite
-	player           uniter
 	currentFrame     int64
+	players          map[string]uniter
 	uniters          map[string]uniter
 	unitPopTimeTable unitPopTimeTable
 	pubsub           *simra.PubSub
@@ -68,8 +68,8 @@ func (g *game) updateGameState(newState gameState) {
 }
 
 type selection struct {
-	sprite *simra.Sprite
-	action action
+	selecting *simra.Sprite
+	class     string
 }
 
 func (s *selection) OnEvent(i interface{}) {
@@ -80,9 +80,11 @@ func (s *selection) OnEvent(i interface{}) {
 
 	switch c.commandtype {
 	case commandUpdateSelection:
-		s.sprite = c.data.(*simra.Sprite)
+		s.selecting = c.data.(*simra.Sprite)
+		simra.LogDebug("selection updated: %v", s.selecting)
 	case commandUnsetSelection:
-		s.sprite = nil
+		s.selecting = nil
+		simra.LogDebug("selection updated: nil")
 	default:
 		// nop
 	}
@@ -102,9 +104,7 @@ func (c *ctrlButtonTouchListener) OnTouchMove(x, y float32) {
 }
 
 func (c *ctrlButtonTouchListener) OnTouchEnd(x, y float32) {
-	simra.LogDebug("@@@@@@ %d is touched!", c.id)
-	command := newCommand(commandUpdateSelection, &c.game.ctrlButton[c.id])
-	c.game.pubsub.Publish(command)
+	c.game.eventqueue <- newCommand(commandUpdateSelection, &c.game.ctrlButton[c.id])
 }
 
 func (g *game) initCtrlPanel() {
@@ -138,11 +138,66 @@ func (g *game) initField() {
 	simra.GetInstance().AddSprite("field1.png",
 		image.Rect(0, 0, 1280, 720),
 		&g.field)
+	g.field.AddTouchListener(&fieldTouchListener{game: g})
+}
+
+type fieldTouchListener struct {
+	game *game
+}
+
+// OnTouchBegin is called when game scene is Touched.
+func (f *fieldTouchListener) OnTouchBegin(x, y float32) {
+	// nop
+}
+
+// OnTouchMove is called when game scene is Touched and moved.
+func (f *fieldTouchListener) OnTouchMove(x, y float32) {
+	// nop
+}
+
+// OnTouchEnd is called when game scene is Touched and it is released.
+func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
+	if y <= ctrlPanelHeight {
+		return
+	}
+
+	if f.game.selection.selecting == nil {
+		return
+	}
+
+	s := f.game.selection.selecting
+	var id string
+	if s == &f.game.ctrlButton[6] {
+		id = "player1"
+	} else if s == &f.game.ctrlButton[7] {
+		id = "player2"
+	} else if s == &f.game.ctrlButton[8] {
+		id = "player3"
+	} else if s == &f.game.ctrlButton[3] {
+		id = "player4"
+	} else if s == &f.game.ctrlButton[4] {
+		id = "player5"
+	} else if s == &f.game.ctrlButton[5] {
+		id = "player6"
+	} else if s == &f.game.ctrlButton[0] {
+		id = "player7"
+	} else if s == &f.game.ctrlButton[1] {
+		id = "player8"
+	} else if s == &f.game.ctrlButton[2] {
+		id = "player9"
+	}
+
+	if id != "" {
+		p := newUnit(id, "player", f.game)
+		f.game.players[id] = p
+		f.game.pubsub.Subscribe(p.GetID(), p)
+	}
 }
 
 func (g *game) initPlayer() {
+	g.players = make(map[string]uniter)
 	p := newUnit("player", "player", g)
-	g.player = p
+	g.players["player"] = p
 	g.pubsub.Subscribe(p.GetID(), p)
 }
 
@@ -262,7 +317,7 @@ func (g *game) initialRunLoop() {
 	for _, v := range commands {
 		g.pubsub.Publish(v)
 	}
-	g.player.DoAction()
+	g.players["player"].DoAction()
 }
 
 func (g *game) runningRunLoop() {
@@ -317,9 +372,9 @@ func (g *game) OnTouchMove(x, y float32) {
 func (g *game) OnTouchEnd(x, y float32) {
 	if g.gameState == gameStateInitial {
 		if y > ctrlPanelHeight {
-			g.player.SetPosition(x, y)
+			g.players["player"].SetPosition(x, y)
 
-			c := newCommand(commandSpawn, g.player)
+			c := newCommand(commandSpawn, g.players["player"])
 			g.eventqueue <- c
 
 			c = newCommand(commandGoToRunningState, g)
