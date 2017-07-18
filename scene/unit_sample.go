@@ -69,17 +69,18 @@ func (u *sampleUnit) DoAction() {
 
 	case actionMoveToNearestTarget:
 		// TODO: lookup nearest target
-		p := u.nearestPlayer(u.game.players)
-		u.moveToTarget(p)
+		target := u.nearestPlayer(u.game.players)
+		u.moveToTarget(target)
 
-		if u.canAttackToTarget(u.game.players["player"]) {
-			u.action = newAction(actionAttack, u.game.players["player"])
+		if u.canAttackToTarget(target) {
+			u.action = newAction(actionAttack, target)
 		}
 
 	case actionAttack:
 		// TODO: start animation
 
-		if !u.canAttackToTarget(u.game.players["player"]) {
+		target := a.data.(uniter)
+		if !u.canAttackToTarget(target) {
 			u.action = newAction(actionMoveToNearestTarget, nil)
 			break
 		}
@@ -89,7 +90,7 @@ func (u *sampleUnit) DoAction() {
 			simra.LogDebug("[ATTACK] i'm %s", u.GetID())
 			u.attackinfo.lastAttackTime = u.game.currentFrame
 
-			u.game.eventqueue <- newCommand(commandDamage, &damage{u.game.players["player"], u.attackinfo.power})
+			u.game.eventqueue <- newCommand(commandDamage, &damage{target, u.attackinfo.power})
 		}
 	default:
 		// nop
