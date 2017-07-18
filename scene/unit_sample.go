@@ -69,7 +69,8 @@ func (u *sampleUnit) DoAction() {
 
 	case actionMoveToNearestTarget:
 		// TODO: lookup nearest target
-		u.moveToTarget(u.game.players["player"])
+		p := u.nearestPlayer(u.game.players)
+		u.moveToTarget(p)
 
 		if u.canAttackToTarget(u.game.players["player"]) {
 			u.action = newAction(actionAttack, u.game.players["player"])
@@ -89,11 +90,30 @@ func (u *sampleUnit) DoAction() {
 			u.attackinfo.lastAttackTime = u.game.currentFrame
 
 			u.game.eventqueue <- newCommand(commandDamage, &damage{u.game.players["player"], u.attackinfo.power})
-
 		}
 	default:
 		// nop
 	}
+}
+
+func (u *sampleUnit) nearestPlayer(players map[string]uniter) uniter {
+	var (
+		distance float64
+		retID    string
+	)
+	for i, v := range players {
+		d := getDistanceBetweenUnit(u, v)
+		if distance == 0 {
+			distance = d
+			retID = i
+			continue
+		}
+		if distance > d {
+			distance = d
+			retID = i
+		}
+	}
+	return players[retID]
 }
 
 func (u *sampleUnit) moveToTarget(target uniter) {
@@ -122,4 +142,10 @@ func (u *sampleUnit) canAttackToTarget(target uniter) bool {
 func getDistance(ax, ay, bx, by float32) float64 {
 	dx, dy := ax-bx, ay-by
 	return math.Sqrt((float64)(dx*dx + dy*dy))
+}
+
+func getDistanceBetweenUnit(u1, u2 uniter) float64 {
+	ax, ay := u1.GetPosition()
+	bx, by := u2.GetPosition()
+	return getDistance(ax, ay, bx, by)
 }
