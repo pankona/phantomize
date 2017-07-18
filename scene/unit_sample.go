@@ -11,6 +11,7 @@ type sampleUnit struct {
 	*unitBase
 	attackinfo *attackInfo
 	target     uniter
+	isSpawned  bool
 }
 
 func (u *sampleUnit) Initialize() {
@@ -27,16 +28,24 @@ func (u *sampleUnit) OnEvent(i interface{}) {
 
 	switch c.commandtype {
 	case commandSpawn:
-		d, ok := c.data.(*sampleUnit)
+		d, ok := c.data.(uniter)
 		if !ok {
 			// unhandled event. ignore.
 			return
 		}
-		if u.id != d.GetID() {
-			// this spawn event is not for me. nop.
+		if u.id == d.GetID() {
+			// my spawn.
+			u.action = newAction(actionSpawn, d)
+			break
+		} else if u.id != d.GetID() {
+			// this spawn event is not for me.
+			_, ok := d.(*player)
+			if ok && u.isSpawned {
+				// player's spawn. move to defeat.
+				u.action = newAction(actionMoveToNearestTarget, nil)
+			}
 			return
 		}
-		u.action = newAction(actionSpawn, d)
 
 	case commandDead:
 		target, ok := c.data.(uniter)
@@ -76,6 +85,7 @@ func (u *sampleUnit) DoAction() {
 		u.sprite.H = 64
 		u.SetPosition(d.GetPosition())
 		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
+		u.isSpawned = true
 
 		// start moving to target
 		u.action = newAction(actionMoveToNearestTarget, nil)
