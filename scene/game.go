@@ -2,6 +2,7 @@ package scene
 
 import (
 	"image"
+	"strconv"
 
 	"github.com/pankona/gomo-simra/simra"
 	"github.com/pankona/phantomize/scene/config"
@@ -166,31 +167,33 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 	}
 
 	s := f.game.selection.selecting
-	var id string
+	var unitID string
 	if s == &f.game.ctrlButton[6] {
-		id = "player1"
+		unitID = "player"
 	} else if s == &f.game.ctrlButton[7] {
-		id = "player2"
+		unitID = "player"
 	} else if s == &f.game.ctrlButton[8] {
-		id = "player3"
+		unitID = "player"
 	} else if s == &f.game.ctrlButton[3] {
-		id = "player4"
+		unitID = "player"
 	} else if s == &f.game.ctrlButton[4] {
-		id = "player5"
+		unitID = "player"
 	} else if s == &f.game.ctrlButton[5] {
-		id = "player6"
+		unitID = "player"
 	} else if s == &f.game.ctrlButton[0] {
-		id = "player7"
+		unitID = "player"
 	} else if s == &f.game.ctrlButton[1] {
-		id = "player8"
+		unitID = "player"
 	} else if s == &f.game.ctrlButton[2] {
-		id = "player9"
+		unitID = "player"
 	}
 
-	if id != "" {
+	id := strconv.Itoa(len(f.game.players))
+
+	if unitID != "" {
 		// TODO: every alley spawn occurs file I/O. lol
 		// loading texture in advance is needed.
-		p := newUnit(id, "player", f.game)
+		p := newUnit(id, unitID, f.game)
 		p.SetPosition(x, y)
 		f.game.players[id] = p
 		f.game.pubsub.Subscribe(p.GetID(), p)

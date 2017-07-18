@@ -10,6 +10,7 @@ import (
 type sampleUnit struct {
 	*unitBase
 	attackinfo *attackInfo
+	target     uniter
 }
 
 func (u *sampleUnit) Initialize() {
@@ -38,12 +39,24 @@ func (u *sampleUnit) OnEvent(i interface{}) {
 		u.action = newAction(actionSpawn, d)
 
 	case commandDead:
-		_, ok := c.data.(*player)
+		target, ok := c.data.(uniter)
 		if !ok {
 			return
 		}
-		simra.LogDebug("i'm %s, we won!", u.GetID())
-		u.action = nil
+
+		// all players are eliminated
+		if len(u.game.players) == 0 {
+			simra.LogDebug("we won!")
+			u.action = nil
+			break
+		}
+
+		if target.GetID() == u.target.GetID() {
+			// target is down. search next target
+			u.action = newAction(actionMoveToNearestTarget, nil)
+		} else {
+			// nop.
+		}
 	default:
 		// nop
 	}
@@ -68,12 +81,15 @@ func (u *sampleUnit) DoAction() {
 		u.action = newAction(actionMoveToNearestTarget, nil)
 
 	case actionMoveToNearestTarget:
-		// TODO: lookup nearest target
-		target := u.nearestPlayer(u.game.players)
-		u.moveToTarget(target)
+		u.target = u.nearestPlayer(u.game.players)
+		if u.target == nil {
+			u.action = nil
+			break
+		}
+		u.moveToTarget(u.target)
 
-		if u.canAttackToTarget(target) {
-			u.action = newAction(actionAttack, target)
+		if u.canAttackToTarget(u.target) {
+			u.action = newAction(actionAttack, u.target)
 		}
 
 	case actionAttack:
@@ -113,6 +129,10 @@ func (u *sampleUnit) nearestPlayer(players map[string]uniter) uniter {
 			distance = d
 			retID = i
 		}
+	}
+
+	if retID == "" {
+		return nil
 	}
 	return players[retID]
 }

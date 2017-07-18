@@ -32,6 +32,7 @@ type actiontype int
 const (
 	// SPAWN spawns an unit
 	actionSpawn actiontype = iota
+	actionDead
 	actionMoveToNearestTarget
 	actionAttack
 )

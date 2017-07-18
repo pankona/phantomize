@@ -48,10 +48,22 @@ func (u *player) OnEvent(i interface{}) {
 
 		// TODO: reduce HP of unit
 		u.hp -= d.damage
-		simra.LogDebug("[DAMAGE] i'm [player], HP = %d", u.hp)
+		simra.LogDebug("[DAMAGE] i'm [%s], HP = %d", u.GetID(), u.hp)
 		if u.hp <= 0 {
 			simra.LogDebug("[DEAD] i'm %s", u.GetID())
-			u.game.eventqueue <- newCommand(commandDead, u.game.players["player"])
+			u.game.eventqueue <- newCommand(commandDead, u)
+			u.action = newAction(actionDead, nil)
+		}
+
+	case commandDead:
+		d, ok := c.data.(*player)
+		if !ok {
+			// unhandled event. ignore
+			return
+		}
+		if u.id != d.GetID() {
+			// this dead event is not for me. nop.
+			return
 		}
 
 	default:
@@ -74,6 +86,16 @@ func (u *player) DoAction() {
 		u.SetPosition(d.GetPosition())
 		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
 		u.action = nil
+
+	case actionDead:
+		// i'm dead!
+		u.sprite.W = 1
+		u.sprite.H = 1
+		u.SetPosition(-1, -1)
+		simra.LogDebug("@@@@@@ [DEAD] i'm %s", u.GetID())
+		u.action = nil
+		delete(u.game.players, u.GetID())
+
 	default:
 		// nop
 	}
