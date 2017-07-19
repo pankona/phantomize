@@ -63,6 +63,8 @@ type unitBase struct {
 	isSpawned  bool
 }
 
+func (u *unitBase) Initialize() {}
+
 func (u *unitBase) GetID() string {
 	return u.id
 }
@@ -78,6 +80,94 @@ func (u *unitBase) GetPosition() (float32, float32) {
 
 func (u *unitBase) IsSpawned() bool {
 	return u.isSpawned
+}
+
+// note that this is NOT delegate method.
+// used by an object that composites unitBase.
+func (u *unitBase) onEvent(c *command) {
+	switch c.commandtype {
+	case commandSpawn:
+		d, ok := c.data.(uniter)
+		if !ok {
+			// unhandled event. ignore.
+			return
+		}
+		if u.id == d.GetID() {
+			// my spawn.
+			u.action = newAction(actionSpawn, d)
+			break
+		} else if u.id != d.GetID() {
+			// this spawn event is not for me.
+			_, ok := d.(*sampleUnit)
+			if ok {
+				if u.isSpawned {
+					simra.LogDebug("enemy's spawn %s is detected! kill them all!", d.GetID())
+
+					// enemy's spawn. move to defeat.
+					u.action = newAction(actionMoveToNearestTarget, nil)
+				}
+			}
+			return
+		}
+
+	case commandDamage:
+		d, ok := c.data.(*damage)
+		if !ok {
+			return
+		}
+		if u.id != d.unit.GetID() {
+			return
+		}
+
+		// TODO: reduce HP of unit
+		u.hp -= d.damage
+		simra.LogDebug("[DAMAGE] i'm [%s], HP = %d", u.GetID(), u.hp)
+		if u.hp <= 0 {
+			simra.LogDebug("[DEAD] i'm %s", u.GetID())
+			u.game.eventqueue <- newCommand(commandDead, u)
+			u.action = newAction(actionDead, nil)
+		}
+
+	default:
+		// nop
+	}
+}
+
+func (u *unitBase) DoAction() {}
+
+func (u *unitBase) doAction(a *action) {
+	switch a.actiontype {
+	case actionSpawn:
+		d := a.data.(uniter)
+		u.sprite.W = 64
+		u.sprite.H = 64
+		u.SetPosition(d.GetPosition())
+		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
+		u.isSpawned = true
+
+		// start moving to target
+		u.action = newAction(actionMoveToNearestTarget, nil)
+
+	case actionAttack:
+		// TODO: start animation
+
+		target := a.data.(uniter)
+		if !canAttackToTarget(u, target) {
+			u.action = newAction(actionMoveToNearestTarget, nil)
+			break
+		}
+
+		if u.game.currentFrame-u.attackinfo.lastAttackTime >=
+			(int64)(u.attackinfo.cooltime*fps) {
+			simra.LogDebug("[ATTACK] i'm %s", u.GetID())
+			u.attackinfo.lastAttackTime = u.game.currentFrame
+
+			u.game.eventqueue <- newCommand(commandDamage, &damage{target, u.attackinfo.power})
+		}
+
+	default:
+		// nop
+	}
 }
 
 func newUnit(id, unittype string, game *game) uniter {
