@@ -14,6 +14,10 @@ type player struct {
 	isSpawned  bool
 }
 
+func (u *player) IsSpawned() bool {
+	return u.isSpawned
+}
+
 func (u *player) Initialize() {
 	simra.GetInstance().AddSprite("player.png",
 		image.Rect(0, 0, 384, 384),
@@ -161,6 +165,9 @@ func (u *player) nearestEnemy(enemies map[string]uniter) uniter {
 		retID    string
 	)
 	for i, v := range enemies {
+		if !v.IsSpawned() {
+			continue
+		}
 		d := getDistanceBetweenUnit(u, v)
 		if distance == 0 {
 			distance = d

@@ -12,6 +12,7 @@ type uniter interface {
 	simra.Subscriber
 	SetPosition(float32, float32)
 	GetPosition() (float32, float32)
+	IsSpawned() bool
 	DoAction()
 }
 

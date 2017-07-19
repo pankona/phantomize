@@ -15,6 +15,10 @@ type sampleUnit struct {
 	isSpawned  bool
 }
 
+func (u *sampleUnit) IsSpawned() bool {
+	return u.isSpawned
+}
+
 func (u *sampleUnit) Initialize() {
 	simra.GetInstance().AddSprite("player.png",
 		image.Rect(0, 0, 384, 384),
@@ -159,6 +163,9 @@ func (u *sampleUnit) nearestPlayer(players map[string]uniter) uniter {
 		retID    string
 	)
 	for i, v := range players {
+		if !v.IsSpawned() {
+			continue
+		}
 		d := getDistanceBetweenUnit(u, v)
 		if distance == 0 {
 			distance = d
