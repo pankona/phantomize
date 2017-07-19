@@ -8,7 +8,10 @@ import (
 
 type player struct {
 	*unitBase
-	hp int
+	hp         int
+	attackinfo *attackInfo
+	target     uniter
+	isSpawned  bool
 }
 
 func (u *player) Initialize() {
@@ -26,16 +29,24 @@ func (u *player) OnEvent(i interface{}) {
 
 	switch c.commandtype {
 	case commandSpawn:
-		d, ok := c.data.(*player)
+		d, ok := c.data.(uniter)
 		if !ok {
-			// unhandled event. ignore
+			// unhandled event. ignore.
 			return
 		}
-		if u.id != d.GetID() {
-			// this spawn event is not for me. nop.
+		if u.id == d.GetID() {
+			// my spawn.
+			u.action = newAction(actionSpawn, d)
+			break
+		} else if u.id != d.GetID() {
+			// this spawn event is not for me.
+			_, ok := d.(*sampleUnit)
+			if ok && u.isSpawned {
+				// enemy's spawn. move to defeat.
+				u.action = newAction(actionMoveToNearestTarget, nil)
+			}
 			return
 		}
-		u.action = newAction(actionSpawn, d)
 
 	case commandDamage:
 		d, ok := c.data.(*damage)
@@ -85,7 +96,39 @@ func (u *player) DoAction() {
 		u.sprite.H = 64
 		u.SetPosition(d.GetPosition())
 		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
-		u.action = nil
+		u.isSpawned = true
+
+		// start moving to target
+		u.action = newAction(actionMoveToNearestTarget, nil)
+
+	case actionMoveToNearestTarget:
+		u.target = u.nearestEnemy(u.game.uniters)
+		if u.target == nil {
+			u.action = nil
+			break
+		}
+		u.moveToTarget(u.target)
+
+		if u.canAttackToTarget(u.target) {
+			u.action = newAction(actionAttack, u.target)
+		}
+
+	case actionAttack:
+		// TODO: start animation
+
+		target := a.data.(uniter)
+		if !u.canAttackToTarget(target) {
+			u.action = newAction(actionMoveToNearestTarget, nil)
+			break
+		}
+
+		if u.game.currentFrame-u.attackinfo.lastAttackTime >=
+			(int64)(u.attackinfo.cooltime*fps) {
+			simra.LogDebug("[ATTACK] i'm %s", u.GetID())
+			u.attackinfo.lastAttackTime = u.game.currentFrame
+
+			u.game.eventqueue <- newCommand(commandDamage, &damage{target, u.attackinfo.power})
+		}
 
 	case actionDead:
 		// i'm dead!
@@ -94,9 +137,44 @@ func (u *player) DoAction() {
 		u.SetPosition(-1, -1)
 		simra.LogDebug("@@@@@@ [DEAD] i'm %s", u.GetID())
 		u.action = nil
+		u.isSpawned = false
 		delete(u.game.players, u.GetID())
 
 	default:
 		// nop
 	}
+}
+
+func (u *player) canAttackToTarget(target uniter) bool {
+	ux, uy := u.GetPosition()
+	tx, ty := target.GetPosition()
+
+	if (float64)(u.attackinfo.attackRange) >= getDistance(ux, uy, tx, ty) {
+		return true
+	}
+	return false
+}
+
+func (u *player) nearestEnemy(enemies map[string]uniter) uniter {
+	var (
+		distance float64
+		retID    string
+	)
+	for i, v := range enemies {
+		d := getDistanceBetweenUnit(u, v)
+		if distance == 0 {
+			distance = d
+			retID = i
+			continue
+		}
+		if distance > d {
+			distance = d
+			retID = i
+		}
+	}
+
+	if retID == "" {
+		return nil
+	}
+	return enemies[retID]
 }

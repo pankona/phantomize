@@ -78,7 +78,8 @@ func newUnit(id, unittype string, game *game) uniter {
 	switch unittype {
 	case "player":
 		u = &player{
-			unitBase: &unitBase{id: id, game: game, moveSpeed: 0},
+			unitBase:   &unitBase{id: id, game: game, moveSpeed: 0.5},
+			attackinfo: &attackInfo{attackRange: 50, power: 15, cooltime: 2},
 		}
 	default:
 		// TODO: remove later
