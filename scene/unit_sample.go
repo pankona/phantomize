@@ -2,7 +2,6 @@ package scene
 
 import (
 	"image"
-	"math"
 
 	"github.com/pankona/gomo-simra/simra"
 )
@@ -69,70 +68,4 @@ func (u *sampleUnit) DoAction() {
 func killUnit(u uniter, umap map[string]uniter) {
 	u.Dead()
 	delete(umap, u.GetID())
-}
-
-// TODO: move to utility
-func moveToTarget(u *unitBase, target uniter) {
-	ux, uy := u.GetPosition()
-	tx, ty := target.GetPosition()
-
-	// calculate which way to go
-	// move speed is temporary
-	dx, dy := tx-ux, ty-uy
-	newx := (float64)(u.moveSpeed) / getDistance(ux, uy, tx, ty) * (float64)(dx)
-	newy := (float64)(u.moveSpeed) / getDistance(ux, uy, tx, ty) * (float64)(dy)
-	u.sprite.X += (float32)(newx)
-	u.sprite.Y += (float32)(newy)
-}
-
-// TODO: move to utility
-func canAttackToTarget(u *unitBase, target uniter) bool {
-	ux, uy := u.GetPosition()
-	tx, ty := target.GetPosition()
-
-	if (float64)(u.attackinfo.attackRange) >= getDistance(ux, uy, tx, ty) {
-		return true
-	}
-	return false
-}
-
-// TODO: move to utility
-func getDistance(ax, ay, bx, by float32) float64 {
-	dx, dy := ax-bx, ay-by
-	return math.Sqrt((float64)(dx*dx + dy*dy))
-}
-
-// TODO: move to utility
-func getDistanceBetweenUnit(u1, u2 uniter) float64 {
-	ax, ay := u1.GetPosition()
-	bx, by := u2.GetPosition()
-	return getDistance(ax, ay, bx, by)
-}
-
-// TODO: move to utility
-func nearestUnit(u *unitBase, enemies map[string]uniter) uniter {
-	var (
-		distance float64
-		retID    string
-	)
-	for i, v := range enemies {
-		if !v.IsSpawned() {
-			continue
-		}
-		d := getDistanceBetweenUnit(u, v)
-		if distance == 0 {
-			distance = d
-			retID = i
-			continue
-		}
-		if distance > d {
-			distance = d
-			retID = i
-		}
-	}
-
-	if retID == "" {
-		return nil
-	}
-	return enemies[retID]
 }
