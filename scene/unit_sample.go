@@ -108,7 +108,6 @@ func (u *sampleUnit) DoAction() {
 	case actionMoveToNearestTarget:
 		u.target = u.nearestPlayer(u.game.players)
 		if u.target == nil {
-			u.action = nil
 			break
 		}
 		u.moveToTarget(u.target)

@@ -98,9 +98,7 @@ func newUnit(id, unittype string, game *game) uniter {
 type commandtype int
 
 const (
-	// SPAWN spawns an unit
 	commandSpawn commandtype = iota
-	// Damage to specified unit
 	commandDamage
 	commandDead
 	commandGoToInitialState
