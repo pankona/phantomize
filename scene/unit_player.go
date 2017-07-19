@@ -8,10 +8,6 @@ import (
 
 type player struct {
 	*unitBase
-	hp         int
-	attackinfo *attackInfo
-	target     uniter
-	isSpawned  bool
 }
 
 func (u *player) IsSpawned() bool {

@@ -52,11 +52,15 @@ func newAction(a actiontype, d interface{}) *action {
 
 type unitBase struct {
 	simra.Subscriber
-	sprite    simra.Sprite
-	id        string
-	action    *action
-	game      *game
-	moveSpeed float32
+	sprite     simra.Sprite
+	id         string
+	action     *action
+	game       *game
+	moveSpeed  float32
+	hp         int
+	attackinfo *attackInfo
+	target     uniter
+	isSpawned  bool
 }
 
 func (u *unitBase) GetID() string {
@@ -79,14 +83,30 @@ func newUnit(id, unittype string, game *game) uniter {
 	switch unittype {
 	case "player":
 		u = &player{
-			unitBase:   &unitBase{id: id, game: game, moveSpeed: 0.5},
-			attackinfo: &attackInfo{attackRange: 50, power: 15, cooltime: 2},
+			unitBase: &unitBase{
+				id:        id,
+				game:      game,
+				moveSpeed: 0.5,
+				attackinfo: &attackInfo{
+					attackRange: 50,
+					power:       15,
+					cooltime:    2,
+				},
+			},
 		}
 	default:
 		// TODO: remove later
 		u = &sampleUnit{
-			unitBase:   &unitBase{id: id, game: game, moveSpeed: 0.5},
-			attackinfo: &attackInfo{attackRange: 50, power: 15, cooltime: 2},
+			unitBase: &unitBase{
+				id:        id,
+				game:      game,
+				moveSpeed: 0.5,
+				attackinfo: &attackInfo{
+					attackRange: 50,
+					power:       15,
+					cooltime:    2,
+				},
+			},
 		}
 	}
 
