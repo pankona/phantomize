@@ -11,10 +11,6 @@ type sampleUnit struct {
 	*unitBase
 }
 
-func (u *sampleUnit) IsSpawned() bool {
-	return u.isSpawned
-}
-
 func (u *sampleUnit) Initialize() {
 	simra.GetInstance().AddSprite("player.png",
 		image.Rect(0, 0, 384, 384),

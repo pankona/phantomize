@@ -76,6 +76,10 @@ func (u *unitBase) GetPosition() (float32, float32) {
 	return u.sprite.X, u.sprite.Y
 }
 
+func (u *unitBase) IsSpawned() bool {
+	return u.isSpawned
+}
+
 func newUnit(id, unittype string, game *game) uniter {
 	// TODO: sample unit implemenation
 	// unit type should be specified and switch here
