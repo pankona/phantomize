@@ -13,6 +13,7 @@ type uniter interface {
 	SetPosition(float32, float32)
 	GetPosition() (float32, float32)
 	IsSpawned() bool
+	Dead()
 	DoAction()
 }
 
@@ -168,6 +169,15 @@ func (u *unitBase) doAction(a *action) {
 	default:
 		// nop
 	}
+}
+
+func (u *unitBase) Dead() {
+	u.sprite.W = 1
+	u.sprite.H = 1
+	u.SetPosition(-1, -1)
+	simra.LogDebug("@@@@@@ [DEAD] i'm %s", u.GetID())
+	u.action = nil
+	u.isSpawned = false
 }
 
 func newUnit(id, unittype string, game *game) uniter {

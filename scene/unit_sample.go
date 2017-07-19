@@ -59,17 +59,16 @@ func (u *sampleUnit) DoAction() {
 
 	case actionDead:
 		// i'm dead!
-		u.sprite.W = 1
-		u.sprite.H = 1
-		u.SetPosition(-1, -1)
-		simra.LogDebug("@@@@@@ [DEAD] i'm %s", u.GetID())
-		u.action = nil
-		u.isSpawned = false
-		delete(u.game.uniters, u.GetID())
+		killUnit(u, u.game.uniters)
 
 	default:
 		u.unitBase.doAction(a)
 	}
+}
+
+func killUnit(u uniter, umap map[string]uniter) {
+	u.Dead()
+	delete(umap, u.GetID())
 }
 
 // TODO: move to utility

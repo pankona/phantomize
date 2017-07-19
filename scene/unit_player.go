@@ -58,13 +58,7 @@ func (u *player) DoAction() {
 
 	case actionDead:
 		// i'm dead!
-		u.sprite.W = 1
-		u.sprite.H = 1
-		u.SetPosition(-1, -1)
-		simra.LogDebug("@@@@@@ [DEAD] i'm %s", u.GetID())
-		u.action = nil
-		u.isSpawned = false
-		delete(u.game.players, u.GetID())
+		killUnit(u, u.game.players)
 
 	default:
 		u.unitBase.doAction(a)
