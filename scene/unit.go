@@ -9,12 +9,12 @@ import (
 type uniter interface {
 	Initialize()
 	GetID() string
-	simra.Subscriber
 	SetPosition(float32, float32)
 	GetPosition() (float32, float32)
 	IsSpawned() bool
 	Dead()
 	DoAction()
+	simra.Subscriber
 }
 
 type attackInfo struct {
