@@ -45,9 +45,13 @@ func (u *player) OnEvent(i interface{}) {
 		} else if u.id != d.GetID() {
 			// this spawn event is not for me.
 			_, ok := d.(*sampleUnit)
-			if ok && u.isSpawned {
-				// enemy's spawn. move to defeat.
-				u.action = newAction(actionMoveToNearestTarget, nil)
+			if ok {
+				if u.isSpawned {
+					simra.LogDebug("enemy's spawn %s is detected! kill them all!", d.GetID())
+
+					// enemy's spawn. move to defeat.
+					u.action = newAction(actionMoveToNearestTarget, nil)
+				}
 			}
 			return
 		}
@@ -71,14 +75,11 @@ func (u *player) OnEvent(i interface{}) {
 		}
 
 	case commandDead:
-		d, ok := c.data.(*player)
-		if !ok {
-			// unhandled event. ignore
-			return
-		}
-		if u.id != d.GetID() {
-			// this dead event is not for me. nop.
-			return
+		if len(u.game.uniters) == 0 {
+			// all enemies are eliminated
+			simra.LogDebug("you won!")
+			u.action = nil
+			break
 		}
 
 	default:

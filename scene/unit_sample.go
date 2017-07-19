@@ -46,9 +46,11 @@ func (u *sampleUnit) OnEvent(i interface{}) {
 		} else if u.id != d.GetID() {
 			// this spawn event is not for me.
 			_, ok := d.(*player)
-			if ok && u.isSpawned {
-				// player's spawn. move to defeat.
-				u.action = newAction(actionMoveToNearestTarget, nil)
+			if ok {
+				if u.isSpawned {
+					// player's spawn. move to defeat.
+					u.action = newAction(actionMoveToNearestTarget, nil)
+				}
 			}
 			return
 		}
@@ -72,24 +74,13 @@ func (u *sampleUnit) OnEvent(i interface{}) {
 		}
 
 	case commandDead:
-		target, ok := c.data.(uniter)
-		if !ok {
-			return
-		}
-
-		// all players are eliminated
 		if len(u.game.players) == 0 {
+			// all players are eliminated
 			simra.LogDebug("we won!")
 			u.action = nil
 			break
 		}
 
-		if target.GetID() == u.target.GetID() {
-			// target is down. search next target
-			u.action = newAction(actionMoveToNearestTarget, nil)
-		} else {
-			// nop.
-		}
 	default:
 		// nop
 	}
@@ -150,7 +141,7 @@ func (u *sampleUnit) DoAction() {
 		simra.LogDebug("@@@@@@ [DEAD] i'm %s", u.GetID())
 		u.action = nil
 		u.isSpawned = false
-		delete(u.game.players, u.GetID())
+		delete(u.game.uniters, u.GetID())
 
 	default:
 		// nop
