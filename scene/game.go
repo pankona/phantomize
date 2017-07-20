@@ -156,6 +156,30 @@ func (f *fieldTouchListener) OnTouchMove(x, y float32) {
 	// nop
 }
 
+func (g *game) unitIDBySprite(s *simra.Sprite) string {
+	var unitID string
+	if s == &g.ctrlButton[6] {
+		unitID = "player"
+	} else if s == &g.ctrlButton[7] {
+		unitID = "player"
+	} else if s == &g.ctrlButton[8] {
+		unitID = "player"
+	} else if s == &g.ctrlButton[3] {
+		unitID = "player"
+	} else if s == &g.ctrlButton[4] {
+		unitID = "player"
+	} else if s == &g.ctrlButton[5] {
+		unitID = "player"
+	} else if s == &g.ctrlButton[0] {
+		unitID = "player"
+	} else if s == &g.ctrlButton[1] {
+		unitID = "player"
+	} else if s == &g.ctrlButton[2] {
+		unitID = "player"
+	}
+	return unitID
+}
+
 // OnTouchEnd is called when game scene is Touched and it is released.
 func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 	if y <= ctrlPanelHeight {
@@ -166,28 +190,7 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 		return
 	}
 
-	s := f.game.selection.selecting
-	var unitID string
-	if s == &f.game.ctrlButton[6] {
-		unitID = "player"
-	} else if s == &f.game.ctrlButton[7] {
-		unitID = "player"
-	} else if s == &f.game.ctrlButton[8] {
-		unitID = "player"
-	} else if s == &f.game.ctrlButton[3] {
-		unitID = "player"
-	} else if s == &f.game.ctrlButton[4] {
-		unitID = "player"
-	} else if s == &f.game.ctrlButton[5] {
-		unitID = "player"
-	} else if s == &f.game.ctrlButton[0] {
-		unitID = "player"
-	} else if s == &f.game.ctrlButton[1] {
-		unitID = "player"
-	} else if s == &f.game.ctrlButton[2] {
-		unitID = "player"
-	}
-
+	unitID := f.game.unitIDBySprite(f.game.selection.selecting)
 	id := strconv.Itoa(len(f.game.players))
 
 	if unitID != "" {
@@ -382,8 +385,12 @@ func (g *game) OnTouchMove(x, y float32) {
 func (g *game) OnTouchEnd(x, y float32) {
 	if g.gameState == gameStateInitial {
 		if y > ctrlPanelHeight {
-			g.players["player"].SetPosition(x, y)
-			g.eventqueue <- newCommand(commandSpawn, g.players["player"])
+			unitID := g.unitIDBySprite(g.selection.selecting)
+			if unitID == "" {
+				return
+			}
+			g.players[unitID].SetPosition(x, y)
+			g.eventqueue <- newCommand(commandSpawn, g.players[unitID])
 			g.eventqueue <- newCommand(commandGoToRunningState, g)
 		}
 	}

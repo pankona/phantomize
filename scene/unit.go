@@ -95,11 +95,20 @@ func (u *unitBase) onEvent(c *command) {
 			// unhandled event. ignore.
 			return
 		}
+
 		if u.id == d.GetID() {
 			// my spawn.
 			u.action = newAction(actionSpawn, d)
-			break
-		} else if u.id != d.GetID() {
+		}
+
+	case commandSpawned:
+		d, ok := c.data.(uniter)
+		if !ok {
+			// unhandled event. ignore.
+			return
+		}
+
+		if u.id != d.GetID() {
 			// this spawn event is not for me.
 			_, ok := d.(*sampleUnit)
 			if ok {
@@ -156,6 +165,7 @@ func (u *unitBase) doAction(a *action) {
 		u.isSpawned = true
 
 		// start moving to target
+		u.game.eventqueue <- newCommand(commandSpawned, u)
 		u.action = newAction(actionMoveToNearestTarget, nil)
 
 	case actionAttack:
@@ -233,6 +243,7 @@ type commandtype int
 
 const (
 	commandSpawn commandtype = iota
+	commandSpawned
 	commandDamage
 	commandDead
 	commandGoToInitialState
