@@ -71,6 +71,7 @@ func (g *game) updateGameState(newState gameState) {
 type selection struct {
 	selecting *simra.Sprite
 	class     string
+	game      *game
 }
 
 func (s *selection) OnEvent(i interface{}) {
@@ -80,6 +81,12 @@ func (s *selection) OnEvent(i interface{}) {
 	}
 
 	switch c.commandtype {
+	case commandSpawned:
+		if s.game.gameState == gameStateInitial {
+			// this is first ally's summoning.
+			// transition gameState from initial to running.
+			s.game.eventqueue <- newCommand(commandGoToRunningState, s.game)
+		}
 	case commandUpdateSelection:
 		s.selecting = c.data.(*simra.Sprite)
 		simra.LogDebug("selection updated: %v", s.selecting)
@@ -206,9 +213,6 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 
 func (g *game) initPlayer() {
 	g.players = make(map[string]uniter)
-	p := newUnit("player", "player", g)
-	g.players["player"] = p
-	g.pubsub.Subscribe(p.GetID(), p)
 }
 
 type unitPopTime struct {
@@ -276,7 +280,7 @@ func (g *game) initialize() {
 	g.initCtrlPanel()
 	g.initPlayer()
 	g.initUnits("") // TODO: input JSON string
-	g.selection = &selection{}
+	g.selection = &selection{game: g}
 	simra.GetInstance().AddTouchListener(g)
 	g.pubsub.Subscribe("god", g)
 	g.pubsub.Subscribe("selection", g.selection)
@@ -327,7 +331,9 @@ func (g *game) initialRunLoop() {
 	for _, v := range commands {
 		g.pubsub.Publish(v)
 	}
-	g.players["player"].DoAction()
+	for _, v := range g.players {
+		v.DoAction()
+	}
 }
 
 func (g *game) runningRunLoop() {
@@ -383,16 +389,6 @@ func (g *game) OnTouchMove(x, y float32) {
 
 // OnTouchEnd is called when game scene is Touched and it is released.
 func (g *game) OnTouchEnd(x, y float32) {
-	if g.gameState == gameStateInitial {
-		if y > ctrlPanelHeight {
-			unitID := g.unitIDBySprite(g.selection.selecting)
-			if unitID == "" {
-				return
-			}
-			g.players[unitID].SetPosition(x, y)
-			g.eventqueue <- newCommand(commandSpawn, g.players[unitID])
-			g.eventqueue <- newCommand(commandGoToRunningState, g)
-		}
-	}
+	// nop
 	//g.nextScene = &result{currentStage: g.currentStage}
 }
