@@ -53,15 +53,17 @@ func newAction(a actiontype, d interface{}) *action {
 
 type unitBase struct {
 	simra.Subscriber
-	sprite     simra.Sprite
-	id         string
-	action     *action
-	game       *game
-	moveSpeed  float32
-	hp         int
-	attackinfo *attackInfo
-	target     uniter
-	isSpawned  bool
+	sprite              simra.Sprite
+	id                  string
+	action              *action
+	game                *game
+	moveSpeed           float32
+	hp                  int
+	attackinfo          *attackInfo
+	target              uniter
+	isSpawned           bool
+	delayTimeToSummon   int64
+	elapsedTimeToSummon int64
 }
 
 func (u *unitBase) Initialize() {}
@@ -139,6 +141,13 @@ func (u *unitBase) DoAction() {}
 func (u *unitBase) doAction(a *action) {
 	switch a.actiontype {
 	case actionSpawn:
+		u.elapsedTimeToSummon++
+		if u.elapsedTimeToSummon <= u.delayTimeToSummon {
+			// still summoning...
+			break
+		}
+		u.elapsedTimeToSummon = 0
+
 		d := a.data.(uniter)
 		u.sprite.W = 64
 		u.sprite.H = 64
@@ -196,6 +205,7 @@ func newUnit(id, unittype string, game *game) uniter {
 					power:       15,
 					cooltime:    2,
 				},
+				delayTimeToSummon: 5 * fps,
 			},
 		}
 	default:
