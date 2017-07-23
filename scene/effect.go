@@ -43,6 +43,7 @@ func (e *effect) OnEvent(i interface{}) {
 		p, ok := c.data.(uniter)
 		if !ok {
 			// ignore
+			break
 		}
 		sprite := simra.NewSprite()
 		sprite.W = 512 / 3
@@ -60,6 +61,7 @@ func (e *effect) OnEvent(i interface{}) {
 		p, ok := c.data.(uniter)
 		if !ok {
 			// ignore
+			break
 		}
 		sprite := e.effects[p.GetID()]
 		sprite.StopAnimation()
