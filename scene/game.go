@@ -337,6 +337,7 @@ func (g *game) initEffects() {
 		animationSet.AddTexture(simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
 	}
+	// TODO: don't relay on time. use fps based animation control
 	animationSet.SetInterval(100 * time.Millisecond)
 	e.animations["smoke"] = animationSet
 }
