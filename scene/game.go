@@ -90,7 +90,7 @@ func (g *game) initCtrlPanel() {
 	g.ctrlPanel.H = ctrlPanelHeight
 	g.ctrlPanel.X = config.ScreenWidth / 2
 	g.ctrlPanel.Y = g.ctrlPanel.H / 2
-	simra.GetInstance().AddSprite("ctrl_panel.png",
+	simra.GetInstance().AddSprite("panel.png",
 		image.Rect(0, 0, 1280, 240),
 		&g.ctrlPanel)
 
