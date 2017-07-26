@@ -171,13 +171,14 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 	id := strconv.Itoa(len(f.game.players))
 
 	if unitID != "" {
-		// TODO: every alley spawn occurs file I/O. lol
+		// TODO: every ally spawning occurs file I/O. lol
 		// loading texture in advance is needed.
 		p := newUnit(id, unitID, f.game)
 		p.SetPosition(x, y)
 		f.game.players[id] = p
 		f.game.pubsub.Subscribe(p.GetID(), p)
 		f.game.eventqueue <- newCommand(commandSpawn, p)
+		f.game.eventqueue <- newCommand(commandUnsetSelection, nil)
 	}
 }
 
@@ -257,7 +258,8 @@ func (g *game) initialize() {
 	g.initCtrlPanel()
 	g.initPlayer()
 	g.initUnits("") // TODO: input JSON string
-	g.selection = &selection{game: g}
+	g.selection = &selection{}
+	g.selection.initialize(g)
 	simra.GetInstance().AddTouchListener(g)
 	g.pubsub.Subscribe("god", g)
 	g.pubsub.Subscribe("selection", g.selection)

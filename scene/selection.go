@@ -1,11 +1,24 @@
 package scene
 
-import "github.com/pankona/gomo-simra/simra"
+import (
+	"image"
+
+	"github.com/pankona/gomo-simra/simra"
+)
 
 type selection struct {
 	selecting *simra.Sprite
+	cursor    *simra.Sprite
+	cursorTex *simra.Texture
 	class     string
 	game      *game
+}
+
+func (s *selection) initialize(g *game) {
+	s.game = g
+	s.cursor = simra.NewSprite()
+	s.cursorTex = simra.NewImageTexture("cursor.png", image.Rect(0, 0, 30, 30))
+	s.cursor.W, s.cursor.H = 30, 30
 }
 
 func (s *selection) OnEvent(i interface{}) {
@@ -26,9 +39,14 @@ func (s *selection) OnEvent(i interface{}) {
 		s.selecting = c.data.(*simra.Sprite)
 		simra.LogDebug("selection updated: %v", s.selecting)
 
+		s.cursor.X, s.cursor.Y = s.selecting.X, s.selecting.Y
+		simra.GetInstance().AddSprite2(s.cursor)
+		s.cursor.ReplaceTexture2(s.cursorTex)
+
 	case commandUnsetSelection:
 		s.selecting = nil
 		simra.LogDebug("selection updated: nil")
+		simra.GetInstance().RemoveSprite(s.cursor)
 
 	default:
 		// nop
