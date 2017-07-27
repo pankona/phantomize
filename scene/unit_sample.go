@@ -11,7 +11,8 @@ type sampleUnit struct {
 }
 
 func (u *sampleUnit) Initialize() {
-	simra.GetInstance().AddSprite("player.png",
+	assetName := u.game.assetNameByUnitType(u.unittype)
+	simra.GetInstance().AddSprite(assetName,
 		image.Rect(0, 0, 384, 384),
 		&u.sprite)
 	u.hp = 50

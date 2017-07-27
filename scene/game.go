@@ -141,29 +141,47 @@ type unitPopTime struct {
 
 type unitPopTimeTable []*unitPopTime
 
+func (g *game) assetNameByUnitType(unittype string) string {
+	switch unittype {
+	case "player1":
+		return "player1.png"
+	case "player2":
+		return "player2.png"
+	case "player3":
+		return "player3.png"
+	case "enemy1":
+		return "enemy1.png"
+	case "enemy2":
+		return "enemy2.png"
+	}
+
+	simra.LogError("%s is unknown unittype!", unittype)
+	panic("unknown unittype!")
+}
+
 func (g *game) initUnits(json string) {
 	// TODO: load from json file
 	units := make(map[string]uniter)
-	units["unit1"] = newUnit("unit1", "", g)
-	units["unit2"] = newUnit("unit2", "", g)
-	units["unit3"] = newUnit("unit3", "", g)
+	units["e1"] = newUnit("e1", "enemy1", g)
+	units["e2"] = newUnit("e2", "enemy1", g)
+	units["e3"] = newUnit("e3", "enemy1", g)
 
 	// TODO: unitpopTimeTable should be sorted by popTime
 	g.unitPopTimeTable = append(g.unitPopTimeTable,
 		&unitPopTime{
-			unitID:          "unit1",
+			unitID:          "e1",
 			popTime:         3 * fps,
 			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 5},
 		})
 	g.unitPopTimeTable = append(g.unitPopTimeTable,
 		&unitPopTime{
-			unitID:          "unit2",
+			unitID:          "e2",
 			popTime:         4 * fps,
 			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 4},
 		})
 	g.unitPopTimeTable = append(g.unitPopTimeTable,
 		&unitPopTime{
-			unitID:          "unit3",
+			unitID:          "e3",
 			popTime:         5 * fps,
 			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 3},
 		})

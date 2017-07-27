@@ -252,11 +252,26 @@ func newUnit(id, unittype string, game *game) uniter {
 			},
 		}
 
-	default:
-		// TODO: remove later
+	case "enemy1":
 		u = &sampleUnit{
 			unitBase: &unitBase{
 				id:        id,
+				unittype:  unittype,
+				game:      game,
+				moveSpeed: 0.5,
+				attackinfo: &attackInfo{
+					attackRange: 50,
+					power:       15,
+					cooltime:    2,
+				},
+			},
+		}
+
+	case "enemy2":
+		u = &sampleUnit{
+			unitBase: &unitBase{
+				id:        id,
+				unittype:  unittype,
 				game:      game,
 				moveSpeed: 0.5,
 				attackinfo: &attackInfo{
