@@ -18,6 +18,7 @@ type uniter interface {
 	Dead()
 	DoAction()
 	GetUnitType() string
+	GetTarget() uniter
 	simra.Subscriber
 }
 
@@ -146,6 +147,8 @@ func (u *unitBase) onEvent(c *command) {
 			break
 		}
 
+		fmt.Printf("[unit][%s] ends attacking\n", u.GetID())
+
 		// TODO: load in advance. don't do every time.
 		texName := fmt.Sprintf("%s.png", u.GetUnitType())
 		tex := simra.NewImageTexture(texName, image.Rect(0, 0, 384, 384))
@@ -165,7 +168,20 @@ func (u *unitBase) onEvent(c *command) {
 		if u.hp <= 0 {
 			simra.LogDebug("[DEAD] i'm %s", u.GetID())
 			u.game.eventqueue <- newCommand(commandDead, u)
+		}
+
+	case commandDead:
+		d := c.data.(uniter)
+		if u.GetID() == d.GetID() {
 			u.action = newAction(actionDead, nil)
+		}
+		if u.target == d.GetTarget() {
+			fmt.Printf("target [%s] is down. [%s] stop attacking.\n", d.GetTarget().GetID(), u.GetID())
+			u.game.eventqueue <- newCommand(commandAttackEnd, u)
+		}
+		if len(u.game.uniters) == 0 {
+			u.action = nil
+			break
 		}
 
 	default:
@@ -177,6 +193,10 @@ func (u *unitBase) DoAction() {}
 
 func (u *unitBase) GetUnitType() string {
 	return u.unittype
+}
+
+func (u *unitBase) GetTarget() uniter {
+	return u.target
 }
 
 func (u *unitBase) doAction(a *action) {
@@ -225,8 +245,8 @@ func (u *unitBase) Dead() {
 	u.sprite.W = 1
 	u.sprite.H = 1
 	u.SetPosition(-1, -1)
-	simra.LogDebug("@@@@@@ [DEAD] i'm %s", u.GetID())
 	u.action = nil
+	u.target = nil
 	u.isSpawned = false
 }
 
@@ -345,4 +365,9 @@ type damage struct {
 
 func newCommand(c commandtype, d interface{}) *command {
 	return &command{commandtype: c, data: d}
+}
+
+func killUnit(u uniter, umap map[string]uniter) {
+	u.Dead()
+	delete(umap, u.GetID())
 }

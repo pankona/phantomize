@@ -25,14 +25,6 @@ func (u *player) OnEvent(i interface{}) {
 	}
 
 	switch c.commandtype {
-	case commandDead:
-		if len(u.game.uniters) == 0 {
-			// all enemies are eliminated
-			simra.LogDebug("you won!")
-			u.action = nil
-			break
-		}
-
 	default:
 		u.unitBase.onEvent(c)
 	}

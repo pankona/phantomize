@@ -25,14 +25,6 @@ func (u *sampleUnit) OnEvent(i interface{}) {
 	}
 
 	switch c.commandtype {
-	case commandDead:
-		if len(u.game.players) == 0 {
-			// all players are eliminated
-			simra.LogDebug("we won!")
-			u.action = nil
-			break
-		}
-
 	default:
 		u.unitBase.onEvent(c)
 	}
@@ -64,9 +56,4 @@ func (u *sampleUnit) DoAction() {
 	default:
 		u.unitBase.doAction(a)
 	}
-}
-
-func killUnit(u uniter, umap map[string]uniter) {
-	u.Dead()
-	delete(umap, u.GetID())
 }
