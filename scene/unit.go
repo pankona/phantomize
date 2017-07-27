@@ -55,6 +55,7 @@ type unitBase struct {
 	simra.Subscriber
 	sprite              simra.Sprite
 	id                  string
+	unittype            string
 	action              *action
 	game                *game
 	moveSpeed           float32
@@ -204,10 +205,11 @@ func newUnit(id, unittype string, game *game) uniter {
 	// unit type should be specified and switch here
 	var u uniter
 	switch unittype {
-	case "player":
+	case "player1":
 		u = &player{
 			unitBase: &unitBase{
 				id:        id,
+				unittype:  unittype,
 				game:      game,
 				moveSpeed: 0.5,
 				attackinfo: &attackInfo{
@@ -218,6 +220,38 @@ func newUnit(id, unittype string, game *game) uniter {
 				delayTimeToSummon: 5 * fps,
 			},
 		}
+	case "player2":
+		u = &player{
+			unitBase: &unitBase{
+				id:        id,
+				unittype:  unittype,
+				game:      game,
+				moveSpeed: 0.5,
+				attackinfo: &attackInfo{
+					attackRange: 50,
+					power:       15,
+					cooltime:    2,
+				},
+				delayTimeToSummon: 5 * fps,
+			},
+		}
+
+	case "player3":
+		u = &player{
+			unitBase: &unitBase{
+				id:        id,
+				unittype:  unittype,
+				game:      game,
+				moveSpeed: 0.5,
+				attackinfo: &attackInfo{
+					attackRange: 50,
+					power:       15,
+					cooltime:    2,
+				},
+				delayTimeToSummon: 5 * fps,
+			},
+		}
+
 	default:
 		// TODO: remove later
 		u = &sampleUnit{

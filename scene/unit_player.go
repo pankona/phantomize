@@ -10,8 +10,21 @@ type player struct {
 	*unitBase
 }
 
+func (g *game) assetNameByUnitType(unittype string) string {
+	switch unittype {
+	case "player1":
+		return "player1.png"
+	case "player2":
+		return "player2.png"
+	case "player3":
+		return "player3.png"
+	}
+	return ""
+}
+
 func (u *player) Initialize() {
-	simra.GetInstance().AddSprite("player.png",
+	assetName := u.game.assetNameByUnitType(u.unittype)
+	simra.GetInstance().AddSprite(assetName,
 		image.Rect(0, 0, 384, 384),
 		&u.sprite)
 	u.hp = 100
