@@ -191,7 +191,12 @@ func (e *effect) OnEvent(i interface{}) {
 
 		fmt.Printf("[effect][%s] ends attacking\n", p.GetID())
 
-		sprite := e.effects[p.GetID()]
+		sprite, ok := e.effects[p.GetID()]
+		if !ok {
+			// maybe this is already removed effect. do nothing.
+			break
+		}
+
 		sprite.StopAnimation()
 		delete(e.effects, p.GetID())
 		simra.GetInstance().RemoveSprite(sprite)
