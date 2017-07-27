@@ -1,6 +1,9 @@
 package scene
 
 import (
+	"fmt"
+	"image"
+
 	"github.com/pankona/gomo-simra/simra"
 )
 
@@ -123,6 +126,30 @@ func (u *unitBase) onEvent(c *command) {
 			}
 			return
 		}
+	case commandAttack:
+		d := c.data.(uniter)
+		if u.GetID() != d.GetID() {
+			// this is not for me. ignore
+			break
+		}
+		// TODO: load in advance. don't do every time.
+		texName := fmt.Sprintf("%s_atk.png", u.GetUnitType())
+		tex := simra.NewImageTexture(texName, image.Rect(0, 0, 384, 384))
+		u.sprite.ReplaceTexture2(tex)
+
+		u.action = newAction(actionAttack, u.target)
+
+	case commandAttackEnd:
+		d := c.data.(uniter)
+		if u.GetID() != d.GetID() {
+			// this is not for me. ignore
+			break
+		}
+
+		// TODO: load in advance. don't do every time.
+		texName := fmt.Sprintf("%s.png", u.GetUnitType())
+		tex := simra.NewImageTexture(texName, image.Rect(0, 0, 384, 384))
+		u.sprite.ReplaceTexture2(tex)
 
 	case commandDamage:
 		d, ok := c.data.(*damage)

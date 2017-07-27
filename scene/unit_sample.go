@@ -54,7 +54,7 @@ func (u *sampleUnit) DoAction() {
 		moveToTarget(u.unitBase, u.target)
 
 		if canAttackToTarget(u.unitBase, u.target) {
-			u.action = newAction(actionAttack, u.target)
+			u.game.eventqueue <- newCommand(commandAttack, u)
 		}
 
 	case actionDead:
