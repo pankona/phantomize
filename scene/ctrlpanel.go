@@ -11,6 +11,18 @@ const (
 	ctrlPanelHeight = 220
 )
 
+func (g *game) assetNameByCtrlButton(s *simra.Sprite) string {
+	switch s {
+	case &g.ctrlButton[0]:
+		return "ctrlbutton1.png"
+	case &g.ctrlButton[1]:
+		return "ctrlbutton2.png"
+	case &g.ctrlButton[2]:
+		return "ctrlbutton3.png"
+	}
+	return ""
+}
+
 func (g *game) initCtrlPanel() {
 	g.ctrlPanel.W = config.ScreenWidth
 	g.ctrlPanel.H = ctrlPanelHeight
@@ -20,13 +32,13 @@ func (g *game) initCtrlPanel() {
 		image.Rect(0, 0, 1280, 240),
 		&g.ctrlPanel)
 
-	g.ctrlButton = make([]simra.Sprite, 9)
+	g.ctrlButton = make([]simra.Sprite, 3)
 	for i := range g.ctrlButton {
 		g.ctrlButton[i].W = 64
 		g.ctrlButton[i].H = 64
-		g.ctrlButton[i].X = (float32)(1010 + (64+45)*(i%3))
-		g.ctrlButton[i].Y = (float32)(44 + (64+5)*(i/3))
-		simra.GetInstance().AddSprite("player.png",
+		g.ctrlButton[i].X = (float32)(1000 + (64+50)*(i%3))
+		g.ctrlButton[i].Y = (float32)(44 + (64+5)*2 - (64+5)*(i/3))
+		simra.GetInstance().AddSprite(g.assetNameByCtrlButton(&g.ctrlButton[i]),
 			image.Rect(0, 0, 384, 384),
 			&g.ctrlButton[i])
 

@@ -94,24 +94,12 @@ func (f *fieldTouchListener) OnTouchMove(x, y float32) {
 
 func (g *game) unitIDBySprite(s *simra.Sprite) string {
 	var unitID string
-	if s == &g.ctrlButton[6] {
-		unitID = "player"
-	} else if s == &g.ctrlButton[7] {
-		unitID = "player"
-	} else if s == &g.ctrlButton[8] {
-		unitID = "player"
-	} else if s == &g.ctrlButton[3] {
-		unitID = "player"
-	} else if s == &g.ctrlButton[4] {
-		unitID = "player"
-	} else if s == &g.ctrlButton[5] {
-		unitID = "player"
-	} else if s == &g.ctrlButton[0] {
-		unitID = "player"
+	if s == &g.ctrlButton[0] {
+		unitID = "player1"
 	} else if s == &g.ctrlButton[1] {
-		unitID = "player"
+		unitID = "player2"
 	} else if s == &g.ctrlButton[2] {
-		unitID = "player"
+		unitID = "player3"
 	}
 	return unitID
 }
