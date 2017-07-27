@@ -132,7 +132,6 @@ func (u *unitBase) onEvent(c *command) {
 			return
 		}
 
-		// TODO: reduce HP of unit
 		u.hp -= d.damage
 		simra.LogDebug("[DAMAGE] i'm [%s], HP = %d", u.GetID(), u.hp)
 		if u.hp <= 0 {
