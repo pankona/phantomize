@@ -133,7 +133,8 @@ func (e *effect) OnEvent(i interface{}) {
 		sprite.AddAnimationSet("smoke.png", animationSet)
 		simra.GetInstance().AddSprite2(sprite)
 		sprite.StartAnimation("smoke.png", true, func() {})
-		e.effects[p.GetID()] = sprite
+		effectID := fmt.Sprintf("%s_spawn", p.GetID())
+		e.effects[effectID] = sprite
 
 	case commandSpawned:
 		p, ok := c.data.(uniter)
@@ -141,10 +142,33 @@ func (e *effect) OnEvent(i interface{}) {
 			// ignore
 			break
 		}
-		sprite := e.effects[p.GetID()]
+		effectID := fmt.Sprintf("%s_spawn", p.GetID())
+		sprite := e.effects[effectID]
 		sprite.StopAnimation()
-		delete(e.effects, p.GetID())
+		delete(e.effects, effectID)
 		simra.GetInstance().RemoveSprite(sprite)
+
+	case commandDead:
+		p, ok := c.data.(uniter)
+		if !ok {
+			// ignore
+			break
+		}
+		sprite := simra.NewSprite()
+		sprite.W = 512 / 3
+		sprite.H = 528 / 4
+		x, y := p.GetPosition()
+		sprite.X, sprite.Y = x-10, y+20
+
+		animationSet := e.animations["smoke.png"]
+		sprite.AddAnimationSet("smoke.png", animationSet)
+		simra.GetInstance().AddSprite2(sprite)
+		effectID := fmt.Sprintf("%s_dead", p.GetID())
+		e.effects[effectID] = sprite
+		sprite.StartAnimation("smoke.png", false, func() {
+			delete(e.effects, effectID)
+			simra.GetInstance().RemoveSprite(sprite)
+		})
 
 	case commandAttack:
 		p, ok := c.data.(uniter)
