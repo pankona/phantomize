@@ -14,6 +14,7 @@ type uniter interface {
 	IsSpawned() bool
 	Dead()
 	DoAction()
+	GetUnitType() string
 	simra.Subscriber
 }
 
@@ -147,6 +148,10 @@ func (u *unitBase) onEvent(c *command) {
 
 func (u *unitBase) DoAction() {}
 
+func (u *unitBase) GetUnitType() string {
+	return u.unittype
+}
+
 func (u *unitBase) doAction(a *action) {
 	switch a.actiontype {
 	case actionSpawn:
@@ -169,10 +174,9 @@ func (u *unitBase) doAction(a *action) {
 		u.action = newAction(actionMoveToNearestTarget, nil)
 
 	case actionAttack:
-		// TODO: start animation
-
 		target := a.data.(uniter)
 		if !canAttackToTarget(u, target) {
+			u.game.eventqueue <- newCommand(commandAttackEnd, u)
 			u.action = newAction(actionMoveToNearestTarget, nil)
 			break
 		}
@@ -292,6 +296,8 @@ type commandtype int
 const (
 	commandSpawn commandtype = iota
 	commandSpawned
+	commandAttack
+	commandAttackEnd
 	commandDamage
 	commandDead
 	commandGoToInitialState
