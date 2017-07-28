@@ -28,6 +28,7 @@ type game struct {
 	currentRunLoop   func()
 	eventqueue       chan *command
 	selection        *selection
+	resource         *resource
 }
 
 type gameState int
@@ -223,11 +224,14 @@ func (g *game) initialize() {
 	g.initCtrlPanel()
 	g.initPlayer()
 	g.initUnits("") // TODO: input JSON string
+	g.resource = newResource(100)
+	g.resource.initialize()
 	g.selection = &selection{}
 	g.selection.initialize(g)
 	simra.GetInstance().AddTouchListener(g)
 	g.pubsub.Subscribe("god", g)
 	g.pubsub.Subscribe("selection", g.selection)
+	g.pubsub.Subscribe("resource", g.resource)
 	g.updateGameState(gameStateInitial)
 }
 

@@ -18,7 +18,9 @@ type uniter interface {
 	Dead()
 	DoAction()
 	GetUnitType() string
+	GetCost() int
 	GetTarget() uniter
+	IsAlly() bool
 	simra.Subscriber
 }
 
@@ -70,6 +72,8 @@ type unitBase struct {
 	isSpawned           bool
 	delayTimeToSummon   int64
 	elapsedTimeToSummon int64
+	isAlly              bool
+	cost                int
 }
 
 func (u *unitBase) Initialize() {}
@@ -199,6 +203,14 @@ func (u *unitBase) GetTarget() uniter {
 	return u.target
 }
 
+func (u *unitBase) GetCost() int {
+	return u.cost
+}
+
+func (u *unitBase) IsAlly() bool {
+	return u.isAlly
+}
+
 func (u *unitBase) doAction(a *action) {
 	switch a.actiontype {
 	case actionSpawn:
@@ -261,13 +273,16 @@ func newUnit(id, unittype string, game *game) uniter {
 				id:        id,
 				unittype:  unittype,
 				game:      game,
-				moveSpeed: 0.5,
+				moveSpeed: 1.5,
+				hp:        50,
 				attackinfo: &attackInfo{
 					attackRange: 50,
 					power:       15,
 					cooltime:    2,
 				},
 				delayTimeToSummon: 5 * fps,
+				isAlly:            true,
+				cost:              10,
 			},
 		}
 	case "player2":
@@ -276,13 +291,16 @@ func newUnit(id, unittype string, game *game) uniter {
 				id:        id,
 				unittype:  unittype,
 				game:      game,
-				moveSpeed: 0.5,
+				moveSpeed: 1.0,
+				hp:        75,
 				attackinfo: &attackInfo{
 					attackRange: 50,
-					power:       15,
-					cooltime:    2,
+					power:       20,
+					cooltime:    3,
 				},
 				delayTimeToSummon: 5 * fps,
+				isAlly:            true,
+				cost:              20,
 			},
 		}
 
@@ -293,12 +311,15 @@ func newUnit(id, unittype string, game *game) uniter {
 				unittype:  unittype,
 				game:      game,
 				moveSpeed: 0.5,
+				hp:        30,
 				attackinfo: &attackInfo{
-					attackRange: 50,
-					power:       15,
-					cooltime:    2,
+					attackRange: 200,
+					power:       20,
+					cooltime:    3,
 				},
 				delayTimeToSummon: 5 * fps,
+				isAlly:            true,
+				cost:              25,
 			},
 		}
 
@@ -314,6 +335,7 @@ func newUnit(id, unittype string, game *game) uniter {
 					power:       15,
 					cooltime:    2,
 				},
+				isAlly: false,
 			},
 		}
 
@@ -329,6 +351,7 @@ func newUnit(id, unittype string, game *game) uniter {
 					power:       15,
 					cooltime:    2,
 				},
+				isAlly: false,
 			},
 		}
 	}
