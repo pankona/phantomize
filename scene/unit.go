@@ -374,6 +374,8 @@ const (
 	commandGoToRunningState
 	commandUpdateSelection
 	commandUnsetSelection
+	commandShowMessage
+	commandHideMessage
 )
 
 type command struct {

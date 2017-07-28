@@ -29,6 +29,7 @@ type game struct {
 	eventqueue       chan *command
 	selection        *selection
 	resource         *resource
+	message          *message
 }
 
 type gameState int
@@ -122,6 +123,11 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 		// TODO: every ally spawning occurs file I/O. lol
 		// loading texture in advance is needed.
 		p := newUnit(id, unitID, f.game)
+		if p.GetCost() > f.game.resource.balance {
+			// balance is not enough. abort spawning
+			f.game.eventqueue <- newCommand(commandShowMessage, "Need more money!")
+			return
+		}
 		p.SetPosition(x, y)
 		f.game.players[id] = p
 		f.game.pubsub.Subscribe(p.GetID(), p)
@@ -224,14 +230,20 @@ func (g *game) initialize() {
 	g.initCtrlPanel()
 	g.initPlayer()
 	g.initUnits("") // TODO: input JSON string
-	g.resource = newResource(100)
+	g.resource = &resource{
+		balance: 100,
+		game:    g,
+	}
 	g.resource.initialize()
+	g.message = &message{game: g}
+
 	g.selection = &selection{}
 	g.selection.initialize(g)
 	simra.GetInstance().AddTouchListener(g)
 	g.pubsub.Subscribe("god", g)
 	g.pubsub.Subscribe("selection", g.selection)
 	g.pubsub.Subscribe("resource", g.resource)
+	g.pubsub.Subscribe("message", g.message)
 	g.updateGameState(gameStateInitial)
 }
 
