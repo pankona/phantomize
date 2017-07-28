@@ -336,6 +336,7 @@ func newUnit(id, unittype string, game *game) uniter {
 					cooltime:    2,
 				},
 				isAlly: false,
+				cost:   20,
 			},
 		}
 
@@ -352,6 +353,7 @@ func newUnit(id, unittype string, game *game) uniter {
 					cooltime:    2,
 				},
 				isAlly: false,
+				cost:   50,
 			},
 		}
 	}
