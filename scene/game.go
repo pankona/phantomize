@@ -240,6 +240,7 @@ func (g *game) initialize() {
 	g.selection = &selection{}
 	g.selection.initialize(g)
 	g.charainfo = &charainfo{game: g}
+	g.charainfo.initialize()
 	simra.GetInstance().AddTouchListener(g)
 	g.pubsub.Subscribe("god", g)
 	g.pubsub.Subscribe("selection", g.selection)

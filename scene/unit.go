@@ -12,12 +12,15 @@ import (
 type uniter interface {
 	Initialize()
 	GetID() string
+	SetID(id string)
 	SetPosition(float32, float32)
 	GetPosition() (float32, float32)
+	SetGame(g *game)
 	IsSpawned() bool
 	Dead()
 	DoAction()
 	GetUnitType() string
+	SetUnitType(unittype string)
 	GetCost() int
 	GetTarget() uniter
 	IsAlly() bool
@@ -82,6 +85,10 @@ func (u *unitBase) GetID() string {
 	return u.id
 }
 
+func (u *unitBase) SetID(id string) {
+	u.id = id
+}
+
 func (u *unitBase) SetPosition(x, y float32) {
 	u.sprite.X = x
 	u.sprite.Y = y
@@ -89,6 +96,10 @@ func (u *unitBase) SetPosition(x, y float32) {
 
 func (u *unitBase) GetPosition() (float32, float32) {
 	return u.sprite.X, u.sprite.Y
+}
+
+func (u *unitBase) SetGame(g *game) {
+	u.game = g
 }
 
 func (u *unitBase) IsSpawned() bool {
@@ -199,6 +210,10 @@ func (u *unitBase) GetUnitType() string {
 	return u.unittype
 }
 
+func (u *unitBase) SetUnitType(unittype string) {
+	u.unittype = unittype
+}
+
 func (u *unitBase) GetTarget() uniter {
 	return u.target
 }
@@ -262,101 +277,99 @@ func (u *unitBase) Dead() {
 	u.isSpawned = false
 }
 
+func getUnitByUnitType(unittype string) *unitBase {
+	switch unittype {
+	case "player1":
+		return &unitBase{
+			moveSpeed: 1.5,
+			hp:        50,
+			attackinfo: &attackInfo{
+				attackRange: 50,
+				power:       15,
+				cooltime:    2,
+			},
+			delayTimeToSummon: 5 * fps,
+			isAlly:            true,
+			cost:              10,
+		}
+
+	case "player2":
+		return &unitBase{
+			moveSpeed: 1.0,
+			hp:        75,
+			attackinfo: &attackInfo{
+				attackRange: 50,
+				power:       20,
+				cooltime:    3,
+			},
+			delayTimeToSummon: 5 * fps,
+			isAlly:            true,
+			cost:              20,
+		}
+
+	case "player3":
+		return &unitBase{
+			moveSpeed: 0.5,
+			hp:        30,
+			attackinfo: &attackInfo{
+				attackRange: 200,
+				power:       20,
+				cooltime:    3,
+			},
+			delayTimeToSummon: 5 * fps,
+			isAlly:            true,
+			cost:              25,
+		}
+
+	case "enemy1":
+		return &unitBase{
+			moveSpeed: 0.5,
+			attackinfo: &attackInfo{
+				attackRange: 50,
+				power:       15,
+				cooltime:    2,
+			},
+			isAlly: false,
+			cost:   20,
+		}
+
+	case "enemy2":
+		return &unitBase{
+			moveSpeed: 0.5,
+			attackinfo: &attackInfo{
+				attackRange: 50,
+				power:       15,
+				cooltime:    2,
+			},
+			isAlly: false,
+			cost:   50,
+		}
+	}
+
+	return nil
+}
+
 func newUnit(id, unittype string, game *game) uniter {
 	// TODO: sample unit implemenation
 	// unit type should be specified and switch here
 	var u uniter
 	switch unittype {
 	case "player1":
-		u = &player{
-			unitBase: &unitBase{
-				id:        id,
-				unittype:  unittype,
-				game:      game,
-				moveSpeed: 1.5,
-				hp:        50,
-				attackinfo: &attackInfo{
-					attackRange: 50,
-					power:       15,
-					cooltime:    2,
-				},
-				delayTimeToSummon: 5 * fps,
-				isAlly:            true,
-				cost:              10,
-			},
-		}
+		fallthrough
 	case "player2":
-		u = &player{
-			unitBase: &unitBase{
-				id:        id,
-				unittype:  unittype,
-				game:      game,
-				moveSpeed: 1.0,
-				hp:        75,
-				attackinfo: &attackInfo{
-					attackRange: 50,
-					power:       20,
-					cooltime:    3,
-				},
-				delayTimeToSummon: 5 * fps,
-				isAlly:            true,
-				cost:              20,
-			},
-		}
-
+		fallthrough
 	case "player3":
-		u = &player{
-			unitBase: &unitBase{
-				id:        id,
-				unittype:  unittype,
-				game:      game,
-				moveSpeed: 0.5,
-				hp:        30,
-				attackinfo: &attackInfo{
-					attackRange: 200,
-					power:       20,
-					cooltime:    3,
-				},
-				delayTimeToSummon: 5 * fps,
-				isAlly:            true,
-				cost:              25,
-			},
-		}
-
+		u = &player{unitBase: getUnitByUnitType(unittype)}
 	case "enemy1":
-		u = &sampleUnit{
-			unitBase: &unitBase{
-				id:        id,
-				unittype:  unittype,
-				game:      game,
-				moveSpeed: 0.5,
-				attackinfo: &attackInfo{
-					attackRange: 50,
-					power:       15,
-					cooltime:    2,
-				},
-				isAlly: false,
-				cost:   20,
-			},
-		}
-
+		fallthrough
 	case "enemy2":
-		u = &sampleUnit{
-			unitBase: &unitBase{
-				id:        id,
-				unittype:  unittype,
-				game:      game,
-				moveSpeed: 0.5,
-				attackinfo: &attackInfo{
-					attackRange: 50,
-					power:       15,
-					cooltime:    2,
-				},
-				isAlly: false,
-				cost:   50,
-			},
-		}
+		u = &sampleUnit{unitBase: getUnitByUnitType(unittype)}
+	default:
+		panic("unknown unittype!")
 	}
+	u.SetID(id)
+	u.SetGame(game)
+	u.SetUnitType(unittype)
 
 	// call each unit's initialize function
 	u.Initialize()
