@@ -402,6 +402,11 @@ func newUnit(id, unittype string, game *game) uniter {
 		fallthrough
 	case "enemy2":
 		u = &sampleUnit{unitBase: getUnitByUnitType(unittype)}
+		u.GetSprite().AddTouchListener(&unitTouchListener{
+			sprite: u.GetSprite(),
+			uniter: u,
+			game:   game,
+		})
 	default:
 		panic("unknown unittype!")
 	}
