@@ -17,6 +17,23 @@ type charainfo struct {
 	game        *game
 }
 
+type recallTouchListener struct {
+	unit uniter
+	game *game
+}
+
+func (r *recallTouchListener) OnTouchBegin(x, y float32) {
+	// nop
+}
+
+func (r *recallTouchListener) OnTouchMove(x, y float32) {
+	// nop
+}
+
+func (r *recallTouchListener) OnTouchEnd(x, y float32) {
+	r.game.eventqueue <- newCommand(commandRecall, r.unit)
+}
+
 func (ci *charainfo) initialize() {
 	ci.icon = simra.NewSprite()
 	ci.icon.X, ci.icon.Y = 500, 120
@@ -138,6 +155,10 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 	if u.IsAlly() {
 		simra.GetInstance().AddSprite2(ci.recall[0])
 		ci.recall[0].ReplaceTexture2(ci.recallBGTex)
+		ci.recall[0].AddTouchListener(&recallTouchListener{
+			unit: u,
+			game: ci.game,
+		})
 
 		simra.GetInstance().AddSprite2(ci.recall[1])
 		tex = simra.NewTextTexture(

@@ -50,6 +50,7 @@ const (
 	actionDead
 	actionMoveToNearestTarget
 	actionAttack
+	actionRecall
 )
 
 type action struct {
@@ -201,6 +202,15 @@ func (u *unitBase) onEvent(c *command) {
 			u.action = nil
 			break
 		}
+
+	case commandRecall:
+		d := c.data.(uniter)
+		if u.GetID() != d.GetID() {
+			// this is not for me. ignore
+			break
+		}
+
+		u.action = newAction(actionRecall, nil)
 
 	default:
 		// nop
@@ -399,7 +409,10 @@ func newUnit(id, unittype string, game *game) uniter {
 	case "player2":
 		fallthrough
 	case "player3":
-		u = &player{unitBase: getUnitByUnitType(unittype)}
+		u = &player{
+			unitBase:          getUnitByUnitType(unittype),
+			delayTimeToRecall: 3 * fps,
+		}
 	case "enemy1":
 		fallthrough
 	case "enemy2":
@@ -426,6 +439,8 @@ const (
 	commandAttackEnd
 	commandDamage
 	commandDead
+	commandRecall
+	commandRecalled
 	commandGoToInitialState
 	commandGoToRunningState
 	commandUpdateSelection

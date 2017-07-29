@@ -30,6 +30,18 @@ func (r *resource) initialize() {
 	r.sprite.W, r.sprite.H = 100, 80
 }
 
+func (r *resource) updateResourceInfo() {
+	resstr := fmt.Sprintf("$ %d", r.balance)
+	tex := simra.NewTextTexture(
+		resstr,
+		40, // fontsize
+		color.RGBA{255, 255, 255, 255},
+		image.Rect(0, 0, 100, 80),
+	)
+	r.sprite.ReplaceTexture2(tex)
+
+}
+
 func (r *resource) OnEvent(i interface{}) {
 	c, ok := i.(*command)
 	if !ok {
@@ -43,16 +55,12 @@ func (r *resource) OnEvent(i interface{}) {
 			break
 		}
 		r.balance -= u.GetCost()
+		r.updateResourceInfo()
 
-		// update texture
-		resstr := fmt.Sprintf("$ %d", r.balance)
-		tex := simra.NewTextTexture(
-			resstr,
-			40, // fontsize
-			color.RGBA{255, 255, 255, 255},
-			image.Rect(0, 0, 100, 80),
-		)
-		r.sprite.ReplaceTexture2(tex)
+	case commandRecalled:
+		u := c.data.(uniter)
+		r.balance += u.GetCost()
+		r.updateResourceInfo()
 
 	case commandDead:
 		u, ok := c.data.(uniter)
@@ -61,16 +69,7 @@ func (r *resource) OnEvent(i interface{}) {
 			break
 		}
 		r.balance += u.GetCost()
-
-		// update texture
-		resstr := fmt.Sprintf("$ %d", r.balance)
-		tex := simra.NewTextTexture(
-			resstr,
-			40, // fontsize
-			color.RGBA{255, 255, 255, 255},
-			image.Rect(0, 0, 100, 80),
-		)
-		r.sprite.ReplaceTexture2(tex)
+		r.updateResourceInfo()
 	}
 
 }

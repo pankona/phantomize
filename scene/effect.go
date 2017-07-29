@@ -118,6 +118,8 @@ func (e *effect) OnEvent(i interface{}) {
 
 	switch c.commandtype {
 	case commandSpawn:
+		fallthrough
+	case commandRecall:
 		p, ok := c.data.(uniter)
 		if !ok {
 			// ignore
@@ -137,6 +139,8 @@ func (e *effect) OnEvent(i interface{}) {
 		e.effects[effectID] = sprite
 
 	case commandSpawned:
+		fallthrough
+	case commandRecalled:
 		p, ok := c.data.(uniter)
 		if !ok {
 			// ignore

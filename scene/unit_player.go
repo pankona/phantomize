@@ -8,6 +8,8 @@ import (
 
 type player struct {
 	*unitBase
+	delayTimeToRecall   int
+	elapsedTimeToRecall int
 }
 
 func (u *player) Initialize() {
@@ -24,6 +26,16 @@ func (u *player) OnEvent(i interface{}) {
 	}
 
 	switch c.commandtype {
+	case commandRecalled:
+		d := c.data.(uniter)
+		if u.GetID() != d.GetID() {
+			// this is not for me. ignore
+			break
+		}
+
+		simra.GetInstance().RemoveSprite(&u.sprite)
+		killUnit(u, u.game.players)
+
 	default:
 		u.unitBase.onEvent(c)
 	}
@@ -51,6 +63,15 @@ func (u *player) DoAction() {
 	case actionDead:
 		// i'm dead!
 		killUnit(u, u.game.players)
+
+	case actionRecall:
+		u.elapsedTimeToRecall++
+		if u.elapsedTimeToRecall <= u.delayTimeToRecall {
+			// still summoning...
+			break
+		}
+		u.elapsedTimeToRecall = 0
+		u.game.eventqueue <- newCommand(commandRecalled, u)
 
 	default:
 		u.unitBase.doAction(a)
