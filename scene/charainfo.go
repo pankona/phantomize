@@ -9,11 +9,12 @@ import (
 )
 
 type charainfo struct {
-	icon       *simra.Sprite
-	sprite     [4]*simra.Sprite
-	recall     [2]*simra.Sprite
-	displaying *simra.Sprite
-	game       *game
+	icon        *simra.Sprite
+	sprite      [4]*simra.Sprite
+	recall      [2]*simra.Sprite
+	recallBGTex *simra.Texture
+	displaying  *simra.Sprite
+	game        *game
 }
 
 func (ci *charainfo) initialize() {
@@ -28,8 +29,14 @@ func (ci *charainfo) initialize() {
 	}
 
 	ci.recall[0] = simra.NewSprite()
-	ci.recall[0].X, ci.recall[0].Y = 500, 70
-	ci.recall[0].H, ci.recall[0].W = 100, 300
+	ci.recall[0].X, ci.recall[0].Y = 500, 95
+	ci.recall[0].W, ci.recall[0].H = 150, 40
+	ci.recallBGTex = simra.NewImageTexture("cursor.png", image.Rect(0, 0, 30, 30))
+
+	ci.recall[1] = simra.NewSprite()
+	ci.recall[1].X, ci.recall[1].Y = 500, 70
+	ci.recall[1].H, ci.recall[1].W = 100, 300
+
 }
 
 func (ci *charainfo) isCtrlButtonSelected(s *simra.Sprite) bool {
@@ -92,6 +99,7 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 		simra.GetInstance().AddSprite2(ci.sprite[i])
 	}
 	simra.GetInstance().AddSprite2(ci.recall[0])
+	simra.GetInstance().AddSprite2(ci.recall[1])
 
 	asset := ci.game.assetNameByUnitType(u.GetUnitType())
 	tex := simra.NewImageTexture(asset, image.Rect(0, 0, 384, 384))
@@ -130,12 +138,13 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 	ci.sprite[3].ReplaceTexture2(tex)
 
 	tex = simra.NewTextTexture(
-		"TAP TO RECALL",
+		"RECALL",
 		30, // fontsize
-		color.RGBA{255, 255, 255, 255},
+		color.RGBA{255, 0, 0, 255},
 		image.Rect(0, 0, 300, 80),
 	)
-	ci.recall[0].ReplaceTexture2(tex)
+	ci.recall[0].ReplaceTexture2(ci.recallBGTex)
+	ci.recall[1].ReplaceTexture2(tex)
 }
 
 func (ci *charainfo) hideCharaInfo() {
@@ -144,6 +153,7 @@ func (ci *charainfo) hideCharaInfo() {
 		simra.GetInstance().RemoveSprite(ci.sprite[i])
 	}
 	simra.GetInstance().RemoveSprite(ci.recall[0])
+	simra.GetInstance().RemoveSprite(ci.recall[1])
 }
 
 func (ci *charainfo) OnEvent(i interface{}) {
@@ -157,10 +167,12 @@ func (ci *charainfo) OnEvent(i interface{}) {
 		switch selecting := c.data.(type) {
 		case *simra.Sprite:
 			if ci.isCtrlButtonSelected(selecting) {
+				ci.hideCharaInfo()
 				ci.showUnitInfo(selecting, ci.game.unitIDBySprite(selecting))
 			}
 			ci.displaying = selecting
 		case *unitTouchListener:
+			ci.hideCharaInfo()
 			ci.showUnitStatus(selecting.sprite, selecting.uniter)
 			ci.displaying = selecting.sprite
 		}
@@ -172,6 +184,7 @@ func (ci *charainfo) OnEvent(i interface{}) {
 		d := c.data.(*damage)
 		if ci.displaying == d.unit.GetSprite() {
 			// update chara info
+			ci.hideCharaInfo()
 			ci.showUnitStatus(d.unit.GetSprite(), d.unit)
 		}
 
