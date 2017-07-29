@@ -26,6 +26,7 @@ type uniter interface {
 	GetCost() int
 	GetTarget() uniter
 	GetSprite() *simra.Sprite
+	GetAction() *action
 	IsAlly() bool
 	simra.Subscriber
 }
@@ -233,6 +234,10 @@ func (u *unitBase) GetTarget() uniter {
 
 func (u *unitBase) GetSprite() *simra.Sprite {
 	return &u.sprite
+}
+
+func (u *unitBase) GetAction() *action {
+	return u.action
 }
 
 func (u *unitBase) GetHP() int {

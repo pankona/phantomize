@@ -31,6 +31,12 @@ func (r *recallTouchListener) OnTouchMove(x, y float32) {
 }
 
 func (r *recallTouchListener) OnTouchEnd(x, y float32) {
+	action := r.unit.GetAction()
+	if action != nil && action.actiontype == actionRecall {
+		// now recalling. ignore
+		return
+	}
+
 	r.game.eventqueue <- newCommand(commandRecall, r.unit)
 }
 

@@ -71,5 +71,4 @@ func (r *resource) OnEvent(i interface{}) {
 		r.balance += u.GetCost()
 		r.updateResourceInfo()
 	}
-
 }
