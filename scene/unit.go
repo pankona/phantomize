@@ -145,6 +145,7 @@ func (u *unitBase) onEvent(c *command) {
 			}
 			return
 		}
+
 	case commandAttack:
 		d := c.data.(uniter)
 		if u.GetID() != d.GetID() {
@@ -194,7 +195,6 @@ func (u *unitBase) onEvent(c *command) {
 			u.action = newAction(actionDead, nil)
 		}
 		if u.target == d.GetTarget() {
-			fmt.Printf("target [%s] is down. [%s] stop attacking.\n", d.GetTarget().GetID(), u.GetID())
 			u.game.eventqueue <- newCommand(commandAttackEnd, u)
 		}
 		if len(u.game.uniters) == 0 {
@@ -257,6 +257,11 @@ func (u *unitBase) doAction(a *action) {
 		u.SetPosition(d.GetPosition())
 		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
 		u.isSpawned = true
+		u.GetSprite().AddTouchListener(&unitTouchListener{
+			sprite: u.GetSprite(),
+			uniter: u,
+			game:   u.game,
+		})
 
 		// start moving to target
 		u.game.eventqueue <- newCommand(commandSpawned, u)
@@ -380,6 +385,7 @@ func (u *unitTouchListener) OnTouchMove(x, y float32) {
 }
 
 func (u *unitTouchListener) OnTouchEnd(x, y float32) {
+	fmt.Println("@@@@@@ selection update from unitTouchListener!")
 	u.game.eventqueue <- newCommand(commandUpdateSelection, u)
 }
 
@@ -394,20 +400,10 @@ func newUnit(id, unittype string, game *game) uniter {
 		fallthrough
 	case "player3":
 		u = &player{unitBase: getUnitByUnitType(unittype)}
-		u.GetSprite().AddTouchListener(&unitTouchListener{
-			sprite: u.GetSprite(),
-			uniter: u,
-			game:   game,
-		})
 	case "enemy1":
 		fallthrough
 	case "enemy2":
 		u = &sampleUnit{unitBase: getUnitByUnitType(unittype)}
-		u.GetSprite().AddTouchListener(&unitTouchListener{
-			sprite: u.GetSprite(),
-			uniter: u,
-			game:   game,
-		})
 	default:
 		panic("unknown unittype!")
 	}

@@ -36,7 +36,6 @@ func (ci *charainfo) initialize() {
 	ci.recall[1] = simra.NewSprite()
 	ci.recall[1].X, ci.recall[1].Y = 500, 70
 	ci.recall[1].H, ci.recall[1].W = 100, 300
-
 }
 
 func (ci *charainfo) isCtrlButtonSelected(s *simra.Sprite) bool {
@@ -98,8 +97,6 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 	for i := 0; i < len(ci.sprite); i++ {
 		simra.GetInstance().AddSprite2(ci.sprite[i])
 	}
-	simra.GetInstance().AddSprite2(ci.recall[0])
-	simra.GetInstance().AddSprite2(ci.recall[1])
 
 	asset := ci.game.assetNameByUnitType(u.GetUnitType())
 	tex := simra.NewImageTexture(asset, image.Rect(0, 0, 384, 384))
@@ -137,17 +134,24 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 	)
 	ci.sprite[3].ReplaceTexture2(tex)
 
-	tex = simra.NewTextTexture(
-		"RECALL",
-		30, // fontsize
-		color.RGBA{255, 0, 0, 255},
-		image.Rect(0, 0, 300, 80),
-	)
-	ci.recall[0].ReplaceTexture2(ci.recallBGTex)
-	ci.recall[1].ReplaceTexture2(tex)
+	// recall label only for players
+	if u.IsAlly() {
+		simra.GetInstance().AddSprite2(ci.recall[0])
+		ci.recall[0].ReplaceTexture2(ci.recallBGTex)
+
+		simra.GetInstance().AddSprite2(ci.recall[1])
+		tex = simra.NewTextTexture(
+			"RECALL",
+			30, // fontsize
+			color.RGBA{255, 0, 0, 255},
+			image.Rect(0, 0, 300, 80),
+		)
+		ci.recall[1].ReplaceTexture2(tex)
+	}
 }
 
 func (ci *charainfo) hideCharaInfo() {
+	simra.LogDebug("@@@@@@ hideCharaInfo!!")
 	simra.GetInstance().RemoveSprite(ci.icon)
 	for i, _ := range ci.sprite {
 		simra.GetInstance().RemoveSprite(ci.sprite[i])
@@ -164,6 +168,7 @@ func (ci *charainfo) OnEvent(i interface{}) {
 
 	switch c.commandtype {
 	case commandUpdateSelection:
+		fmt.Println("@@@@@@ selection is updated")
 		switch selecting := c.data.(type) {
 		case *simra.Sprite:
 			if ci.isCtrlButtonSelected(selecting) {
@@ -178,6 +183,7 @@ func (ci *charainfo) OnEvent(i interface{}) {
 		}
 
 	case commandUnsetSelection:
+		fmt.Println("@@@@@@ selection is unset")
 		ci.hideCharaInfo()
 
 	case commandDamage:
