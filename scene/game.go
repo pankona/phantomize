@@ -283,18 +283,38 @@ func (g *game) eventFetch() []*command {
 	return c
 }
 
-func (g *game) showConguraturation() {
+type congratTouchListener struct {
+	game *game
+}
 
+// OnTouchBegin is called when game scene is Touched.
+func (c *congratTouchListener) OnTouchBegin(x, y float32) {
+	// nop
+}
+
+// OnTouchMove is called when game scene is Touched and moved.
+func (c *congratTouchListener) OnTouchMove(x, y float32) {
+	// nop
+}
+
+// OnTouchEnd is called when game scene is Touched and it is released.
+func (c *congratTouchListener) OnTouchEnd(x, y float32) {
+	// nop
+	c.game.nextScene = &result{}
+}
+
+func (g *game) showCongratulation() {
 	sprite := simra.NewSprite()
 	sprite.W = config.ScreenWidth
 	sprite.H = 80
 	sprite.X = config.ScreenWidth / 2
 	sprite.Y = config.ScreenHeight / 2
-	simra.GetInstance().AddTextSprite("You won! Conguraturation!",
+	simra.GetInstance().AddTextSprite("You won! Congratulation!",
 		60, // fontsize
 		color.RGBA{255, 0, 0, 255},
 		image.Rect(0, 0, int(sprite.W), int(sprite.H)),
 		sprite)
+	sprite.AddTouchListener(&congratTouchListener{game: g})
 }
 
 func (g *game) OnEvent(i interface{}) {
@@ -317,7 +337,7 @@ func (g *game) OnEvent(i interface{}) {
 		g.updateGameState(gameStateRunning)
 	case commandWin:
 		g.updateGameState(gameStateGameOver)
-		g.showConguraturation()
+		g.showCongratulation()
 	}
 }
 
@@ -409,5 +429,4 @@ func (g *game) OnTouchMove(x, y float32) {
 // OnTouchEnd is called when game scene is Touched and it is released.
 func (g *game) OnTouchEnd(x, y float32) {
 	// nop
-	//g.nextScene = &result{currentStage: g.currentStage}
 }
