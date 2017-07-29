@@ -284,6 +284,7 @@ func (u *unitBase) doAction(a *action) {
 }
 
 func (u *unitBase) Dead() {
+	u.sprite.RemoveAllTouchListener()
 	u.sprite.W = 1
 	u.sprite.H = 1
 	u.SetPosition(-1, -1)
