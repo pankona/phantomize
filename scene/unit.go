@@ -454,6 +454,7 @@ const (
 	commandShowMessage
 	commandHideMessage
 	commandWin
+	commandLose
 )
 
 type command struct {

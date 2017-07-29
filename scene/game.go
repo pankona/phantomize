@@ -185,8 +185,8 @@ func (g *game) initUnits(json string) {
 	// TODO: load from json file
 	units := make(map[string]uniter)
 	units["e1"] = newUnit("e1", "enemy1", g)
-	//units["e2"] = newUnit("e2", "enemy1", g)
-	//units["e3"] = newUnit("e3", "enemy1", g)
+	units["e2"] = newUnit("e2", "enemy1", g)
+	units["e3"] = newUnit("e3", "enemy1", g)
 
 	// TODO: unitpopTimeTable should be sorted by popTime
 	g.unitPopTimeTable = append(g.unitPopTimeTable,
@@ -195,18 +195,18 @@ func (g *game) initUnits(json string) {
 			popTime:         3 * fps,
 			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 5},
 		})
-	//	g.unitPopTimeTable = append(g.unitPopTimeTable,
-	//		&unitPopTime{
-	//			unitID:          "e2",
-	//			popTime:         4 * fps,
-	//			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 4},
-	//		})
-	//	g.unitPopTimeTable = append(g.unitPopTimeTable,
-	//		&unitPopTime{
-	//			unitID:          "e3",
-	//			popTime:         5 * fps,
-	//			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 3},
-	//		})
+	g.unitPopTimeTable = append(g.unitPopTimeTable,
+		&unitPopTime{
+			unitID:          "e2",
+			popTime:         4 * fps,
+			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 4},
+		})
+	g.unitPopTimeTable = append(g.unitPopTimeTable,
+		&unitPopTime{
+			unitID:          "e3",
+			popTime:         5 * fps,
+			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 3},
+		})
 
 	g.uniters = units
 }
@@ -283,22 +283,22 @@ func (g *game) eventFetch() []*command {
 	return c
 }
 
-type congratTouchListener struct {
+type gameoverTouchListener struct {
 	game *game
 }
 
 // OnTouchBegin is called when game scene is Touched.
-func (c *congratTouchListener) OnTouchBegin(x, y float32) {
+func (c *gameoverTouchListener) OnTouchBegin(x, y float32) {
 	// nop
 }
 
 // OnTouchMove is called when game scene is Touched and moved.
-func (c *congratTouchListener) OnTouchMove(x, y float32) {
+func (c *gameoverTouchListener) OnTouchMove(x, y float32) {
 	// nop
 }
 
 // OnTouchEnd is called when game scene is Touched and it is released.
-func (c *congratTouchListener) OnTouchEnd(x, y float32) {
+func (c *gameoverTouchListener) OnTouchEnd(x, y float32) {
 	// nop
 	c.game.nextScene = &result{}
 }
@@ -314,7 +314,21 @@ func (g *game) showCongratulation() {
 		color.RGBA{255, 0, 0, 255},
 		image.Rect(0, 0, int(sprite.W), int(sprite.H)),
 		sprite)
-	sprite.AddTouchListener(&congratTouchListener{game: g})
+	sprite.AddTouchListener(&gameoverTouchListener{game: g})
+}
+
+func (g *game) showLose() {
+	sprite := simra.NewSprite()
+	sprite.W = config.ScreenWidth
+	sprite.H = 80
+	sprite.X = config.ScreenWidth / 2
+	sprite.Y = config.ScreenHeight / 2
+	simra.GetInstance().AddTextSprite("You lose...",
+		60, // fontsize
+		color.RGBA{255, 0, 0, 255},
+		image.Rect(0, 0, int(sprite.W), int(sprite.H)),
+		sprite)
+	sprite.AddTouchListener(&gameoverTouchListener{game: g})
 }
 
 func (g *game) OnEvent(i interface{}) {
@@ -338,6 +352,9 @@ func (g *game) OnEvent(i interface{}) {
 	case commandWin:
 		g.updateGameState(gameStateGameOver)
 		g.showCongratulation()
+	case commandLose:
+		g.updateGameState(gameStateGameOver)
+		g.showLose()
 	}
 }
 
@@ -380,6 +397,11 @@ func (g *game) runningRunLoop() {
 		fmt.Println("@@@@@ all enemies are eliminated!")
 		g.eventqueue <- newCommand(commandWin, g)
 	}
+
+	if g.areAllPlayersEliminated() {
+		fmt.Println("@@@@@ all playeres are eliminated!")
+		g.eventqueue <- newCommand(commandLose, g)
+	}
 }
 
 func (g *game) gameoverRunLoop() {
@@ -400,6 +422,10 @@ func (g *game) areAllEnemiesEliminated() bool {
 		return false
 	}
 	return true
+}
+
+func (g *game) areAllPlayersEliminated() bool {
+	return len(g.players) == 0
 }
 
 // Drive is called from simra.
