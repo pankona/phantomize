@@ -131,10 +131,11 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 		// TODO: every ally spawning occurs file I/O. lol
 		// loading texture in advance is needed.
 		if f.game.summonPipeline < f.game.ongoingSummon+1 {
-			// too much to summon. ignore
+			// too much to summon. abort summoning.
 			f.game.eventqueue <- newCommand(commandShowMessage, "Another summon is ongoing. please wait.")
 			return
 		}
+		fmt.Println("ongoing summon ++")
 		f.game.ongoingSummon++
 
 		p := newUnit(id, unitID, f.game)

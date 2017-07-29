@@ -133,7 +133,6 @@ func (u *unitBase) onEvent(c *command) {
 			// unhandled event. ignore.
 			return
 		}
-		u.game.ongoingSummon--
 
 		if u.id != d.GetID() {
 			// this spawn event is not for me.
@@ -282,6 +281,11 @@ func (u *unitBase) doAction(a *action) {
 		// start moving to target
 		u.game.eventqueue <- newCommand(commandSpawned, u)
 		u.action = newAction(actionMoveToNearestTarget, nil)
+
+		if u.IsAlly() {
+			fmt.Println("ongoing summon --")
+			u.game.ongoingSummon--
+		}
 
 	case actionAttack:
 		target := a.data.(uniter)
