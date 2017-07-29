@@ -329,7 +329,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 				power:       15,
 				cooltime:    2,
 			},
-			delayTimeToSummon: 5 * fps,
+			delayTimeToSummon: 3 * fps,
 			isAlly:            true,
 			cost:              10,
 		}
@@ -343,7 +343,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 				power:       20,
 				cooltime:    3,
 			},
-			delayTimeToSummon: 5 * fps,
+			delayTimeToSummon: 4 * fps,
 			isAlly:            true,
 			cost:              20,
 		}
