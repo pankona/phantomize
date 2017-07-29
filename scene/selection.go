@@ -36,7 +36,12 @@ func (s *selection) OnEvent(i interface{}) {
 		}
 
 	case commandUpdateSelection:
-		s.selecting = c.data.(*simra.Sprite)
+		s.selecting, ok = c.data.(*simra.Sprite)
+		if !ok {
+			// ignore
+			break
+		}
+
 		simra.LogDebug("selection updated: %v", s.selecting)
 
 		s.cursor.X, s.cursor.Y = s.selecting.X, s.selecting.Y

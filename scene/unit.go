@@ -21,8 +21,11 @@ type uniter interface {
 	DoAction()
 	GetUnitType() string
 	SetUnitType(unittype string)
+	GetHP() int
+	GetMoveSpeed() float32
 	GetCost() int
 	GetTarget() uniter
+	GetSprite() *simra.Sprite
 	IsAlly() bool
 	simra.Subscriber
 }
@@ -218,6 +221,18 @@ func (u *unitBase) GetTarget() uniter {
 	return u.target
 }
 
+func (u *unitBase) GetSprite() *simra.Sprite {
+	return &u.sprite
+}
+
+func (u *unitBase) GetHP() int {
+	return u.hp
+}
+
+func (u *unitBase) GetMoveSpeed() float32 {
+	return u.moveSpeed
+}
+
 func (u *unitBase) GetCost() int {
 	return u.cost
 }
@@ -349,6 +364,24 @@ func getUnitByUnitType(unittype string) *unitBase {
 	return nil
 }
 
+type unitTouchListener struct {
+	sprite *simra.Sprite
+	uniter uniter
+	game   *game
+}
+
+func (u *unitTouchListener) OnTouchBegin(x, y float32) {
+	// nop
+}
+
+func (u *unitTouchListener) OnTouchMove(x, y float32) {
+	// nop
+}
+
+func (u *unitTouchListener) OnTouchEnd(x, y float32) {
+	u.game.eventqueue <- newCommand(commandUpdateSelection, u)
+}
+
 func newUnit(id, unittype string, game *game) uniter {
 	// TODO: sample unit implemenation
 	// unit type should be specified and switch here
@@ -360,6 +393,11 @@ func newUnit(id, unittype string, game *game) uniter {
 		fallthrough
 	case "player3":
 		u = &player{unitBase: getUnitByUnitType(unittype)}
+		u.GetSprite().AddTouchListener(&unitTouchListener{
+			sprite: u.GetSprite(),
+			uniter: u,
+			game:   game,
+		})
 	case "enemy1":
 		fallthrough
 	case "enemy2":
@@ -373,6 +411,7 @@ func newUnit(id, unittype string, game *game) uniter {
 
 	// call each unit's initialize function
 	u.Initialize()
+
 	return u
 }
 
