@@ -453,6 +453,7 @@ const (
 	commandUnsetSelection
 	commandShowMessage
 	commandHideMessage
+	commandWin
 )
 
 type command struct {

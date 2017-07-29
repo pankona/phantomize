@@ -1,7 +1,9 @@
 package scene
 
 import (
+	"fmt"
 	"image"
+	"image/color"
 	"strconv"
 
 	"github.com/pankona/gomo-simra/simra"
@@ -40,6 +42,7 @@ type gameState int
 const (
 	gameStateInitial gameState = iota
 	gameStateRunning
+	gameStateGameOver
 )
 
 // Initialize initializes game scene
@@ -64,8 +67,10 @@ func (g *game) updateGameState(newState gameState) {
 		g.currentRunLoop = g.initialRunLoop
 	case gameStateRunning:
 		g.currentRunLoop = g.runningRunLoop
+	case gameStateGameOver:
+		g.currentRunLoop = g.gameoverRunLoop
 	default:
-		//nop
+		panic("unexpected game state")
 	}
 
 	// reset frame
@@ -180,8 +185,8 @@ func (g *game) initUnits(json string) {
 	// TODO: load from json file
 	units := make(map[string]uniter)
 	units["e1"] = newUnit("e1", "enemy1", g)
-	units["e2"] = newUnit("e2", "enemy1", g)
-	units["e3"] = newUnit("e3", "enemy1", g)
+	//units["e2"] = newUnit("e2", "enemy1", g)
+	//units["e3"] = newUnit("e3", "enemy1", g)
 
 	// TODO: unitpopTimeTable should be sorted by popTime
 	g.unitPopTimeTable = append(g.unitPopTimeTable,
@@ -190,18 +195,18 @@ func (g *game) initUnits(json string) {
 			popTime:         3 * fps,
 			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 5},
 		})
-	g.unitPopTimeTable = append(g.unitPopTimeTable,
-		&unitPopTime{
-			unitID:          "e2",
-			popTime:         4 * fps,
-			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 4},
-		})
-	g.unitPopTimeTable = append(g.unitPopTimeTable,
-		&unitPopTime{
-			unitID:          "e3",
-			popTime:         5 * fps,
-			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 3},
-		})
+	//	g.unitPopTimeTable = append(g.unitPopTimeTable,
+	//		&unitPopTime{
+	//			unitID:          "e2",
+	//			popTime:         4 * fps,
+	//			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 4},
+	//		})
+	//	g.unitPopTimeTable = append(g.unitPopTimeTable,
+	//		&unitPopTime{
+	//			unitID:          "e3",
+	//			popTime:         5 * fps,
+	//			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 3},
+	//		})
 
 	g.uniters = units
 }
@@ -278,6 +283,20 @@ func (g *game) eventFetch() []*command {
 	return c
 }
 
+func (g *game) showConguraturation() {
+
+	sprite := simra.NewSprite()
+	sprite.W = config.ScreenWidth
+	sprite.H = 80
+	sprite.X = config.ScreenWidth / 2
+	sprite.Y = config.ScreenHeight / 2
+	simra.GetInstance().AddTextSprite("You won! Conguraturation!",
+		60, // fontsize
+		color.RGBA{255, 0, 0, 255},
+		image.Rect(0, 0, int(sprite.W), int(sprite.H)),
+		sprite)
+}
+
 func (g *game) OnEvent(i interface{}) {
 	c, ok := i.(*command)
 	if !ok {
@@ -296,6 +315,9 @@ func (g *game) OnEvent(i interface{}) {
 		g.updateGameState(gameStateInitial)
 	case commandGoToRunningState:
 		g.updateGameState(gameStateRunning)
+	case commandWin:
+		g.updateGameState(gameStateGameOver)
+		g.showConguraturation()
 	}
 }
 
@@ -317,7 +339,6 @@ func (g *game) runningRunLoop() {
 			panic("failed to subscribe. fatal.")
 		}
 
-		// generate spawn command
 		g.eventqueue <- newCommand(commandSpawn, v)
 	}
 
@@ -334,6 +355,31 @@ func (g *game) runningRunLoop() {
 	for _, v := range g.uniters {
 		v.DoAction()
 	}
+
+	if g.areAllEnemiesEliminated() {
+		fmt.Println("@@@@@ all enemies are eliminated!")
+		g.eventqueue <- newCommand(commandWin, g)
+	}
+}
+
+func (g *game) gameoverRunLoop() {
+	// event fetch and publish to all subscribers
+	commands := g.eventFetch()
+	for _, v := range commands {
+		g.pubsub.Publish(v)
+	}
+}
+
+func (g *game) areAllEnemiesEliminated() bool {
+	if len(g.unitPopTimeTable) != 0 {
+		// there's still enemies that are waiting or spawning
+		return false
+	}
+	if len(g.uniters) != 0 {
+		// there's still enemies that are on field
+		return false
+	}
+	return true
 }
 
 // Drive is called from simra.

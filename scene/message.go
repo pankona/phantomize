@@ -10,8 +10,7 @@ import (
 )
 
 type message struct {
-	sprite *simra.Sprite
-	game   *game
+	game *game
 }
 
 func (m *message) OnEvent(i interface{}) {
@@ -25,8 +24,8 @@ func (m *message) OnEvent(i interface{}) {
 	case commandShowMessage:
 		message := c.data.(string)
 
-		m.sprite = simra.NewSprite()
-		simra.GetInstance().AddSprite2(m.sprite)
+		sprite := simra.NewSprite()
+		simra.GetInstance().AddSprite2(sprite)
 
 		tex := simra.NewTextTexture(
 			message,
@@ -34,18 +33,19 @@ func (m *message) OnEvent(i interface{}) {
 			color.RGBA{255, 255, 255, 255},
 			image.Rect(0, 0, config.ScreenWidth, 80),
 		)
-		m.sprite.ReplaceTexture2(tex)
-		m.sprite.X, m.sprite.Y = config.ScreenWidth/2, 300
-		m.sprite.W, m.sprite.H = config.ScreenWidth, 80
+		sprite.ReplaceTexture2(tex)
+		sprite.X, sprite.Y = config.ScreenWidth/2, 300
+		sprite.W, sprite.H = config.ScreenWidth, 80
 
 		go func() {
 			select {
 			case <-time.After(2 * time.Second):
-				m.game.eventqueue <- newCommand(commandHideMessage, nil)
+				m.game.eventqueue <- newCommand(commandHideMessage, sprite)
 			}
 		}()
 
 	case commandHideMessage:
-		simra.GetInstance().RemoveSprite(m.sprite)
+		s := c.data.(*simra.Sprite)
+		simra.GetInstance().RemoveSprite(s)
 	}
 }
