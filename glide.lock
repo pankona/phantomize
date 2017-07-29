@@ -1,15 +1,23 @@
 hash: 40d333b3d721af6ea8d0a6c2c9a368e013293e6eb6c7e24fd86ee663ed946ac6
-updated: 2017-06-21T12:24:16.913629676+09:00
+updated: 2017-07-30T03:31:47.934576146+09:00
 imports:
 - name: github.com/boltdb/bolt
-  version: 583e8937c61f1af6513608ccc75c97b6abdf4ff9
+  version: 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
 - name: github.com/golang/freetype
   version: e2365dfdc4a05e4b8299a783240d4a7d5a65d4e4
   subpackages:
   - raster
   - truetype
+- name: github.com/gopherjs/gopherjs
+  version: 2b1d432c8a82c9bff0b0baffaeb3ec6e92974112
+  subpackages:
+  - js
+- name: github.com/hajimehoshi/oto
+  version: 3f34faeeb68e18a9a7ae39056db4d4e117b805df
+  subpackages:
+  - internal/jni
 - name: github.com/pankona/gomo-simra
-  version: 6dbbd2a7b20c3d715b105164ab1daab20509fbf2
+  version: 8b372e264a23b554877cc828f96fbae6b8f55e17
   subpackages:
   - simra
   - simra/config
@@ -48,6 +56,7 @@ imports:
   - event/size
   - event/touch
   - exp/app/debug
+  - exp/audio/al
   - exp/f32
   - exp/gl/glutil
   - exp/sprite
@@ -57,7 +66,7 @@ imports:
   - gl
   - internal/mobileinit
 - name: golang.org/x/sys
-  version: fb4cac33e3196ff7f507ab9b2d2a44b0142f5b5a
+  version: 0f826bdd13b500be0f1d4004938ad978fcc6031e
   subpackages:
   - unix
   - windows
