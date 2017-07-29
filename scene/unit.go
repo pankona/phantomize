@@ -133,6 +133,7 @@ func (u *unitBase) onEvent(c *command) {
 			// unhandled event. ignore.
 			return
 		}
+		u.game.ongoingSummon--
 
 		if u.id != d.GetID() {
 			// this spawn event is not for me.
