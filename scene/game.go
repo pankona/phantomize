@@ -33,7 +33,7 @@ type game struct {
 	resource         *resource
 	message          *message
 	charainfo        *charainfo
-	summonPipline    int
+	summonPipeline   int
 	ongoingSummon    int
 }
 
@@ -130,7 +130,7 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 	if unitID != "" {
 		// TODO: every ally spawning occurs file I/O. lol
 		// loading texture in advance is needed.
-		if f.game.summonPipline < f.game.ongoingSummon+1 {
+		if f.game.summonPipeline < f.game.ongoingSummon+1 {
 			// too much to summon. ignore
 			f.game.eventqueue <- newCommand(commandShowMessage, "Another summon is ongoing. please wait.")
 			return
@@ -261,7 +261,7 @@ func (g *game) initialize() {
 	g.pubsub.Subscribe("resource", g.resource)
 	g.pubsub.Subscribe("message", g.message)
 	g.pubsub.Subscribe("charainfo", g.charainfo)
-	g.summonPipline = 1
+	g.summonPipeline = 1
 	g.updateGameState(gameStateInitial)
 }
 
