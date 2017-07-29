@@ -30,6 +30,7 @@ type game struct {
 	selection        *selection
 	resource         *resource
 	message          *message
+	charainfo        *charainfo
 }
 
 type gameState int
@@ -238,11 +239,13 @@ func (g *game) initialize() {
 	g.message = &message{game: g}
 	g.selection = &selection{}
 	g.selection.initialize(g)
+	g.charainfo = &charainfo{game: g}
 	simra.GetInstance().AddTouchListener(g)
 	g.pubsub.Subscribe("god", g)
 	g.pubsub.Subscribe("selection", g.selection)
 	g.pubsub.Subscribe("resource", g.resource)
 	g.pubsub.Subscribe("message", g.message)
+	g.pubsub.Subscribe("charainfo", g.charainfo)
 	g.updateGameState(gameStateInitial)
 }
 
