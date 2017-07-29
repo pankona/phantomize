@@ -18,13 +18,11 @@ func (ci *charainfo) initialize() {
 	ci.icon = simra.NewSprite()
 	ci.icon.W, ci.icon.H = 200, 200
 	ci.icon.X, ci.icon.Y = 500, 120
-	simra.GetInstance().AddSprite2(ci.icon)
 
 	for i := 0; i < len(ci.sprite); i++ {
 		ci.sprite[i] = simra.NewSprite()
 		ci.sprite[i].X, ci.sprite[i].Y = 800, (float32)(165-(i*50))
 		ci.sprite[i].H, ci.sprite[i].W = 100, 300
-		simra.GetInstance().AddSprite2(ci.sprite[i])
 	}
 }
 
@@ -39,6 +37,11 @@ func (ci *charainfo) isCtrlButtonSelected(s *simra.Sprite) bool {
 }
 
 func (ci *charainfo) showUnitInfo(s *simra.Sprite, unittype string) {
+
+	simra.GetInstance().AddSprite2(ci.icon)
+	for i := 0; i < len(ci.sprite); i++ {
+		simra.GetInstance().AddSprite2(ci.sprite[i])
+	}
 
 	asset := ci.game.assetNameByCtrlButton(s)
 	tex := simra.NewImageTexture(asset, image.Rect(0, 0, 384, 384))
@@ -94,5 +97,11 @@ func (ci *charainfo) OnEvent(i interface{}) {
 		if ci.isCtrlButtonSelected(selecting) {
 			ci.showUnitInfo(selecting, ci.game.unitIDBySprite(selecting))
 		}
+	case commandUnsetSelection:
+		for i, _ := range ci.sprite {
+			simra.GetInstance().RemoveSprite(ci.icon)
+			simra.GetInstance().RemoveSprite(ci.sprite[i])
+		}
+
 	}
 }
