@@ -264,7 +264,7 @@ func (g *game) initialize() {
 	g.pubsub.Subscribe("resource", g.resource)
 	g.pubsub.Subscribe("message", g.message)
 	g.pubsub.Subscribe("charainfo", g.charainfo)
-	g.summonPipeline = 1
+	g.summonPipeline = 2
 	g.updateGameState(gameStateInitial)
 }
 
