@@ -35,6 +35,7 @@ type game struct {
 	charainfo        *charainfo
 	summonPipeline   int
 	ongoingSummon    int
+	playerID         int
 }
 
 type gameState int
@@ -125,7 +126,6 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 	}
 
 	unitID := f.game.unitIDBySprite(f.game.selection.selecting)
-	id := strconv.Itoa(len(f.game.players))
 
 	if unitID != "" {
 		// TODO: every ally spawning occurs file I/O. lol
@@ -138,6 +138,8 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 		fmt.Println("ongoing summon ++")
 		f.game.ongoingSummon++
 
+		id := strconv.Itoa(f.game.playerID)
+		f.game.playerID++
 		p := newUnit(id, unitID, f.game)
 		if p.GetCost() > f.game.resource.balance {
 			// balance is not enough. abort spawning
