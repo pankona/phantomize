@@ -18,7 +18,7 @@ type game struct {
 	nextScene        simra.Driver
 	field            simra.Sprite
 	ctrlPanel        simra.Sprite
-	ctrlButton       []simra.Sprite
+	ctrlButton       []*simra.Sprite
 	currentFrame     int64
 	players          map[string]uniter
 	uniters          map[string]uniter
@@ -96,11 +96,11 @@ func (f *fieldTouchListener) OnTouchMove(x, y float32) {
 
 func (g *game) unitIDBySprite(s *simra.Sprite) string {
 	var unitID string
-	if s == &g.ctrlButton[0] {
+	if s == g.ctrlButton[0] {
 		unitID = "player1"
-	} else if s == &g.ctrlButton[1] {
+	} else if s == g.ctrlButton[1] {
 		unitID = "player2"
-	} else if s == &g.ctrlButton[2] {
+	} else if s == g.ctrlButton[2] {
 		unitID = "player3"
 	}
 	return unitID
@@ -236,7 +236,6 @@ func (g *game) initialize() {
 	}
 	g.resource.initialize()
 	g.message = &message{game: g}
-
 	g.selection = &selection{}
 	g.selection.initialize(g)
 	simra.GetInstance().AddTouchListener(g)
