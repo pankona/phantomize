@@ -42,6 +42,6 @@ you can summon players with following way:
   * to recall, click the summoned unit.
   * then press "RECALL" button on unit icon on charactor information, that is placed on center-bottom.
 
-# Credits
+# credits
 
 sounds: [maoudamashii.jokersounds.com](http://maoudamashii.jokersounds.com/)

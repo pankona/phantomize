@@ -15,7 +15,6 @@ func (u *sampleUnit) Initialize() {
 	simra.GetInstance().AddSprite(assetName,
 		image.Rect(0, 0, 384, 384),
 		&u.sprite)
-	u.hp = 50
 }
 
 func (u *sampleUnit) OnEvent(i interface{}) {

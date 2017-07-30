@@ -194,7 +194,7 @@ func (g *game) initUnits(json string) {
 	units := make(map[string]uniter)
 	units["e1"] = newUnit("e1", "enemy1", g)
 	units["e2"] = newUnit("e2", "enemy1", g)
-	units["e3"] = newUnit("e3", "enemy1", g)
+	units["e3"] = newUnit("e3", "enemy2", g)
 
 	// TODO: unitpopTimeTable should be sorted by popTime
 	g.unitPopTimeTable = append(g.unitPopTimeTable,

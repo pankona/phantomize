@@ -365,6 +365,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 	case "enemy1":
 		return &unitBase{
 			moveSpeed: 0.5,
+			hp:        30,
 			attackinfo: &attackInfo{
 				attackRange: 50,
 				power:       15,
@@ -376,11 +377,12 @@ func getUnitByUnitType(unittype string) *unitBase {
 
 	case "enemy2":
 		return &unitBase{
-			moveSpeed: 0.5,
+			moveSpeed: 1.0,
+			hp:        45,
 			attackinfo: &attackInfo{
-				attackRange: 50,
+				attackRange: 200,
 				power:       15,
-				cooltime:    2,
+				cooltime:    3,
 			},
 			isAlly: false,
 			cost:   50,
