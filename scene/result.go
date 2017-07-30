@@ -14,7 +14,6 @@ type result struct {
 	text         simra.Sprite
 	currentStage int
 	again        simra.Sprite
-	next         simra.Sprite
 	nextScene    simra.Driver
 	bgm          simra.Audioer
 }
@@ -35,18 +34,15 @@ func (r *result) Initialize() {
 }
 
 func (r *result) initialize() {
-	initTextSprite(&r.text, "result",
+	initTextSprite(&r.text, "Thank you for playing!",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*4/6,
 		60, color.RGBA{255, 0, 0, 255})
-	initTextSprite(&r.again, "try again",
+	initTextSprite(&r.again, "try again?",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*2/6,
 		60, color.RGBA{255, 0, 0, 255})
-	initTextSprite(&r.next, "go to next stage",
-		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*1/6,
-		60, color.RGBA{255, 0, 0, 255})
+
 	//simra.GetInstance().AddTouchListener(menu)
 	r.again.AddTouchListener(&again{result: r})
-	r.next.AddTouchListener(&next{result: r})
 
 	r.bgm = simra.NewAudio()
 	resource, err := asset.Open("bgm3.mp3")
@@ -62,6 +58,7 @@ func (r *result) initialize() {
 func (r *result) Drive() {
 	// nop
 	if r.nextScene != nil {
+		r.bgm.Stop()
 		simra.GetInstance().SetScene(r.nextScene)
 	}
 }
