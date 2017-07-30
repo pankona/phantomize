@@ -5,3 +5,7 @@ kanban (powered by zenhub) here -> <a href="https://app.zenhub.com/workspace/o/p
 # phantomize
 
 under development...
+
+# Credits
+
+sounds: [maoudamashii.jokersounds.com](http://maoudamashii.jokersounds.com/)
