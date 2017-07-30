@@ -1,7 +1,6 @@
 package scene
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"strconv"
@@ -140,7 +139,6 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 			f.game.eventqueue <- newCommand(commandShowMessage, "Another summon is ongoing. please wait.")
 			return
 		}
-		fmt.Println("ongoing summon ++")
 		f.game.ongoingSummon++
 
 		id := strconv.Itoa(f.game.playerID)
@@ -386,12 +384,10 @@ func (g *game) runningRunLoop() {
 	}
 
 	if g.areAllEnemiesEliminated() {
-		fmt.Println("@@@@@ all enemies are eliminated!")
 		g.eventqueue <- newCommand(commandWin, g)
 	}
 
 	if g.areAllPlayersEliminated() {
-		fmt.Println("@@@@@ all playeres are eliminated!")
 		g.eventqueue <- newCommand(commandLose, g)
 	}
 }

@@ -1,7 +1,6 @@
 package scene
 
 import (
-	"fmt"
 	"image"
 
 	"github.com/pankona/gomo-simra/simra"
@@ -62,6 +61,5 @@ func (c *ctrlButtonTouchListener) OnTouchMove(x, y float32) {
 }
 
 func (c *ctrlButtonTouchListener) OnTouchEnd(x, y float32) {
-	fmt.Println("@@@@@@ selection update from ctrlButtonTouchListener!")
 	c.game.eventqueue <- newCommand(commandUpdateSelection, c.game.ctrlButton[c.id])
 }

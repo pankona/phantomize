@@ -178,7 +178,6 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 }
 
 func (ci *charainfo) hideCharaInfo() {
-	simra.LogDebug("@@@@@@ hideCharaInfo!!")
 	simra.GetInstance().RemoveSprite(ci.icon)
 	for i, _ := range ci.sprite {
 		simra.GetInstance().RemoveSprite(ci.sprite[i])
@@ -195,7 +194,6 @@ func (ci *charainfo) OnEvent(i interface{}) {
 
 	switch c.commandtype {
 	case commandUpdateSelection:
-		fmt.Println("@@@@@@ selection is updated")
 		switch selecting := c.data.(type) {
 		case *simra.Sprite:
 			if ci.isCtrlButtonSelected(selecting) {
@@ -210,7 +208,6 @@ func (ci *charainfo) OnEvent(i interface{}) {
 		}
 
 	case commandUnsetSelection:
-		fmt.Println("@@@@@@ selection is unset")
 		ci.hideCharaInfo()
 
 	case commandDamage:

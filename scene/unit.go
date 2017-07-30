@@ -168,8 +168,6 @@ func (u *unitBase) onEvent(c *command) {
 			break
 		}
 
-		fmt.Printf("[unit][%s] ends attacking\n", u.GetID())
-
 		// TODO: load in advance. don't do every time.
 		texName := fmt.Sprintf("%s.png", u.GetUnitType())
 		tex := simra.NewImageTexture(texName, image.Rect(0, 0, 384, 384))
@@ -270,7 +268,6 @@ func (u *unitBase) doAction(a *action) {
 		u.sprite.W = 64
 		u.sprite.H = 64
 		u.SetPosition(d.GetPosition())
-		simra.LogDebug("@@@@@@ [SPAWN] i'm %s", u.GetID())
 		u.isSpawned = true
 		u.GetSprite().AddTouchListener(&unitTouchListener{
 			sprite: u.GetSprite(),
@@ -283,7 +280,6 @@ func (u *unitBase) doAction(a *action) {
 		u.action = newAction(actionMoveToNearestTarget, nil)
 
 		if u.IsAlly() {
-			fmt.Println("ongoing summon --")
 			u.game.ongoingSummon--
 		}
 
@@ -407,7 +403,6 @@ func (u *unitTouchListener) OnTouchMove(x, y float32) {
 }
 
 func (u *unitTouchListener) OnTouchEnd(x, y float32) {
-	fmt.Println("@@@@@@ selection update from unitTouchListener!")
 	u.game.eventqueue <- newCommand(commandUpdateSelection, u)
 }
 

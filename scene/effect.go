@@ -217,8 +217,6 @@ func (e *effect) OnEvent(i interface{}) {
 			break
 		}
 
-		fmt.Printf("[effect][%s] ends attacking\n", p.GetID())
-
 		sprite, ok := e.effects[p.GetID()]
 		if !ok {
 			// maybe this is already removed effect. do nothing.
