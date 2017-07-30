@@ -15,6 +15,7 @@ type Title struct {
 	text      simra.Sprite
 	nextScene simra.Driver
 	bgm       simra.Audioer
+	beep      asset.File
 }
 
 // Initialize initializes title scene
@@ -51,6 +52,11 @@ func (title *Title) initialize() {
 		panic(err.Error())
 	}
 	title.bgm.Play(resource, true, func() {})
+
+	title.beep, err = asset.Open("start_game.mp3")
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
 // Drive is called from simra.
@@ -58,6 +64,9 @@ func (title *Title) initialize() {
 // This will be called 60 times per sec.
 func (title *Title) Drive() {
 	if title.nextScene != nil {
+		a := simra.NewAudio()
+		a.Play(title.beep, false, func() {})
+
 		title.bgm.Stop()
 		simra.GetInstance().SetScene(title.nextScene)
 	}

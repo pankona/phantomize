@@ -39,6 +39,7 @@ type game struct {
 	ongoingSummon    int
 	playerID         int
 	bgm              simra.Audioer
+	sound            *sound
 }
 
 type gameState int
@@ -261,12 +262,14 @@ func (g *game) initialize() {
 	g.selection.initialize(g)
 	g.charainfo = &charainfo{game: g}
 	g.charainfo.initialize()
+	g.sound = &sound{game: g}
 	simra.GetInstance().AddTouchListener(g)
 	g.pubsub.Subscribe("god", g)
 	g.pubsub.Subscribe("selection", g.selection)
 	g.pubsub.Subscribe("resource", g.resource)
 	g.pubsub.Subscribe("message", g.message)
 	g.pubsub.Subscribe("charainfo", g.charainfo)
+	g.pubsub.Subscribe("sound", g.sound)
 	g.summonPipeline = 2
 	g.updateGameState(gameStateInitial)
 
