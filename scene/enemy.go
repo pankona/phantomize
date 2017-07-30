@@ -1,55 +1,33 @@
 package scene
 
-type enemy struct {
-	eID     string
-	isAlive bool
-}
+import "github.com/pankona/phantomize/scene/config"
 
-type enemies []enemy
+func (g *game) initUnits(json string) {
+	// TODO: load from json file
+	units := make(map[string]uniter)
+	units["e1"] = newUnit("e1", "enemy1", g)
+	units["e2"] = newUnit("e2", "enemy1", g)
+	units["e3"] = newUnit("e3", "enemy2", g)
 
-func (e enemy) action() {
-	// TODO: implement
-}
+	// TODO: unitpopTimeTable should be sorted by popTime
+	g.unitPopTimeTable = append(g.unitPopTimeTable,
+		&unitPopTime{
+			unitID:          "e1",
+			popTime:         3 * fps,
+			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 5},
+		})
+	g.unitPopTimeTable = append(g.unitPopTimeTable,
+		&unitPopTime{
+			unitID:          "e2",
+			popTime:         4 * fps,
+			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 4},
+		})
+	g.unitPopTimeTable = append(g.unitPopTimeTable,
+		&unitPopTime{
+			unitID:          "e3",
+			popTime:         5 * fps,
+			initialPosition: position{config.ScreenWidth - 32, config.ScreenHeight / 6 * 3},
+		})
 
-func (e enemy) dead() {
-	// TODO: implement
-	e.isAlive = false
-}
-
-type enemyconfig struct {
-	enemyType string
-	ftp       int64 // frame to pop
-	pos       position
-}
-
-type enemyconfigs []enemyconfig
-
-func createGoblin() *enemy {
-	return nil
-}
-
-func jsonToEnemyConfig(json string) enemyconfigs {
-	return nil
-}
-
-func (e enemyconfigs) initEnemies() enemies {
-
-	// TODO: json unmarshall and generate enemyconfigs []enemyconfig
-	enemies := make(enemies, 0)
-	for _, v := range e {
-		switch v.enemyType {
-		case "goblin":
-			enemies = append(enemies, *createGoblin())
-		}
-	}
-	return enemies
-}
-
-func (e enemies) getEnemiesToPop(currentFrame int64) enemies {
-	// TODO: implement
-	return nil
-}
-
-func (e enemies) spawn() {
-	// TODO: implement
+	g.uniters = units
 }
