@@ -21,7 +21,7 @@ enemy_atk.mp3
 //enemy_dead.mp3
 //enemy_spawn.mp3
 //player_dead.mp3
-recall.mp3
+//recall.mp3
 //select.mp3
 //start_game.mp3
 //summoning.mp3

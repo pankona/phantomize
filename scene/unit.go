@@ -443,7 +443,8 @@ func newUnit(id, unittype string, game *game) uniter {
 type commandtype int
 
 const (
-	commandSpawn commandtype = iota
+	commandGameStarted commandtype = iota
+	commandSpawn
 	commandSpawned
 	commandAttack
 	commandAttackEnd

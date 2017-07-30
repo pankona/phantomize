@@ -40,6 +40,7 @@ type game struct {
 	playerID         int
 	bgm              simra.Audioer
 	sound            *sound
+	instruction      *instruction
 }
 
 type gameState int
@@ -263,6 +264,8 @@ func (g *game) initialize() {
 	g.charainfo = &charainfo{game: g}
 	g.charainfo.initialize()
 	g.sound = &sound{game: g}
+	g.instruction = &instruction{game: g}
+	g.instruction.initialize()
 	simra.GetInstance().AddTouchListener(g)
 	g.pubsub.Subscribe("god", g)
 	g.pubsub.Subscribe("selection", g.selection)
@@ -270,6 +273,7 @@ func (g *game) initialize() {
 	g.pubsub.Subscribe("message", g.message)
 	g.pubsub.Subscribe("charainfo", g.charainfo)
 	g.pubsub.Subscribe("sound", g.sound)
+	g.pubsub.Subscribe("instruction", g.instruction)
 	g.summonPipeline = 2
 	g.updateGameState(gameStateInitial)
 
@@ -279,6 +283,8 @@ func (g *game) initialize() {
 		panic(err.Error())
 	}
 	g.bgm.Play(resource, true, func() {})
+
+	g.eventqueue <- newCommand(commandGameStarted, nil)
 }
 
 func (g *game) eventFetch() []*command {
@@ -315,7 +321,6 @@ func (c *gameoverTouchListener) OnTouchMove(x, y float32) {
 
 // OnTouchEnd is called when game scene is Touched and it is released.
 func (c *gameoverTouchListener) OnTouchEnd(x, y float32) {
-	// nop
 	c.game.nextScene = &result{}
 }
 
@@ -421,7 +426,6 @@ func (g *game) runningRunLoop() {
 }
 
 func (g *game) gameoverRunLoop() {
-	// event fetch and publish to all subscribers
 	commands := g.eventFetch()
 	for _, v := range commands {
 		g.pubsub.Publish(v)
