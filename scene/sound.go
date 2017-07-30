@@ -33,7 +33,7 @@ func (s *sound) play(assetName string) {
 	if err != nil {
 		panic(err.Error())
 	}
-	a.Play(resource, false, func() {})
+	a.Play(resource, false, func(err error) {})
 }
 
 func (s *sound) OnEvent(i interface{}) {

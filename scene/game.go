@@ -282,7 +282,7 @@ func (g *game) initialize() {
 	if err != nil {
 		panic(err.Error())
 	}
-	g.bgm.Play(resource, true, func() {})
+	g.bgm.Play(resource, true, func(err error) {})
 
 	g.eventqueue <- newCommand(commandGameStarted, nil)
 }

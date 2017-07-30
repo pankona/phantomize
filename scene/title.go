@@ -51,7 +51,7 @@ func (title *Title) initialize() {
 	if err != nil {
 		panic(err.Error())
 	}
-	title.bgm.Play(resource, true, func() {})
+	title.bgm.Play(resource, true, func(err error) {})
 
 	title.beep, err = asset.Open("start_game.mp3")
 	if err != nil {
@@ -65,7 +65,7 @@ func (title *Title) initialize() {
 func (title *Title) Drive() {
 	if title.nextScene != nil {
 		a := simra.NewAudio()
-		a.Play(title.beep, false, func() {})
+		a.Play(title.beep, false, func(err error) {})
 
 		title.bgm.Stop()
 		simra.GetInstance().SetScene(title.nextScene)

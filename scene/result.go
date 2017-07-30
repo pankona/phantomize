@@ -49,7 +49,7 @@ func (r *result) initialize() {
 	if err != nil {
 		panic(err.Error())
 	}
-	r.bgm.Play(resource, true, func() {})
+	r.bgm.Play(resource, true, func(err error) {})
 }
 
 // Drive is called from simra.
