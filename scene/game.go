@@ -165,6 +165,7 @@ func (g *game) initPlayer() {
 
 type unitPopTime struct {
 	unitID          string
+	unittype        string
 	popTime         int64
 	initialPosition position
 }
