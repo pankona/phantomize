@@ -3,6 +3,8 @@ package scene
 import (
 	"image/color"
 
+	"golang.org/x/mobile/asset"
+
 	"github.com/pankona/gomo-simra/simra"
 	"github.com/pankona/phantomize/scene/config"
 )
@@ -14,61 +16,68 @@ type result struct {
 	again        simra.Sprite
 	next         simra.Sprite
 	nextScene    simra.Driver
+	bgm          simra.Audioer
 }
 
 // Initialize initializes result scene
 // This is called from simra.
 // simra.GetInstance().SetDesiredScreenSize should be called to determine
 // screen size of this scene.
-func (result *result) Initialize() {
+func (r *result) Initialize() {
 	simra.LogDebug("[IN]")
 
 	simra.GetInstance().SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
 
 	// initialize sprites
-	result.initialize()
+	r.initialize()
 
 	simra.LogDebug("[OUT]")
 }
 
-func (result *result) initialize() {
-	initTextSprite(&result.text, "result",
+func (r *result) initialize() {
+	initTextSprite(&r.text, "result",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*4/6,
 		60, color.RGBA{255, 0, 0, 255})
-	initTextSprite(&result.again, "try again",
+	initTextSprite(&r.again, "try again",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*2/6,
 		60, color.RGBA{255, 0, 0, 255})
-	initTextSprite(&result.next, "go to next stage",
+	initTextSprite(&r.next, "go to next stage",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*1/6,
 		60, color.RGBA{255, 0, 0, 255})
 	//simra.GetInstance().AddTouchListener(menu)
-	result.again.AddTouchListener(&again{result: result})
-	result.next.AddTouchListener(&next{result: result})
+	r.again.AddTouchListener(&again{result: r})
+	r.next.AddTouchListener(&next{result: r})
 
+	r.bgm = simra.NewAudio()
+	resource, err := asset.Open("bgm3.mp3")
+	if err != nil {
+		panic(err.Error())
+	}
+	r.bgm.Play(resource, true, func() {})
 }
 
 // Drive is called from simra.
 // This is used to update sprites position.
 // This will be called 60 times per sec.
-func (result *result) Drive() {
+func (r *result) Drive() {
 	// nop
-	if result.nextScene != nil {
-		simra.GetInstance().SetScene(result.nextScene)
+	if r.nextScene != nil {
+		simra.GetInstance().SetScene(r.nextScene)
 	}
 }
 
 // OnTouchBegin is called when result scene is Touched.
-func (result *result) OnTouchBegin(x, y float32) {
+func (r *result) OnTouchBegin(x, y float32) {
 	// nop
 }
 
 // OnTouchMove is called when result scene is Touched and moved.
-func (result *result) OnTouchMove(x, y float32) {
+func (r *result) OnTouchMove(x, y float32) {
 	// nop
 }
 
 // OnTouchEnd is called when result scene is Touched and it is released.
-func (result *result) OnTouchEnd(x, y float32) {
+func (r *result) OnTouchEnd(x, y float32) {
 	// nop
 }
 
@@ -76,14 +85,14 @@ type again struct {
 	*result
 }
 
-func (again *again) OnTouchEnd(x, y float32) {
-	again.result.nextScene = &game{currentStage: again.result.currentStage}
+func (a *again) OnTouchEnd(x, y float32) {
+	a.result.nextScene = &game{currentStage: a.result.currentStage}
 }
 
 type next struct {
 	*result
 }
 
-func (next *next) OnTouchEnd(x, y float32) {
-	next.result.nextScene = &briefing{currentStage: next.result.currentStage + 1}
+func (n *next) OnTouchEnd(x, y float32) {
+	n.result.nextScene = &briefing{currentStage: n.result.currentStage + 1}
 }

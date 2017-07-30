@@ -4,6 +4,8 @@ import (
 	"image"
 	"image/color"
 
+	"golang.org/x/mobile/asset"
+
 	"github.com/pankona/gomo-simra/simra"
 	"github.com/pankona/phantomize/scene/config"
 )
@@ -12,6 +14,7 @@ import (
 type Title struct {
 	text      simra.Sprite
 	nextScene simra.Driver
+	bgm       simra.Audioer
 }
 
 // Initialize initializes title scene
@@ -41,6 +44,13 @@ func (title *Title) initialize() {
 		&title.text)
 
 	simra.GetInstance().AddTouchListener(title)
+
+	title.bgm = simra.NewAudio()
+	resource, err := asset.Open("bgm1.mp3")
+	if err != nil {
+		panic(err.Error())
+	}
+	title.bgm.Play(resource, true, func() {})
 }
 
 // Drive is called from simra.
@@ -48,6 +58,7 @@ func (title *Title) initialize() {
 // This will be called 60 times per sec.
 func (title *Title) Drive() {
 	if title.nextScene != nil {
+		title.bgm.Stop()
 		simra.GetInstance().SetScene(title.nextScene)
 	}
 }

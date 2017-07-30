@@ -6,6 +6,8 @@ import (
 	"image/color"
 	"strconv"
 
+	"golang.org/x/mobile/asset"
+
 	"github.com/pankona/gomo-simra/simra"
 	"github.com/pankona/phantomize/scene/config"
 )
@@ -36,6 +38,7 @@ type game struct {
 	summonPipeline   int
 	ongoingSummon    int
 	playerID         int
+	bgm              simra.Audioer
 }
 
 type gameState int
@@ -266,6 +269,13 @@ func (g *game) initialize() {
 	g.pubsub.Subscribe("charainfo", g.charainfo)
 	g.summonPipeline = 2
 	g.updateGameState(gameStateInitial)
+
+	g.bgm = simra.NewAudio()
+	resource, err := asset.Open("bgm2.mp3")
+	if err != nil {
+		panic(err.Error())
+	}
+	g.bgm.Play(resource, true, func() {})
 }
 
 func (g *game) eventFetch() []*command {
@@ -440,6 +450,7 @@ func (g *game) Drive() {
 	}()
 
 	if g.nextScene != nil {
+		g.bgm.Stop()
 		simra.GetInstance().SetScene(g.nextScene)
 	}
 	g.currentRunLoop()
