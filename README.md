@@ -18,7 +18,7 @@ a game like free place tower diffence written in Go
 
 * build phantomize itself
 
-`$ go build`
+`$ go build -tags=release`
 
 * executable `phantomize` will be out.
 
