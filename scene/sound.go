@@ -10,23 +10,6 @@ type sound struct {
 	game *game
 }
 
-/*
-atk_fire.mp3
-atk_hammer.mp3
-atk_sword.mp3
-//bgm1.mp3
-//bgm2.mp3
-//bgm3.mp3
-enemy_atk.mp3
-//enemy_dead.mp3
-//enemy_spawn.mp3
-//player_dead.mp3
-//recall.mp3
-//select.mp3
-//start_game.mp3
-//summoning.mp3
-*/
-
 func (s *sound) play(assetName string) {
 	a := simra.NewAudio()
 	resource, err := asset.Open(assetName)
