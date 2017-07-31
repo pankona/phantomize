@@ -57,7 +57,7 @@ func (s *sound) OnEvent(i interface{}) {
 	case commandUpdateSelection:
 		s.play("select.mp3")
 
-	case commandAttack:
+	case commandAttacking:
 		d := c.data.(uniter)
 		switch d.GetUnitType() {
 		case "player1":
