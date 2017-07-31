@@ -136,8 +136,27 @@ func (e *effect) OnEvent(i interface{}) {
 		animationSet := e.animations["smoke.png"]
 		sprite.AddAnimationSet("smoke.png", animationSet)
 		simra.GetInstance().AddSprite2(sprite)
-		sprite.StartAnimation("smoke.png", true, func() {})
+		doneChan := make(chan struct{})
+		sprite.StartAnimation("smoke.png", true, func() {
+			doneChan <- struct{}{}
+		})
+
 		effectID := fmt.Sprintf("%s_spawn", p.GetID())
+		go func() {
+			select {
+			case <-doneChan:
+			case <-time.After(10 * time.Second):
+				simra.LogError("animation has not been stopped! effectID = %s_spawn\n", p.GetID())
+				func() {
+					e.mu.Lock()
+					defer e.mu.Unlock()
+					sprite = e.effects[effectID]
+					delete(e.effects, effectID)
+				}()
+				sprite.StopAnimation()
+				simra.GetInstance().RemoveSprite(sprite)
+			}
+		}()
 
 		func() {
 			e.mu.Lock()
