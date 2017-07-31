@@ -139,16 +139,18 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 			f.game.eventqueue <- newCommand(commandShowMessage, "Another summon is ongoing. please wait.")
 			return
 		}
-		f.game.ongoingSummon++
-
-		id := strconv.Itoa(f.game.playerID)
-		f.game.playerID++
-		p := newUnit(id, unitID, f.game)
-		if p.GetCost() > f.game.resource.balance {
+		u := getUnitByUnitType(unitID)
+		if u.GetCost() > f.game.resource.balance {
 			// balance is not enough. abort spawning
 			f.game.eventqueue <- newCommand(commandShowMessage, "Need more money!")
 			return
 		}
+
+		id := strconv.Itoa(f.game.playerID)
+		p := newUnit(id, unitID, f.game)
+		f.game.ongoingSummon++
+		f.game.playerID++
+
 		p.SetPosition(x, y)
 		f.game.players[id] = p
 		f.game.pubsub.Subscribe(p.GetID(), p)

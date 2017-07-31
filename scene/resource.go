@@ -48,7 +48,7 @@ func (r *resource) OnEvent(i interface{}) {
 		panic("unexpected command received. fatal.")
 	}
 	switch c.commandtype {
-	case commandSpawned:
+	case commandSpawn:
 		u, ok := c.data.(uniter)
 		if !ok || !u.IsAlly() {
 			// ignore
