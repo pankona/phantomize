@@ -16,6 +16,7 @@ type result struct {
 	again        simra.Sprite
 	nextScene    simra.Driver
 	bgm          simra.Audioer
+	beep         asset.File
 }
 
 // Initialize initializes result scene
@@ -50,6 +51,11 @@ func (r *result) initialize() {
 		panic(err.Error())
 	}
 	r.bgm.Play(resource, true, func(err error) {})
+
+	r.beep, err = asset.Open("start_game.mp3")
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
 // Drive is called from simra.
@@ -58,6 +64,9 @@ func (r *result) initialize() {
 func (r *result) Drive() {
 	// nop
 	if r.nextScene != nil {
+		a := simra.NewAudio()
+		a.Play(r.beep, false, func(err error) {})
+
 		r.bgm.Stop()
 		simra.GetInstance().SetScene(r.nextScene)
 	}
