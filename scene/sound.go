@@ -17,7 +17,9 @@ func (s *sound) play(assetName string) {
 		panic(err.Error())
 	}
 	err = a.Play(resource, false, func(err error) {
-		resource.Close()
+		if err != nil {
+			simra.LogError(err.Error())
+		}
 	})
 	if err != nil {
 		panic(err.Error())
