@@ -44,12 +44,21 @@ func (title *Title) initialize() {
 		image.Rect(0, 0, int(title.text.W), int(title.text.H)),
 		&title.text)
 
+	bg := simra.NewSprite()
+	bg.W = config.ScreenWidth
+	bg.H = config.ScreenHeight
+	bg.X = config.ScreenWidth / 2
+	bg.Y = config.ScreenHeight / 2
+	simra.GetInstance().AddSprite("title.png",
+		image.Rect(0, 0, 1280, 720),
+		bg)
+
 	text2 := simra.NewSprite()
 	text2.W, text2.H = config.ScreenWidth, 80
-	text2.X, text2.Y = config.ScreenWidth/2, config.ScreenHeight/6*2
+	text2.X, text2.Y = config.ScreenWidth/2, config.ScreenHeight/6*1
 	simra.GetInstance().AddTextSprite("tap to start!",
 		60, // fontsize
-		color.RGBA{255, 0, 0, 255},
+		color.RGBA{255, 255, 255, 255},
 		image.Rect(0, 0, int(title.text.W), int(title.text.H)),
 		text2)
 
