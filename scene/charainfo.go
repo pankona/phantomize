@@ -182,6 +182,7 @@ func (ci *charainfo) hideCharaInfo() {
 	for i, _ := range ci.sprite {
 		simra.GetInstance().RemoveSprite(ci.sprite[i])
 	}
+	ci.recall[0].RemoveAllTouchListener()
 	simra.GetInstance().RemoveSprite(ci.recall[0])
 	simra.GetInstance().RemoveSprite(ci.recall[1])
 }
