@@ -16,9 +16,12 @@ func (s *sound) play(assetName string) {
 	if err != nil {
 		panic(err.Error())
 	}
-	a.Play(resource, false, func(err error) {
+	err = a.Play(resource, false, func(err error) {
 		resource.Close()
 	})
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
 func (s *sound) OnEvent(i interface{}) {
