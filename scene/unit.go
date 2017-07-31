@@ -327,7 +327,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 			},
 			delayTimeToSummon: 3 * fps,
 			isAlly:            true,
-			cost:              30,
+			cost:              20,
 		}
 
 	case "player2":
@@ -341,7 +341,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 			},
 			delayTimeToSummon: 4 * fps,
 			isAlly:            true,
-			cost:              50,
+			cost:              30,
 		}
 
 	case "player3":
@@ -355,7 +355,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 			},
 			delayTimeToSummon: 5 * fps,
 			isAlly:            true,
-			cost:              60,
+			cost:              40,
 		}
 
 	case "enemy1":
@@ -364,8 +364,8 @@ func getUnitByUnitType(unittype string) *unitBase {
 			hp:        30,
 			attackinfo: &attackInfo{
 				attackRange: 50,
-				power:       15,
-				cooltime:    2,
+				power:       10,
+				cooltime:    3,
 			},
 			isAlly: false,
 			cost:   20,
@@ -378,7 +378,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 			attackinfo: &attackInfo{
 				attackRange: 200,
 				power:       15,
-				cooltime:    3,
+				cooltime:    4,
 			},
 			isAlly: false,
 			cost:   40,

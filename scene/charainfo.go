@@ -218,6 +218,8 @@ func (ci *charainfo) OnEvent(i interface{}) {
 			ci.showUnitStatus(d.unit.GetSprite(), d.unit)
 		}
 
+	case commandRecalled:
+		fallthrough
 	case commandDead:
 		d := c.data.(uniter)
 		if ci.displaying == d.GetSprite() {
