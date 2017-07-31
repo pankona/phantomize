@@ -295,7 +295,7 @@ func (u *unitBase) doAction(a *action) {
 			(int64)(u.attackinfo.cooltime*fps) {
 			simra.LogDebug("[ATTACK] i'm %s", u.GetID())
 			u.attackinfo.lastAttackTime = u.game.currentFrame
-
+			u.game.eventqueue <- newCommand(commandAttacking, (uniter)(u))
 			u.game.eventqueue <- newCommand(commandDamage, &damage{target, u.attackinfo.power})
 		}
 
@@ -444,6 +444,7 @@ const (
 	commandSpawn
 	commandSpawned
 	commandAttack
+	commandAttacking
 	commandAttackEnd
 	commandDamage
 	commandDead

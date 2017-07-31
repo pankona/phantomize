@@ -192,7 +192,7 @@ func (e *effect) OnEvent(i interface{}) {
 			simra.GetInstance().RemoveSprite(sprite)
 		})
 
-	case commandAttack:
+	case commandAttacking:
 		p, ok := c.data.(uniter)
 		if !ok {
 			// ignore
@@ -202,8 +202,7 @@ func (e *effect) OnEvent(i interface{}) {
 		tx, ty := target.GetPosition()
 
 		sprite := simra.NewSprite()
-		sprite.W = 64
-		sprite.H = 64
+		sprite.W, sprite.H = 64, 64
 		sprite.X, sprite.Y = tx, ty
 		var atkeffect string
 		switch p.GetUnitType() {
@@ -225,37 +224,8 @@ func (e *effect) OnEvent(i interface{}) {
 		animationSet := e.animations[atkeffect]
 		sprite.AddAnimationSet(atkeffect, animationSet)
 		simra.GetInstance().AddSprite2(sprite)
-		sprite.StartAnimation(atkeffect, true, func() {})
-		func() {
-			e.mu.Lock()
-			defer e.mu.Unlock()
-			e.effects[p.GetID()] = sprite
-		}()
-
-	case commandAttackEnd:
-		p, ok := c.data.(uniter)
-		if !ok {
-			// ignore
-			break
-		}
-
-		var sprite *simra.Sprite
-		func() {
-			e.mu.Lock()
-			defer e.mu.Unlock()
-			sprite, ok = e.effects[p.GetID()]
-		}()
-		if !ok {
-			// maybe this is already removed effect. do nothing.
-			break
-		}
-
-		sprite.StopAnimation()
-		func() {
-			e.mu.Lock()
-			defer e.mu.Unlock()
-			delete(e.effects, p.GetID())
-		}()
-		simra.GetInstance().RemoveSprite(sprite)
+		sprite.StartAnimation(atkeffect, false, func() {
+			simra.GetInstance().RemoveSprite(sprite)
+		})
 	}
 }
