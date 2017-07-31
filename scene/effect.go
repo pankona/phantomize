@@ -3,6 +3,7 @@ package scene
 import (
 	"fmt"
 	"image"
+	"sync"
 	"time"
 
 	"github.com/pankona/gomo-simra/simra"
@@ -12,6 +13,7 @@ type effect struct {
 	game       *game
 	animations map[string]*simra.AnimationSet
 	effects    map[string]*simra.Sprite
+	mu         sync.Mutex
 }
 
 func (e *effect) initialize() {
@@ -136,7 +138,12 @@ func (e *effect) OnEvent(i interface{}) {
 		simra.GetInstance().AddSprite2(sprite)
 		sprite.StartAnimation("smoke.png", true, func() {})
 		effectID := fmt.Sprintf("%s_spawn", p.GetID())
-		e.effects[effectID] = sprite
+
+		func() {
+			e.mu.Lock()
+			defer e.mu.Unlock()
+			e.effects[effectID] = sprite
+		}()
 
 	case commandSpawned:
 		fallthrough
@@ -147,9 +154,14 @@ func (e *effect) OnEvent(i interface{}) {
 			break
 		}
 		effectID := fmt.Sprintf("%s_spawn", p.GetID())
-		sprite := e.effects[effectID]
+		var sprite *simra.Sprite
+		func() {
+			e.mu.Lock()
+			defer e.mu.Unlock()
+			sprite = e.effects[effectID]
+			delete(e.effects, effectID)
+		}()
 		sprite.StopAnimation()
-		delete(e.effects, effectID)
 		simra.GetInstance().RemoveSprite(sprite)
 
 	case commandDead:
@@ -168,8 +180,14 @@ func (e *effect) OnEvent(i interface{}) {
 		sprite.AddAnimationSet("smoke.png", animationSet)
 		simra.GetInstance().AddSprite2(sprite)
 		effectID := fmt.Sprintf("%s_dead", p.GetID())
-		e.effects[effectID] = sprite
+		func() {
+			e.mu.Lock()
+			defer e.mu.Unlock()
+			e.effects[effectID] = sprite
+		}()
 		sprite.StartAnimation("smoke.png", false, func() {
+			e.mu.Lock()
+			defer e.mu.Unlock()
 			delete(e.effects, effectID)
 			simra.GetInstance().RemoveSprite(sprite)
 		})
@@ -208,7 +226,11 @@ func (e *effect) OnEvent(i interface{}) {
 		sprite.AddAnimationSet(atkeffect, animationSet)
 		simra.GetInstance().AddSprite2(sprite)
 		sprite.StartAnimation(atkeffect, true, func() {})
-		e.effects[p.GetID()] = sprite
+		func() {
+			e.mu.Lock()
+			defer e.mu.Unlock()
+			e.effects[p.GetID()] = sprite
+		}()
 
 	case commandAttackEnd:
 		p, ok := c.data.(uniter)
@@ -217,14 +239,23 @@ func (e *effect) OnEvent(i interface{}) {
 			break
 		}
 
-		sprite, ok := e.effects[p.GetID()]
+		var sprite *simra.Sprite
+		func() {
+			e.mu.Lock()
+			defer e.mu.Unlock()
+			sprite, ok = e.effects[p.GetID()]
+		}()
 		if !ok {
 			// maybe this is already removed effect. do nothing.
 			break
 		}
 
 		sprite.StopAnimation()
-		delete(e.effects, p.GetID())
+		func() {
+			e.mu.Lock()
+			defer e.mu.Unlock()
+			delete(e.effects, p.GetID())
+		}()
 		simra.GetInstance().RemoveSprite(sprite)
 	}
 }
