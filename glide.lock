@@ -1,5 +1,5 @@
 hash: 40d333b3d721af6ea8d0a6c2c9a368e013293e6eb6c7e24fd86ee663ed946ac6
-updated: 2017-07-31T20:13:14.640779546+09:00
+updated: 2017-08-01T12:23:42.632918412+09:00
 imports:
 - name: github.com/boltdb/bolt
   version: 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
@@ -22,7 +22,7 @@ imports:
   subpackages:
   - internal/jni
 - name: github.com/pankona/gomo-simra
-  version: ca80c9a6282d93923d69b7ffc6a6549ab5cc2c3a
+  version: 908c24f2ff31c38aa6a4d341862546b7957b7c7c
   subpackages:
   - simra
   - simra/config
@@ -71,7 +71,7 @@ imports:
   - gl
   - internal/mobileinit
 - name: golang.org/x/sys
-  version: 0f826bdd13b500be0f1d4004938ad978fcc6031e
+  version: b892924b68aa53038e8a55b255ee0d8391e8eec5
   subpackages:
   - unix
   - windows
