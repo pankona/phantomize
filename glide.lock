@@ -1,5 +1,5 @@
-hash: 5e2db42d6bdb7bcb882f6b3fcce6b9a785d815d419cc2c26486cdbdc9bd00f00
-updated: 2017-08-02T14:49:41.814471476+09:00
+hash: 40d333b3d721af6ea8d0a6c2c9a368e013293e6eb6c7e24fd86ee663ed946ac6
+updated: 2017-08-02T18:18:31.975292499+09:00
 imports:
 - name: github.com/boltdb/bolt
   version: 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
@@ -18,9 +18,7 @@ imports:
   - internal/bits
   - internal/imdct
 - name: github.com/hajimehoshi/oto
-  version: 8908ca082e98da9bce2f0369a9324c8879f642de
-  repo: https://github.com/pankona/oto
-  vcs: git
+  version: 8ab1cc50f21ad05f93bf99dc8c44d6aa101c29c9
   subpackages:
   - internal/jni
 - name: github.com/pankona/gomo-simra
