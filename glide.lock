@@ -1,5 +1,5 @@
-hash: 6c4b774644bef95c9642516732563424793c8167d9aea15ab9123a156437e371
-updated: 2017-08-01T22:21:23.72183898+09:00
+hash: 5e2db42d6bdb7bcb882f6b3fcce6b9a785d815d419cc2c26486cdbdc9bd00f00
+updated: 2017-08-02T14:49:41.814471476+09:00
 imports:
 - name: github.com/boltdb/bolt
   version: 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
@@ -73,7 +73,7 @@ imports:
   - gl
   - internal/mobileinit
 - name: golang.org/x/sys
-  version: b892924b68aa53038e8a55b255ee0d8391e8eec5
+  version: 396c9fc8fb0ce27fc7a1ff136dc5af797bba258a
   subpackages:
   - unix
   - windows

@@ -10,3 +10,5 @@ import:
 - package: github.com/hajimehoshi/oto
   repo: https://github.com/pankona/oto
   vcs: git
+  version: guard_openal_crash
+
