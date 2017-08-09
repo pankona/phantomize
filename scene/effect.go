@@ -30,8 +30,7 @@ func (e *effect) initialize() {
 		animationSet.AddTexture(simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
 	}
-	// TODO: don't relay on time. use fps based animation control
-	animationSet.SetInterval(100 * time.Millisecond)
+	animationSet.SetInterval(6)
 	e.animations[resource] = animationSet
 
 	// attack animation (1)
@@ -44,8 +43,7 @@ func (e *effect) initialize() {
 		animationSet.AddTexture(simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
 	}
-	// TODO: don't relay on time. use fps based animation control
-	animationSet.SetInterval(100 * time.Millisecond)
+	animationSet.SetInterval(6)
 	e.animations[resource] = animationSet
 
 	// attack animation (2)
@@ -58,8 +56,7 @@ func (e *effect) initialize() {
 		animationSet.AddTexture(simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
 	}
-	// TODO: don't relay on time. use fps based animation control
-	animationSet.SetInterval(100 * time.Millisecond)
+	animationSet.SetInterval(6)
 	e.animations[resource] = animationSet
 
 	// attack animation (3)
@@ -72,8 +69,7 @@ func (e *effect) initialize() {
 		animationSet.AddTexture(simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
 	}
-	// TODO: don't relay on time. use fps based animation control
-	animationSet.SetInterval(100 * time.Millisecond)
+	animationSet.SetInterval(6)
 	e.animations[resource] = animationSet
 
 	// attack animation (4)
@@ -89,8 +85,7 @@ func (e *effect) initialize() {
 		animationSet.AddTexture(simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, h, ((int)(w)*(i+1))-1, int(h))))
 	}
-	// TODO: don't relay on time. use fps based animation control
-	animationSet.SetInterval(100 * time.Millisecond)
+	animationSet.SetInterval(6)
 	e.animations[resource] = animationSet
 
 	// attack animation (5)
@@ -106,8 +101,7 @@ func (e *effect) initialize() {
 		animationSet.AddTexture(simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, h, ((int)(w)*(i+1))-1, int(h))))
 	}
-	// TODO: don't relay on time. use fps based animation control
-	animationSet.SetInterval(100 * time.Millisecond)
+	animationSet.SetInterval(6)
 	e.animations[resource] = animationSet
 
 }
