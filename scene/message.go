@@ -3,9 +3,9 @@ package scene
 import (
 	"image"
 	"image/color"
-	"time"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/fps"
 	"github.com/pankona/phantomize/scene/config"
 )
 
@@ -39,7 +39,7 @@ func (m *message) OnEvent(i interface{}) {
 
 		go func() {
 			select {
-			case <-time.After(2 * time.Second):
+			case <-fps.After(2 * framePerSec):
 				m.game.eventqueue <- newCommand(commandHideMessage, sprite)
 			}
 		}()

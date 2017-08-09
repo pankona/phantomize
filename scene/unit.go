@@ -292,7 +292,7 @@ func (u *unitBase) doAction(a *action) {
 		}
 
 		if u.game.currentFrame-u.attackinfo.lastAttackTime >=
-			(int64)(u.attackinfo.cooltime*fps) {
+			(int64)(u.attackinfo.cooltime*framePerSec) {
 			simra.LogDebug("[ATTACK] i'm %s", u.GetID())
 			u.attackinfo.lastAttackTime = u.game.currentFrame
 			u.game.eventqueue <- newCommand(commandAttacking, (uniter)(u))
@@ -325,7 +325,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 				power:       15,
 				cooltime:    2,
 			},
-			delayTimeToSummon: 3 * fps,
+			delayTimeToSummon: 3 * framePerSec,
 			isAlly:            true,
 			cost:              20,
 		}
@@ -339,7 +339,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 				power:       20,
 				cooltime:    3,
 			},
-			delayTimeToSummon: 4 * fps,
+			delayTimeToSummon: 4 * framePerSec,
 			isAlly:            true,
 			cost:              30,
 		}
@@ -353,7 +353,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 				power:       20,
 				cooltime:    3,
 			},
-			delayTimeToSummon: 5 * fps,
+			delayTimeToSummon: 5 * framePerSec,
 			isAlly:            true,
 			cost:              40,
 		}
@@ -418,7 +418,7 @@ func newUnit(id, unittype string, game *game) uniter {
 	case "player3":
 		u = &player{
 			unitBase:          getUnitByUnitType(unittype),
-			delayTimeToRecall: 3 * fps,
+			delayTimeToRecall: 3 * framePerSec,
 		}
 	case "enemy1":
 		fallthrough

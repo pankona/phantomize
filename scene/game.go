@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	fps = 60
+	framePerSec = 60
 )
 
 // game represents a scene object for game

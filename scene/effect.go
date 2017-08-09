@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"image"
 	"sync"
-	"time"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/fps"
 )
 
 type effect struct {
@@ -139,7 +139,7 @@ func (e *effect) OnEvent(i interface{}) {
 		go func() {
 			select {
 			case <-doneChan:
-			case <-time.After(10 * time.Second):
+			case <-fps.After(60 * framePerSec):
 				simra.LogError("animation has not been stopped! effectID = %s_spawn\n", p.GetID())
 				func() {
 					e.mu.Lock()
