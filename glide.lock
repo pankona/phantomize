@@ -1,5 +1,5 @@
 hash: 40d333b3d721af6ea8d0a6c2c9a368e013293e6eb6c7e24fd86ee663ed946ac6
-updated: 2017-08-09T22:15:03.814432938+09:00
+updated: 2017-08-09T22:25:54.090464079+09:00
 imports:
 - name: github.com/boltdb/bolt
   version: 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
@@ -48,7 +48,7 @@ imports:
   - math/f64
   - math/fixed
 - name: golang.org/x/mobile
-  version: aa66222491480338a23d52bcd82816947dbf78fe
+  version: 831ed5b3cb8a00233e33851f0d47e3ec4307e6a1
   repo: https://github.com/pankona/mobile
   vcs: git
   subpackages:
