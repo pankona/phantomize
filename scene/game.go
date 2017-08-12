@@ -8,6 +8,7 @@ import (
 	"golang.org/x/mobile/asset"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/fps"
 	"github.com/pankona/phantomize/scene/config"
 )
 
@@ -243,7 +244,7 @@ func (g *game) initialize() {
 	g.pubsub.Subscribe("resource", g.resource)
 	g.pubsub.Subscribe("message", g.message)
 	g.pubsub.Subscribe("charainfo", g.charainfo)
-	g.pubsub.Subscribe("sound", g.sound)
+	//g.pubsub.Subscribe("sound", g.sound)
 	g.pubsub.Subscribe("instruction", g.instruction)
 	g.summonPipeline = 2
 	g.updateGameState(gameStateInitial)
@@ -256,6 +257,16 @@ func (g *game) initialize() {
 	g.bgm.Play(resource, true, func(err error) {})
 
 	g.eventqueue <- newCommand(commandGameStarted, nil)
+
+	// debug purpose
+	go func() {
+		id := 0
+		for {
+			<-fps.After(20)
+			g.eventqueue <- newCommand(commandUpdateSelection, g.ctrlButton[id])
+			id = (id + 1) % 3
+		}
+	}()
 }
 
 func (g *game) eventFetch() []*command {
