@@ -262,7 +262,7 @@ func (g *game) initialize() {
 	go func() {
 		id := 0
 		for {
-			<-fps.After(20)
+			<-fps.After(5)
 			g.eventqueue <- newCommand(commandUpdateSelection, g.ctrlButton[id])
 			id = (id + 1) % 3
 		}
