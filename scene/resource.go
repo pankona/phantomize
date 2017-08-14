@@ -39,7 +39,6 @@ func (r *resource) updateResourceInfo() {
 		image.Rect(0, 0, 100, 80),
 	)
 	r.sprite.ReplaceTexture2(tex)
-
 }
 
 func (r *resource) OnEvent(i interface{}) {
