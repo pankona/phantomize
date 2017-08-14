@@ -11,6 +11,9 @@ build:
 mobile:
 	make build BUILD_CMD=gomobile
 
+mobile-install: mobile
+	adb install -r $(APK)
+
 clean:
 	rm -f $(OUT)
 	rm -f $(APK)
