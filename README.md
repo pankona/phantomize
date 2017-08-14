@@ -1,5 +1,5 @@
 
-kanban (powered by zenhub) here -> <a href="https://app.zenhub.com/workspace/o/pankona/phantomize/boards?repos=90622123"><img src="https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png"></a>
+<a href="https://app.zenhub.com/workspace/o/pankona/phantomize/boards?repos=90622123"><img src="https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png"></a>
 
 # phantomize
 
