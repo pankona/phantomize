@@ -16,7 +16,7 @@ type resource struct {
 
 func (r *resource) initialize() {
 	r.sprite = simra.NewSprite()
-	simra.GetInstance().AddSprite2(r.sprite)
+	simra.GetInstance().AddSprite(r.sprite)
 
 	resstr := fmt.Sprintf("$ %d", r.balance)
 	tex := simra.NewTextTexture(
@@ -25,7 +25,7 @@ func (r *resource) initialize() {
 		color.RGBA{255, 255, 255, 255},
 		image.Rect(0, 0, 100, 80),
 	)
-	r.sprite.ReplaceTexture2(tex)
+	r.sprite.ReplaceTexture(tex)
 	r.sprite.X, r.sprite.Y = 100, 100
 	r.sprite.W, r.sprite.H = 100, 80
 }
@@ -38,7 +38,7 @@ func (r *resource) updateResourceInfo() {
 		color.RGBA{255, 255, 255, 255},
 		image.Rect(0, 0, 100, 80),
 	)
-	r.sprite.ReplaceTexture2(tex)
+	r.sprite.ReplaceTexture(tex)
 }
 
 func (r *resource) OnEvent(i interface{}) {

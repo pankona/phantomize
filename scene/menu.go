@@ -33,11 +33,10 @@ func (menu *menu) Initialize() {
 
 func initTextSprite(sprite *simra.Sprite, text string, w, h, x, y float32, fontsize float64, color color.RGBA) {
 	sprite.W, sprite.H, sprite.X, sprite.Y = w, h, x, y
-	simra.GetInstance().AddTextSprite(text,
-		fontsize, // fontsize
-		color,
-		image.Rect(0, 0, int(sprite.W), int(sprite.H)),
-		sprite)
+	simra.GetInstance().AddSprite(sprite)
+	tex := simra.NewTextTexture(text, fontsize, color, image.Rect(0, 0, int(sprite.W), int(sprite.H)))
+	sprite.ReplaceTexture(tex)
+
 }
 
 func (menu *menu) initialize() {

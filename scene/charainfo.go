@@ -72,14 +72,14 @@ func (ci *charainfo) isCtrlButtonSelected(s *simra.Sprite) bool {
 }
 
 func (ci *charainfo) showUnitInfo(s *simra.Sprite, unittype string) {
-	simra.GetInstance().AddSprite2(ci.icon)
+	simra.GetInstance().AddSprite(ci.icon)
 	for i := 0; i < len(ci.sprite); i++ {
-		simra.GetInstance().AddSprite2(ci.sprite[i])
+		simra.GetInstance().AddSprite(ci.sprite[i])
 	}
 
 	asset := ci.game.assetNameByCtrlButton(s)
 	tex := simra.NewImageTexture(asset, image.Rect(0, 0, 384, 384))
-	ci.icon.ReplaceTexture2(tex)
+	ci.icon.ReplaceTexture(tex)
 
 	u := getUnitByUnitType(unittype)
 	tex = simra.NewTextTexture(
@@ -88,7 +88,7 @@ func (ci *charainfo) showUnitInfo(s *simra.Sprite, unittype string) {
 		color.RGBA{255, 255, 255, 255},
 		image.Rect(0, 0, 300, 80),
 	)
-	ci.sprite[0].ReplaceTexture2(tex)
+	ci.sprite[0].ReplaceTexture(tex)
 
 	tex = simra.NewTextTexture(
 		fmt.Sprintf("HP: %d", u.hp),
@@ -96,7 +96,7 @@ func (ci *charainfo) showUnitInfo(s *simra.Sprite, unittype string) {
 		color.RGBA{255, 255, 255, 255},
 		image.Rect(0, 0, 300, 80),
 	)
-	ci.sprite[1].ReplaceTexture2(tex)
+	ci.sprite[1].ReplaceTexture(tex)
 
 	tex = simra.NewTextTexture(
 		fmt.Sprintf("COST: %d", u.cost),
@@ -104,7 +104,7 @@ func (ci *charainfo) showUnitInfo(s *simra.Sprite, unittype string) {
 		color.RGBA{255, 255, 255, 255},
 		image.Rect(0, 0, 300, 80),
 	)
-	ci.sprite[2].ReplaceTexture2(tex)
+	ci.sprite[2].ReplaceTexture(tex)
 
 	tex = simra.NewTextTexture(
 		fmt.Sprintf("SPEED: %0.1f", u.moveSpeed),
@@ -112,18 +112,18 @@ func (ci *charainfo) showUnitInfo(s *simra.Sprite, unittype string) {
 		color.RGBA{255, 255, 255, 255},
 		image.Rect(0, 0, 300, 80),
 	)
-	ci.sprite[3].ReplaceTexture2(tex)
+	ci.sprite[3].ReplaceTexture(tex)
 }
 
 func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
-	simra.GetInstance().AddSprite2(ci.icon)
+	simra.GetInstance().AddSprite(ci.icon)
 	for i := 0; i < len(ci.sprite); i++ {
-		simra.GetInstance().AddSprite2(ci.sprite[i])
+		simra.GetInstance().AddSprite(ci.sprite[i])
 	}
 
 	asset := ci.game.assetNameByUnitType(u.GetUnitType())
 	tex := simra.NewImageTexture(asset, image.Rect(0, 0, 384, 384))
-	ci.icon.ReplaceTexture2(tex)
+	ci.icon.ReplaceTexture(tex)
 
 	tex = simra.NewTextTexture(
 		fmt.Sprintf("%s", u.GetUnitType()),
@@ -131,7 +131,7 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 		color.RGBA{255, 255, 255, 255},
 		image.Rect(0, 0, 300, 80),
 	)
-	ci.sprite[0].ReplaceTexture2(tex)
+	ci.sprite[0].ReplaceTexture(tex)
 
 	tex = simra.NewTextTexture(
 		fmt.Sprintf("HP: %d", u.GetHP()),
@@ -139,7 +139,7 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 		color.RGBA{255, 255, 255, 255},
 		image.Rect(0, 0, 300, 80),
 	)
-	ci.sprite[1].ReplaceTexture2(tex)
+	ci.sprite[1].ReplaceTexture(tex)
 
 	tex = simra.NewTextTexture(
 		fmt.Sprintf("COST: %d", u.GetCost()),
@@ -147,7 +147,7 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 		color.RGBA{255, 255, 255, 255},
 		image.Rect(0, 0, 300, 80),
 	)
-	ci.sprite[2].ReplaceTexture2(tex)
+	ci.sprite[2].ReplaceTexture(tex)
 
 	tex = simra.NewTextTexture(
 		fmt.Sprintf("SPEED: %0.1f", u.GetMoveSpeed()),
@@ -155,25 +155,25 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 		color.RGBA{255, 255, 255, 255},
 		image.Rect(0, 0, 300, 80),
 	)
-	ci.sprite[3].ReplaceTexture2(tex)
+	ci.sprite[3].ReplaceTexture(tex)
 
 	// recall label only for players
 	if u.IsAlly() {
-		simra.GetInstance().AddSprite2(ci.recall[0])
-		ci.recall[0].ReplaceTexture2(ci.recallBGTex)
+		simra.GetInstance().AddSprite(ci.recall[0])
+		ci.recall[0].ReplaceTexture(ci.recallBGTex)
 		ci.recall[0].AddTouchListener(&recallTouchListener{
 			unit: u,
 			game: ci.game,
 		})
 
-		simra.GetInstance().AddSprite2(ci.recall[1])
+		simra.GetInstance().AddSprite(ci.recall[1])
 		tex = simra.NewTextTexture(
 			"RECALL",
 			30, // fontsize
 			color.RGBA{255, 0, 0, 255},
 			image.Rect(0, 0, 300, 80),
 		)
-		ci.recall[1].ReplaceTexture2(tex)
+		ci.recall[1].ReplaceTexture(tex)
 	}
 }
 

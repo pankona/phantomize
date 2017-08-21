@@ -45,8 +45,8 @@ func (s *selection) OnEvent(i interface{}) {
 		simra.LogDebug("selection updated: %v", s.selecting)
 
 		s.cursor.X, s.cursor.Y = s.selecting.X, s.selecting.Y
-		simra.GetInstance().AddSprite2(s.cursor)
-		s.cursor.ReplaceTexture2(s.cursorTex)
+		simra.GetInstance().AddSprite(s.cursor)
+		s.cursor.ReplaceTexture(s.cursorTex)
 
 	case commandUnsetSelection:
 		s.selecting = nil

@@ -28,9 +28,11 @@ func (g *game) initCtrlPanel() {
 	g.ctrlPanel.H = ctrlPanelHeight
 	g.ctrlPanel.X = config.ScreenWidth / 2
 	g.ctrlPanel.Y = g.ctrlPanel.H / 2
-	simra.GetInstance().AddSprite("panel.png",
-		image.Rect(0, 0, 1280, 240),
-		&g.ctrlPanel)
+	simra.GetInstance().AddSprite(&g.ctrlPanel)
+
+	var tex *simra.Texture
+	tex = simra.NewImageTexture("panel.png", image.Rect(0, 0, 1280, 240))
+	g.ctrlPanel.ReplaceTexture(tex)
 
 	g.ctrlButton = make([]*simra.Sprite, 3)
 	for i := range g.ctrlButton {
@@ -39,9 +41,10 @@ func (g *game) initCtrlPanel() {
 		g.ctrlButton[i].H = 64
 		g.ctrlButton[i].X = (float32)(1000 + (64+50)*(i%3))
 		g.ctrlButton[i].Y = (float32)(44 + (64+5)*2 - (64+5)*(i/3))
-		simra.GetInstance().AddSprite(g.assetNameByCtrlButton(g.ctrlButton[i]),
-			image.Rect(0, 0, 384, 384),
-			g.ctrlButton[i])
+		simra.GetInstance().AddSprite(g.ctrlButton[i])
+		tex = simra.NewImageTexture(g.assetNameByCtrlButton(g.ctrlButton[i]),
+			image.Rect(0, 0, 384, 384))
+		g.ctrlButton[i].ReplaceTexture(tex)
 
 		g.ctrlButton[i].AddTouchListener(&ctrlButtonTouchListener{id: i, game: g})
 	}

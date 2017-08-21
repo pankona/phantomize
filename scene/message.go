@@ -25,15 +25,11 @@ func (m *message) OnEvent(i interface{}) {
 		message := c.data.(string)
 
 		sprite := simra.NewSprite()
-		simra.GetInstance().AddSprite2(sprite)
+		simra.GetInstance().AddSprite(sprite)
 
-		tex := simra.NewTextTexture(
-			message,
-			40, // fontsize
-			color.RGBA{255, 255, 255, 255},
-			image.Rect(0, 0, config.ScreenWidth, 80),
-		)
-		sprite.ReplaceTexture2(tex)
+		tex := simra.NewTextTexture(message,
+			40, color.RGBA{255, 255, 255, 255}, image.Rect(0, 0, config.ScreenWidth, 80))
+		sprite.ReplaceTexture(tex)
 		sprite.X, sprite.Y = config.ScreenWidth/2, 300
 		sprite.W, sprite.H = config.ScreenWidth, 80
 

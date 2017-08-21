@@ -129,7 +129,7 @@ func (e *effect) OnEvent(i interface{}) {
 
 		animationSet := e.animations["smoke.png"]
 		sprite.AddAnimationSet("smoke.png", animationSet)
-		simra.GetInstance().AddSprite2(sprite)
+		simra.GetInstance().AddSprite(sprite)
 		doneChan := make(chan struct{})
 		sprite.StartAnimation("smoke.png", true, func() {
 			doneChan <- struct{}{}
@@ -191,7 +191,7 @@ func (e *effect) OnEvent(i interface{}) {
 
 		animationSet := e.animations["smoke.png"]
 		sprite.AddAnimationSet("smoke.png", animationSet)
-		simra.GetInstance().AddSprite2(sprite)
+		simra.GetInstance().AddSprite(sprite)
 		effectID := fmt.Sprintf("%s_dead", p.GetID())
 		func() {
 			e.mu.Lock()
@@ -236,7 +236,7 @@ func (e *effect) OnEvent(i interface{}) {
 
 		animationSet := e.animations[atkeffect]
 		sprite.AddAnimationSet(atkeffect, animationSet)
-		simra.GetInstance().AddSprite2(sprite)
+		simra.GetInstance().AddSprite(sprite)
 		sprite.StartAnimation(atkeffect, false, func() {
 			simra.GetInstance().RemoveSprite(sprite)
 		})

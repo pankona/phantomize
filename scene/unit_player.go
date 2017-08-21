@@ -14,9 +14,10 @@ type player struct {
 
 func (u *player) Initialize() {
 	assetName := u.game.assetNameByUnitType(u.unittype)
-	simra.GetInstance().AddSprite(assetName,
-		image.Rect(0, 0, 384, 384),
-		&u.sprite)
+	simra.GetInstance().AddSprite(&u.sprite)
+	tex := simra.NewImageTexture(assetName,
+		image.Rect(0, 0, 384, 384))
+	u.sprite.ReplaceTexture(tex)
 }
 
 func (u *player) OnEvent(i interface{}) {

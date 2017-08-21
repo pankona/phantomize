@@ -157,7 +157,7 @@ func (u *unitBase) onEvent(c *command) {
 		// TODO: load in advance. don't do every time.
 		texName := fmt.Sprintf("%s_atk.png", u.GetUnitType())
 		tex := simra.NewImageTexture(texName, image.Rect(0, 0, 384, 384))
-		u.sprite.ReplaceTexture2(tex)
+		u.sprite.ReplaceTexture(tex)
 
 		u.action = newAction(actionAttack, u.target)
 
@@ -171,7 +171,7 @@ func (u *unitBase) onEvent(c *command) {
 		// TODO: load in advance. don't do every time.
 		texName := fmt.Sprintf("%s.png", u.GetUnitType())
 		tex := simra.NewImageTexture(texName, image.Rect(0, 0, 384, 384))
-		u.sprite.ReplaceTexture2(tex)
+		u.sprite.ReplaceTexture(tex)
 
 	case commandDamage:
 		d, ok := c.data.(*damage)

@@ -42,11 +42,10 @@ func (briefing *briefing) initialize() {
 	temporary.H = 80
 	temporary.X = config.ScreenWidth / 2
 	temporary.Y = config.ScreenHeight * 2 / 5
-	simra.GetInstance().AddTextSprite("(click to go to next scene)",
-		60, // fontsize
-		color.RGBA{255, 0, 0, 255},
-		image.Rect(0, 0, int(temporary.W), int(temporary.H)),
-		temporary)
+	simra.GetInstance().AddSprite(temporary)
+	tex := simra.NewTextTexture("(click to go to next scene)",
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(temporary.W), int(temporary.H)))
+	temporary.ReplaceTexture(tex)
 
 	simra.GetInstance().AddTouchListener(briefing)
 }

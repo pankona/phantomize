@@ -33,11 +33,7 @@ func (howtoplay *howtoplay) initialize() {
 	howtoplay.text.H = 80
 	howtoplay.text.X = config.ScreenWidth / 2
 	howtoplay.text.Y = config.ScreenHeight / 2
-	simra.GetInstance().AddTextSprite("How To Play",
-		60, // fontsize
-		color.RGBA{255, 0, 0, 255},
-		image.Rect(0, 0, int(howtoplay.text.W), int(howtoplay.text.H)),
-		&howtoplay.text)
+	simra.GetInstance().AddSprite(&howtoplay.text)
 
 	simra.GetInstance().AddTouchListener(howtoplay)
 
@@ -47,11 +43,17 @@ func (howtoplay *howtoplay) initialize() {
 	temporary.H = 80
 	temporary.X = config.ScreenWidth / 2
 	temporary.Y = config.ScreenHeight * 2 / 5
-	simra.GetInstance().AddTextSprite("(click to exit this page)",
-		60, // fontsize
-		color.RGBA{255, 0, 0, 255},
-		image.Rect(0, 0, int(temporary.W), int(temporary.H)),
-		temporary)
+	simra.GetInstance().AddSprite(temporary)
+
+	var tex *simra.Texture
+	tex = simra.NewTextTexture("How To Play",
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(howtoplay.text.W), int(howtoplay.text.H)))
+	howtoplay.text.ReplaceTexture(tex)
+
+	tex = simra.NewTextTexture("(click to exit this page)",
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(temporary.W), int(temporary.H)))
+	temporary.ReplaceTexture(tex)
+
 }
 
 // Drive is called from simra.

@@ -87,9 +87,11 @@ func (g *game) initField() {
 	g.field.H = config.ScreenHeight
 	g.field.X = config.ScreenWidth / 2
 	g.field.Y = config.ScreenHeight / 2
-	simra.GetInstance().AddSprite("field1.png",
-		image.Rect(0, 0, 1280, 720),
-		&g.field)
+	simra.GetInstance().AddSprite(&g.field)
+	tex := simra.NewImageTexture("field1.png",
+		image.Rect(0, 0, 1280, 720))
+	g.field.ReplaceTexture(tex)
+
 	g.field.AddTouchListener(&fieldTouchListener{game: g})
 }
 
@@ -301,11 +303,11 @@ func (g *game) showCongratulation() {
 	sprite.H = 80
 	sprite.X = config.ScreenWidth / 2
 	sprite.Y = config.ScreenHeight / 2
-	simra.GetInstance().AddTextSprite("You won! Congratulation!",
-		60, // fontsize
-		color.RGBA{255, 0, 0, 255},
-		image.Rect(0, 0, int(sprite.W), int(sprite.H)),
-		sprite)
+	simra.GetInstance().AddSprite(sprite)
+	tex := simra.NewTextTexture("You won! Congratulation!",
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(sprite.W), int(sprite.H)))
+	sprite.ReplaceTexture(tex)
+
 	sprite.AddTouchListener(&gameoverTouchListener{game: g})
 }
 
@@ -315,11 +317,11 @@ func (g *game) showLose() {
 	sprite.H = 80
 	sprite.X = config.ScreenWidth / 2
 	sprite.Y = config.ScreenHeight / 2
-	simra.GetInstance().AddTextSprite("You lose...",
-		60, // fontsize
-		color.RGBA{255, 0, 0, 255},
-		image.Rect(0, 0, int(sprite.W), int(sprite.H)),
-		sprite)
+	simra.GetInstance().AddSprite(sprite)
+	tex := simra.NewTextTexture("You lose...",
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(sprite.W), int(sprite.H)))
+	sprite.ReplaceTexture(tex)
+
 	sprite.AddTouchListener(&gameoverTouchListener{game: g})
 }
 

@@ -16,7 +16,7 @@ type instruction struct {
 
 func (in *instruction) initialize() {
 	in.sprite = simra.NewSprite()
-	simra.GetInstance().AddSprite2(in.sprite)
+	simra.GetInstance().AddSprite(in.sprite)
 	in.texs[0] = simra.NewTextTexture(
 		"choose first unit from here ↓",
 		40, // fontsize
@@ -36,12 +36,12 @@ func (in *instruction) OnEvent(i interface{}) {
 	c := i.(*command)
 	switch c.commandtype {
 	case commandGameStarted:
-		in.sprite.ReplaceTexture2(in.texs[0])
+		in.sprite.ReplaceTexture(in.texs[0])
 		in.sprite.X, in.sprite.Y = config.ScreenWidth/2+240, 260
 		in.sprite.W, in.sprite.H = config.ScreenWidth, 80
 
 	case commandUpdateSelection:
-		in.sprite.ReplaceTexture2(in.texs[1])
+		in.sprite.ReplaceTexture(in.texs[1])
 		in.sprite.X, in.sprite.Y = config.ScreenWidth/2+275, 260
 		in.sprite.W, in.sprite.H = config.ScreenWidth, 80
 
