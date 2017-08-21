@@ -220,7 +220,7 @@ func (g *game) initEffects() {
 
 func (g *game) initialize() {
 	g.pubsub = simra.NewPubSub()
-	g.eventqueue = make(chan *command, 256)
+	g.eventqueue = make(chan *command, 2048)
 	g.initEffects()
 	g.initField()
 	g.initCtrlPanel()
@@ -269,6 +269,10 @@ func (g *game) eventFetch() []*command {
 	qlen := len(g.eventqueue)
 	if qlen == 0 {
 		return nil
+	}
+
+	if qlen > 1500 {
+		panic("too many events enqueued!")
 	}
 
 	c := make([]*command, qlen)
