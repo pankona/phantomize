@@ -1,5 +1,5 @@
 hash: 40d333b3d721af6ea8d0a6c2c9a368e013293e6eb6c7e24fd86ee663ed946ac6
-updated: 2017-08-09T22:39:18.53542991+09:00
+updated: 2017-08-21T16:26:41.812086318+09:00
 imports:
 - name: github.com/boltdb/bolt
   version: 2f1ce7a837dcb8da3ec595b1dac9d0632f0f99e8
@@ -13,16 +13,16 @@ imports:
   subpackages:
   - js
 - name: github.com/hajimehoshi/go-mp3
-  version: 38fd3fbee64d4cf50b38449550183de5bd3c1bb2
+  version: c2f85e8c3ff60d72b4ad80e86ebc96566be7bbf4
   subpackages:
   - internal/bits
   - internal/imdct
 - name: github.com/hajimehoshi/oto
-  version: 8ab1cc50f21ad05f93bf99dc8c44d6aa101c29c9
+  version: 58b076ceb5dde593df27749cd918caf6273ee84a
   subpackages:
   - internal/jni
 - name: github.com/pankona/gomo-simra
-  version: a4f520d634131c907a352c85c24d72cd8876ce2b
+  version: f7137ac8c6ec9995bd66903066dc46d0e380986c
   subpackages:
   - simra
   - simra/config
@@ -72,7 +72,7 @@ imports:
   - gl
   - internal/mobileinit
 - name: golang.org/x/sys
-  version: f1e7f7a8ac17a049db88e72899c00f1f841a676f
+  version: 43e60d72a8e2bd92ee98319ba9a384a0e9837c08
   subpackages:
   - unix
   - windows
