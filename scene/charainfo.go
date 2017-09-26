@@ -64,7 +64,7 @@ func (ci *charainfo) initialize() {
 
 func (ci *charainfo) isCtrlButtonSelected(s simra.Spriter) bool {
 	ctrls := ci.game.ctrlButton
-	for i, _ := range ctrls {
+	for i := range ctrls {
 		if ctrls[i] == s {
 			return true
 		}
@@ -180,7 +180,7 @@ func (ci *charainfo) showUnitStatus(s simra.Spriter, u uniter) {
 
 func (ci *charainfo) hideCharaInfo() {
 	ci.simra.RemoveSprite(ci.icon)
-	for i, _ := range ci.sprite {
+	for i := range ci.sprite {
 		ci.simra.RemoveSprite(ci.sprite[i])
 	}
 	ci.recall[0].RemoveAllTouchListener()
