@@ -4,11 +4,13 @@ import (
 	"image"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/simlog"
 )
 
 type selection struct {
-	selecting *simra.Sprite
-	cursor    *simra.Sprite
+	simra     simra.Simraer
+	selecting simra.Spriter
+	cursor    simra.Spriter
 	cursorTex *simra.Texture
 	class     string
 	game      *game
@@ -16,9 +18,9 @@ type selection struct {
 
 func (s *selection) initialize(g *game) {
 	s.game = g
-	s.cursor = simra.NewSprite()
-	s.cursorTex = simra.NewImageTexture("cursor.png", image.Rect(0, 0, 30, 30))
-	s.cursor.W, s.cursor.H = 30, 30
+	s.cursor = s.simra.NewSprite()
+	s.cursorTex = s.simra.NewImageTexture("cursor.png", image.Rect(0, 0, 30, 30))
+	s.cursor.SetScale(30, 30)
 }
 
 func (s *selection) OnEvent(i interface{}) {
@@ -36,22 +38,22 @@ func (s *selection) OnEvent(i interface{}) {
 		}
 
 	case commandUpdateSelection:
-		s.selecting, ok = c.data.(*simra.Sprite)
+		s.selecting, ok = c.data.(simra.Spriter)
 		if !ok {
 			// ignore
 			break
 		}
 
-		simra.LogDebug("selection updated: %v", s.selecting)
+		simlog.Debugf("selection updated: %v", s.selecting)
 
-		s.cursor.X, s.cursor.Y = s.selecting.X, s.selecting.Y
-		simra.GetInstance().AddSprite(s.cursor)
+		s.cursor.SetPosition(s.selecting.GetPosition().X, s.selecting.GetPosition().Y)
+		s.simra.AddSprite(s.cursor)
 		s.cursor.ReplaceTexture(s.cursorTex)
 
 	case commandUnsetSelection:
 		s.selecting = nil
-		simra.LogDebug("selection updated: nil")
-		simra.GetInstance().RemoveSprite(s.cursor)
+		simlog.Debug("selection updated: nil")
+		s.simra.RemoveSprite(s.cursor)
 
 	default:
 		// nop

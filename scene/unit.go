@@ -5,6 +5,7 @@ import (
 	"image"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/simlog"
 )
 
 // unit base implementation
@@ -25,7 +26,7 @@ type uniter interface {
 	GetMoveSpeed() float32
 	GetCost() int
 	GetTarget() uniter
-	GetSprite() *simra.Sprite
+	GetSprite() simra.Spriter
 	GetAction() *action
 	IsAlly() bool
 	simra.Subscriber
@@ -68,7 +69,8 @@ func newAction(a actiontype, d interface{}) *action {
 
 type unitBase struct {
 	simra.Subscriber
-	sprite              simra.Sprite
+	simra               simra.Simraer
+	sprite              simra.Spriter
 	id                  string
 	unittype            string
 	action              *action
@@ -95,12 +97,13 @@ func (u *unitBase) SetID(id string) {
 }
 
 func (u *unitBase) SetPosition(x, y float32) {
-	u.sprite.X = x
-	u.sprite.Y = y
+	// FIXME: don't cast to int
+	u.sprite.SetPosition((int)(x), (int)(y))
 }
 
 func (u *unitBase) GetPosition() (float32, float32) {
-	return u.sprite.X, u.sprite.Y
+	// FIXME: dont' cast to flaot32
+	return (float32)(u.sprite.GetPosition().X), (float32)(u.sprite.GetPosition().Y)
 }
 
 func (u *unitBase) SetGame(g *game) {
@@ -139,7 +142,7 @@ func (u *unitBase) onEvent(c *command) {
 			_, ok := d.(*sampleUnit)
 			if ok {
 				if u.isSpawned {
-					simra.LogDebug("enemy's spawn %s is detected! kill them all!", d.GetID())
+					simlog.Debugf("enemy's spawn %s is detected! kill them all!", d.GetID())
 
 					// enemy's spawn. move to defeat.
 					u.action = newAction(actionMoveToNearestTarget, nil)
@@ -156,7 +159,7 @@ func (u *unitBase) onEvent(c *command) {
 		}
 		// TODO: load in advance. don't do every time.
 		texName := fmt.Sprintf("%s_atk.png", u.GetUnitType())
-		tex := simra.NewImageTexture(texName, image.Rect(0, 0, 384, 384))
+		tex := u.simra.NewImageTexture(texName, image.Rect(0, 0, 384, 384))
 		u.sprite.ReplaceTexture(tex)
 
 		u.action = newAction(actionAttack, u.target)
@@ -170,7 +173,7 @@ func (u *unitBase) onEvent(c *command) {
 
 		// TODO: load in advance. don't do every time.
 		texName := fmt.Sprintf("%s.png", u.GetUnitType())
-		tex := simra.NewImageTexture(texName, image.Rect(0, 0, 384, 384))
+		tex := u.simra.NewImageTexture(texName, image.Rect(0, 0, 384, 384))
 		u.sprite.ReplaceTexture(tex)
 
 	case commandDamage:
@@ -183,9 +186,9 @@ func (u *unitBase) onEvent(c *command) {
 		}
 
 		u.hp -= d.damage
-		simra.LogDebug("[DAMAGE] i'm [%s], HP = %d", u.GetID(), u.hp)
+		simlog.Debugf("[DAMAGE] i'm [%s], HP = %d", u.GetID(), u.hp)
 		if u.hp <= 0 {
-			simra.LogDebug("[DEAD] i'm %s", u.GetID())
+			simlog.Debugf("[DEAD] i'm %s", u.GetID())
 			u.game.eventqueue <- newCommand(commandDead, u)
 		}
 
@@ -230,8 +233,8 @@ func (u *unitBase) GetTarget() uniter {
 	return u.target
 }
 
-func (u *unitBase) GetSprite() *simra.Sprite {
-	return &u.sprite
+func (u *unitBase) GetSprite() simra.Spriter {
+	return u.sprite
 }
 
 func (u *unitBase) GetAction() *action {
@@ -265,8 +268,7 @@ func (u *unitBase) doAction(a *action) {
 		u.elapsedTimeToSummon = 0
 
 		d := a.data.(uniter)
-		u.sprite.W = 64
-		u.sprite.H = 64
+		u.sprite.SetScale(64, 64)
 		u.SetPosition(d.GetPosition())
 		u.isSpawned = true
 		u.GetSprite().AddTouchListener(&unitTouchListener{
@@ -293,7 +295,7 @@ func (u *unitBase) doAction(a *action) {
 
 		if u.game.currentFrame-u.attackinfo.lastAttackTime >=
 			(int64)(u.attackinfo.cooltime*framePerSec) {
-			simra.LogDebug("[ATTACK] i'm %s", u.GetID())
+			simlog.Debugf("[ATTACK] i'm %s", u.GetID())
 			u.attackinfo.lastAttackTime = u.game.currentFrame
 			u.game.eventqueue <- newCommand(commandAttacking, (uniter)(u))
 			u.game.eventqueue <- newCommand(commandDamage, &damage{target, u.attackinfo.power})
@@ -306,18 +308,19 @@ func (u *unitBase) doAction(a *action) {
 
 func (u *unitBase) Dead() {
 	u.sprite.RemoveAllTouchListener()
-	u.sprite.W = 1
-	u.sprite.H = 1
+	// FIXME: ???
+	u.sprite.SetScale(1, 1)
 	u.SetPosition(-1, -1)
 	u.action = nil
 	u.target = nil
 	u.isSpawned = false
 }
 
-func getUnitByUnitType(unittype string) *unitBase {
+func getUnitByUnitType(sim simra.Simraer, unittype string) *unitBase {
 	switch unittype {
 	case "player1":
 		return &unitBase{
+			simra:     sim,
 			moveSpeed: 1.5,
 			hp:        50,
 			attackinfo: &attackInfo{
@@ -332,6 +335,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 
 	case "player2":
 		return &unitBase{
+			simra:     sim,
 			moveSpeed: 1.0,
 			hp:        75,
 			attackinfo: &attackInfo{
@@ -346,6 +350,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 
 	case "player3":
 		return &unitBase{
+			simra:     sim,
 			moveSpeed: 0.5,
 			hp:        30,
 			attackinfo: &attackInfo{
@@ -360,6 +365,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 
 	case "enemy1":
 		return &unitBase{
+			simra:     sim,
 			moveSpeed: 0.5,
 			hp:        30,
 			attackinfo: &attackInfo{
@@ -373,6 +379,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 
 	case "enemy2":
 		return &unitBase{
+			simra:     sim,
 			moveSpeed: 1.0,
 			hp:        45,
 			attackinfo: &attackInfo{
@@ -389,7 +396,7 @@ func getUnitByUnitType(unittype string) *unitBase {
 }
 
 type unitTouchListener struct {
-	sprite *simra.Sprite
+	sprite simra.Spriter
 	uniter uniter
 	game   *game
 }
@@ -417,13 +424,13 @@ func newUnit(id, unittype string, game *game) uniter {
 		fallthrough
 	case "player3":
 		u = &player{
-			unitBase:          getUnitByUnitType(unittype),
+			unitBase:          getUnitByUnitType(game.simra, unittype),
 			delayTimeToRecall: 3 * framePerSec,
 		}
 	case "enemy1":
 		fallthrough
 	case "enemy2":
-		u = &sampleUnit{unitBase: getUnitByUnitType(unittype)}
+		u = &sampleUnit{unitBase: getUnitByUnitType(game.simra, unittype)}
 	default:
 		panic("unknown unittype!")
 	}

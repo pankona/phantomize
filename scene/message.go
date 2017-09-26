@@ -10,7 +10,8 @@ import (
 )
 
 type message struct {
-	game *game
+	simra simra.Simraer
+	game  *game
 }
 
 func (m *message) OnEvent(i interface{}) {
@@ -24,14 +25,14 @@ func (m *message) OnEvent(i interface{}) {
 	case commandShowMessage:
 		message := c.data.(string)
 
-		sprite := simra.NewSprite()
-		simra.GetInstance().AddSprite(sprite)
+		sprite := m.simra.NewSprite()
+		m.simra.AddSprite(sprite)
 
-		tex := simra.NewTextTexture(message,
+		tex := m.simra.NewTextTexture(message,
 			40, color.RGBA{255, 255, 255, 255}, image.Rect(0, 0, config.ScreenWidth, 80))
 		sprite.ReplaceTexture(tex)
-		sprite.X, sprite.Y = config.ScreenWidth/2, 300
-		sprite.W, sprite.H = config.ScreenWidth, 80
+		sprite.SetPosition(config.ScreenWidth/2, 300)
+		sprite.SetScale(config.ScreenWidth, 80)
 
 		go func() {
 			select {
@@ -41,7 +42,7 @@ func (m *message) OnEvent(i interface{}) {
 		}()
 
 	case commandHideMessage:
-		s := c.data.(*simra.Sprite)
-		simra.GetInstance().RemoveSprite(s)
+		s := c.data.(simra.Spriter)
+		m.simra.RemoveSprite(s)
 	}
 }

@@ -8,6 +8,7 @@ import (
 	"golang.org/x/mobile/asset"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/simlog"
 	"github.com/pankona/phantomize/scene/config"
 )
 
@@ -17,11 +18,12 @@ const (
 
 // game represents a scene object for game
 type game struct {
+	simra            simra.Simraer
 	currentStage     int
 	nextScene        simra.Driver
-	field            simra.Sprite
-	ctrlPanel        simra.Sprite
-	ctrlButton       []*simra.Sprite
+	field            simra.Spriter
+	ctrlPanel        simra.Spriter
+	ctrlButton       []simra.Spriter
 	currentFrame     int64
 	players          map[string]uniter
 	uniters          map[string]uniter
@@ -54,15 +56,10 @@ const (
 // This is called from simra.
 // simra.GetInstance().SetDesiredScreenSize should be called to determine
 // screen size of this scene.
-func (g *game) Initialize() {
-	simra.LogDebug("[IN]")
-
-	simra.GetInstance().SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
-
-	// initialize sprites
+func (g *game) Initialize(sim simra.Simraer) {
+	g.simra = sim
+	g.simra.SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
 	g.initialize()
-
-	simra.LogDebug("[OUT]")
 }
 
 func (g *game) updateGameState(newState gameState) {
@@ -83,15 +80,11 @@ func (g *game) updateGameState(newState gameState) {
 }
 
 func (g *game) initField() {
-	g.field.W = config.ScreenWidth
-	g.field.H = config.ScreenHeight
-	g.field.X = config.ScreenWidth / 2
-	g.field.Y = config.ScreenHeight / 2
-	simra.GetInstance().AddSprite(&g.field)
-	tex := simra.NewImageTexture("field1.png",
-		image.Rect(0, 0, 1280, 720))
+	g.field.SetScale(config.ScreenWidth, config.ScreenHeight)
+	g.field.SetPosition(config.ScreenWidth/2, config.ScreenHeight/2)
+	g.simra.AddSprite(g.field)
+	tex := g.simra.NewImageTexture("field1.png", image.Rect(0, 0, 1280, 720))
 	g.field.ReplaceTexture(tex)
-
 	g.field.AddTouchListener(&fieldTouchListener{game: g})
 }
 
@@ -109,7 +102,7 @@ func (f *fieldTouchListener) OnTouchMove(x, y float32) {
 	// nop
 }
 
-func (g *game) unitIDBySprite(s *simra.Sprite) string {
+func (g *game) unitIDBySprite(s simra.Spriter) string {
 	var unitID string
 	if s == g.ctrlButton[0] {
 		unitID = "player1"
@@ -141,7 +134,7 @@ func (f *fieldTouchListener) OnTouchEnd(x, y float32) {
 			f.game.eventqueue <- newCommand(commandShowMessage, "Another summon is ongoing. please wait.")
 			return
 		}
-		u := getUnitByUnitType(unitID)
+		u := getUnitByUnitType(f.game.simra, unitID)
 		if u.GetCost() > f.game.resource.balance {
 			// balance is not enough. abort spawning
 			f.game.eventqueue <- newCommand(commandShowMessage, "Need more money!")
@@ -187,8 +180,7 @@ func (g *game) assetNameByUnitType(unittype string) string {
 	case "enemy2":
 		return "enemy2.png"
 	}
-
-	simra.LogError("%s is unknown unittype!", unittype)
+	simlog.Errorf("%s is unknown unittype!", unittype)
 	panic("unknown unittype!")
 }
 
@@ -213,7 +205,7 @@ func (g *game) popUnits() []uniter {
 }
 
 func (g *game) initEffects() {
-	e := &effect{game: g}
+	e := &effect{simra: g.simra, game: g}
 	e.initialize()
 	g.pubsub.Subscribe("effect", e)
 }
@@ -227,19 +219,20 @@ func (g *game) initialize() {
 	g.initPlayer()
 	g.initUnits("") // TODO: input JSON string
 	g.resource = &resource{
+		simra:   g.simra,
 		balance: 100,
 		game:    g,
 	}
 	g.resource.initialize()
-	g.message = &message{game: g}
-	g.selection = &selection{}
+	g.message = &message{simra: g.simra, game: g}
+	g.selection = &selection{simra: g.simra}
 	g.selection.initialize(g)
-	g.charainfo = &charainfo{game: g}
+	g.charainfo = &charainfo{simra: g.simra, game: g}
 	g.charainfo.initialize()
 	g.sound = &sound{game: g}
-	g.instruction = &instruction{game: g}
+	g.instruction = &instruction{simra: g.simra, game: g}
 	g.instruction.initialize()
-	simra.GetInstance().AddTouchListener(g)
+	g.simra.AddTouchListener(g)
 	g.pubsub.Subscribe("god", g)
 	g.pubsub.Subscribe("selection", g.selection)
 	g.pubsub.Subscribe("resource", g.resource)
@@ -302,28 +295,24 @@ func (c *gameoverTouchListener) OnTouchEnd(x, y float32) {
 }
 
 func (g *game) showCongratulation() {
-	sprite := simra.NewSprite()
-	sprite.W = config.ScreenWidth
-	sprite.H = 80
-	sprite.X = config.ScreenWidth / 2
-	sprite.Y = config.ScreenHeight / 2
-	simra.GetInstance().AddSprite(sprite)
-	tex := simra.NewTextTexture("You won! Congratulation!",
-		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(sprite.W), int(sprite.H)))
+	sprite := g.simra.NewSprite()
+	sprite.SetScale(config.ScreenWidth, 80)
+	sprite.SetPosition(config.ScreenWidth/2, config.ScreenHeight/2)
+	g.simra.AddSprite(sprite)
+	tex := g.simra.NewTextTexture("You won! Congratulation!",
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(sprite.GetScale().W), int(sprite.GetScale().H)))
 	sprite.ReplaceTexture(tex)
 
 	sprite.AddTouchListener(&gameoverTouchListener{game: g})
 }
 
 func (g *game) showLose() {
-	sprite := simra.NewSprite()
-	sprite.W = config.ScreenWidth
-	sprite.H = 80
-	sprite.X = config.ScreenWidth / 2
-	sprite.Y = config.ScreenHeight / 2
-	simra.GetInstance().AddSprite(sprite)
-	tex := simra.NewTextTexture("You lose...",
-		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(sprite.W), int(sprite.H)))
+	sprite := g.simra.NewSprite()
+	sprite.SetScale(config.ScreenWidth, 80)
+	sprite.SetPosition(config.ScreenWidth/2, config.ScreenHeight/2)
+	g.simra.AddSprite(sprite)
+	tex := g.simra.NewTextTexture("You lose...",
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(sprite.GetScale().W), int(sprite.GetScale().H)))
 	sprite.ReplaceTexture(tex)
 
 	sprite.AddTouchListener(&gameoverTouchListener{game: g})
@@ -373,7 +362,6 @@ func (g *game) runningRunLoop() {
 		if err != nil {
 			panic("failed to subscribe. fatal.")
 		}
-
 		g.eventqueue <- newCommand(commandSpawn, v)
 	}
 
@@ -394,7 +382,6 @@ func (g *game) runningRunLoop() {
 	if g.areAllEnemiesEliminated() {
 		g.eventqueue <- newCommand(commandWin, g)
 	}
-
 	if g.areAllPlayersEliminated() {
 		g.eventqueue <- newCommand(commandLose, g)
 	}
@@ -433,7 +420,7 @@ func (g *game) Drive() {
 
 	if g.nextScene != nil {
 		g.bgm.Stop()
-		simra.GetInstance().SetScene(g.nextScene)
+		g.simra.SetScene(g.nextScene)
 	}
 	g.currentRunLoop()
 }

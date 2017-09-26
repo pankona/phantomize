@@ -6,19 +6,20 @@ import (
 	"sync"
 
 	"github.com/pankona/gomo-simra/simra"
-	"github.com/pankona/gomo-simra/simra/fps"
+	"github.com/pankona/gomo-simra/simra/simlog"
 )
 
 type effect struct {
+	simra      simra.Simraer
 	game       *game
 	animations map[string]*simra.AnimationSet
-	effects    map[string]*simra.Sprite
+	effects    map[string]simra.Spriter
 	mu         sync.Mutex
 }
 
 func (e *effect) initialize() {
 	e.animations = make(map[string]*simra.AnimationSet)
-	e.effects = make(map[string]*simra.Sprite)
+	e.effects = make(map[string]simra.Spriter)
 
 	// smoke animation
 	numOfAnimation := 3
@@ -27,7 +28,7 @@ func (e *effect) initialize() {
 	resource := "smoke.png"
 	animationSet := simra.NewAnimationSet()
 	for i := 0; i < numOfAnimation; i++ {
-		animationSet.AddTexture(simra.NewImageTexture(resource,
+		animationSet.AddTexture(e.simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
 	}
 	animationSet.SetInterval(6)
@@ -40,7 +41,7 @@ func (e *effect) initialize() {
 	resource = "atkeffect1.png"
 	animationSet = simra.NewAnimationSet()
 	for i := 0; i < numOfAnimation; i++ {
-		animationSet.AddTexture(simra.NewImageTexture(resource,
+		animationSet.AddTexture(e.simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
 	}
 	animationSet.SetInterval(6)
@@ -53,7 +54,7 @@ func (e *effect) initialize() {
 	resource = "atkeffect2.png"
 	animationSet = simra.NewAnimationSet()
 	for i := 0; i < numOfAnimation; i++ {
-		animationSet.AddTexture(simra.NewImageTexture(resource,
+		animationSet.AddTexture(e.simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
 	}
 	animationSet.SetInterval(6)
@@ -66,7 +67,7 @@ func (e *effect) initialize() {
 	resource = "atkeffect3.png"
 	animationSet = simra.NewAnimationSet()
 	for i := 0; i < numOfAnimation; i++ {
-		animationSet.AddTexture(simra.NewImageTexture(resource,
+		animationSet.AddTexture(e.simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
 	}
 	animationSet.SetInterval(6)
@@ -78,11 +79,11 @@ func (e *effect) initialize() {
 	resource = "atkeffect4.png"
 	animationSet = simra.NewAnimationSet()
 	for i := 0; i < 5; i++ {
-		animationSet.AddTexture(simra.NewImageTexture(resource,
+		animationSet.AddTexture(e.simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
 	}
 	for i := 0; i < 3; i++ {
-		animationSet.AddTexture(simra.NewImageTexture(resource,
+		animationSet.AddTexture(e.simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, h, ((int)(w)*(i+1))-1, int(h))))
 	}
 	animationSet.SetInterval(6)
@@ -94,11 +95,11 @@ func (e *effect) initialize() {
 	resource = "atkeffect5.png"
 	animationSet = simra.NewAnimationSet()
 	for i := 0; i < 6; i++ {
-		animationSet.AddTexture(simra.NewImageTexture(resource,
+		animationSet.AddTexture(e.simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
 	}
 	for i := 0; i < 6; i++ {
-		animationSet.AddTexture(simra.NewImageTexture(resource,
+		animationSet.AddTexture(e.simra.NewImageTexture(resource,
 			image.Rect((int)(w)*i, h, ((int)(w)*(i+1))-1, int(h))))
 	}
 	animationSet.SetInterval(6)
@@ -121,15 +122,15 @@ func (e *effect) OnEvent(i interface{}) {
 			// ignore
 			break
 		}
-		sprite := simra.NewSprite()
-		sprite.W = 512 / 3
-		sprite.H = 528 / 4
+		sprite := e.simra.NewSprite()
+		sprite.SetScale(512/3, 528/4)
 		x, y := p.GetPosition()
-		sprite.X, sprite.Y = x-10, y+20
+		// FIXME: actually cast into int is not needed
+		sprite.SetPosition((int)(x-10), (int)(y+20))
 
 		animationSet := e.animations["smoke.png"]
 		sprite.AddAnimationSet("smoke.png", animationSet)
-		simra.GetInstance().AddSprite(sprite)
+		e.simra.AddSprite(sprite)
 		doneChan := make(chan struct{})
 		sprite.StartAnimation("smoke.png", true, func() {
 			doneChan <- struct{}{}
@@ -139,16 +140,18 @@ func (e *effect) OnEvent(i interface{}) {
 		go func() {
 			select {
 			case <-doneChan:
-			case <-fps.After(60 * framePerSec):
-				simra.LogError("animation has not been stopped! effectID = %s_spawn\n", p.GetID())
-				func() {
-					e.mu.Lock()
-					defer e.mu.Unlock()
-					sprite = e.effects[effectID]
-					delete(e.effects, effectID)
-				}()
-				sprite.StopAnimation()
-				simra.GetInstance().RemoveSprite(sprite)
+				/*
+					case <-fps.After(60 * framePerSec):
+						simra.LogError("animation has not been stopped! effectID = %s_spawn\n", p.GetID())
+						func() {
+							e.mu.Lock()
+							defer e.mu.Unlock()
+							sprite = e.effects[effectID]
+							delete(e.effects, effectID)
+						}()
+						sprite.StopAnimation()
+						simra.GetInstance().RemoveSprite(sprite)
+				*/
 			}
 		}()
 
@@ -167,7 +170,7 @@ func (e *effect) OnEvent(i interface{}) {
 			break
 		}
 		effectID := fmt.Sprintf("%s_spawn", p.GetID())
-		var sprite *simra.Sprite
+		var sprite simra.Spriter
 		func() {
 			e.mu.Lock()
 			defer e.mu.Unlock()
@@ -175,7 +178,7 @@ func (e *effect) OnEvent(i interface{}) {
 			delete(e.effects, effectID)
 		}()
 		sprite.StopAnimation()
-		simra.GetInstance().RemoveSprite(sprite)
+		e.simra.RemoveSprite(sprite)
 
 	case commandDead:
 		p, ok := c.data.(uniter)
@@ -183,15 +186,15 @@ func (e *effect) OnEvent(i interface{}) {
 			// ignore
 			break
 		}
-		sprite := simra.NewSprite()
-		sprite.W = 512 / 3
-		sprite.H = 528 / 4
+		sprite := e.simra.NewSprite()
+		sprite.SetScale(512/3, 528/4)
 		x, y := p.GetPosition()
-		sprite.X, sprite.Y = x-10, y+20
+		// FIXME: actually cast into int is not needed
+		sprite.SetPosition((int)(x-10), (int)(y+20))
 
 		animationSet := e.animations["smoke.png"]
 		sprite.AddAnimationSet("smoke.png", animationSet)
-		simra.GetInstance().AddSprite(sprite)
+		e.simra.AddSprite(sprite)
 		effectID := fmt.Sprintf("%s_dead", p.GetID())
 		func() {
 			e.mu.Lock()
@@ -202,7 +205,7 @@ func (e *effect) OnEvent(i interface{}) {
 			e.mu.Lock()
 			defer e.mu.Unlock()
 			delete(e.effects, effectID)
-			simra.GetInstance().RemoveSprite(sprite)
+			e.simra.RemoveSprite(sprite)
 		})
 
 	case commandAttacking:
@@ -214,9 +217,10 @@ func (e *effect) OnEvent(i interface{}) {
 		target := p.GetTarget()
 		tx, ty := target.GetPosition()
 
-		sprite := simra.NewSprite()
-		sprite.W, sprite.H = 64, 64
-		sprite.X, sprite.Y = tx, ty
+		sprite := e.simra.NewSprite()
+		sprite.SetScale(64, 64)
+		// FIXME: actually cast into int is not needed
+		sprite.SetPosition((int)(tx), (int)(ty))
 		var atkeffect string
 		switch p.GetUnitType() {
 		case "player1":
@@ -230,15 +234,15 @@ func (e *effect) OnEvent(i interface{}) {
 		case "enemy2":
 			atkeffect = "atkeffect5.png"
 		default:
-			simra.LogError("[%s]'s atkeffect is not loaded!", p.GetUnitType())
+			simlog.Errorf("[%s]'s atkeffect is not loaded!", p.GetUnitType())
 			panic("atkeffect is not loaded!")
 		}
 
 		animationSet := e.animations[atkeffect]
 		sprite.AddAnimationSet(atkeffect, animationSet)
-		simra.GetInstance().AddSprite(sprite)
+		e.simra.AddSprite(sprite)
 		sprite.StartAnimation(atkeffect, false, func() {
-			simra.GetInstance().RemoveSprite(sprite)
+			e.simra.RemoveSprite(sprite)
 		})
 	}
 }

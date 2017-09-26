@@ -11,9 +11,10 @@ import (
 
 // result represents a scene object for result
 type result struct {
-	text         simra.Sprite
+	simra        simra.Simraer
+	text         simra.Spriter
 	currentStage int
-	again        simra.Sprite
+	again        simra.Spriter
 	nextScene    simra.Driver
 	bgm          simra.Audioer
 	beep         asset.File
@@ -23,22 +24,18 @@ type result struct {
 // This is called from simra.
 // simra.GetInstance().SetDesiredScreenSize should be called to determine
 // screen size of this scene.
-func (r *result) Initialize() {
-	simra.LogDebug("[IN]")
+func (r *result) Initialize(sim simra.Simraer) {
+	r.simra = sim
 
-	simra.GetInstance().SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
-
-	// initialize sprites
+	r.simra.SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
 	r.initialize()
-
-	simra.LogDebug("[OUT]")
 }
 
 func (r *result) initialize() {
-	initTextSprite(&r.text, "Thank you for playing!",
+	initTextSprite(r.simra, r.text, "Thank you for playing!",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*4/6,
 		60, color.RGBA{255, 0, 0, 255})
-	initTextSprite(&r.again, "try again?",
+	initTextSprite(r.simra, r.again, "try again?",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*2/6,
 		60, color.RGBA{255, 0, 0, 255})
 
@@ -68,7 +65,7 @@ func (r *result) Drive() {
 		a.Play(r.beep, false, func(err error) {})
 
 		r.bgm.Stop()
-		simra.GetInstance().SetScene(r.nextScene)
+		r.simra.SetScene(r.nextScene)
 	}
 }
 

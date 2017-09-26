@@ -10,9 +10,10 @@ import (
 
 // menu represents a scene object for menu
 type menu struct {
-	menu      simra.Sprite
-	start     simra.Sprite
-	howto     simra.Sprite
+	simra     simra.Simraer
+	menu      simra.Spriter
+	start     simra.Spriter
+	howto     simra.Spriter
 	nextScene simra.Driver
 }
 
@@ -20,33 +21,30 @@ type menu struct {
 // This is called from simra.
 // simra.GetInstance().SetDesiredScreenSize should be called to determine
 // screen size of this scene.
-func (menu *menu) Initialize() {
-	simra.LogDebug("[IN]")
-
-	simra.GetInstance().SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
-
-	// initialize sprites
+func (menu *menu) Initialize(sim simra.Simraer) {
+	menu.simra = sim
+	menu.simra.SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
 	menu.initialize()
-
-	simra.LogDebug("[OUT]")
 }
 
-func initTextSprite(sprite *simra.Sprite, text string, w, h, x, y float32, fontsize float64, color color.RGBA) {
-	sprite.W, sprite.H, sprite.X, sprite.Y = w, h, x, y
-	simra.GetInstance().AddSprite(sprite)
-	tex := simra.NewTextTexture(text, fontsize, color, image.Rect(0, 0, int(sprite.W), int(sprite.H)))
+func initTextSprite(simra simra.Simraer, sprite simra.Spriter, text string, w, h, x, y float32, fontsize float64, color color.RGBA) {
+	// FIXME: don't cast to int
+	sprite.SetScale((int)(w), (int)(h))
+	// FIXME: don't cast to int
+	sprite.SetPosition((int)(x), (int)(y))
+	simra.AddSprite(sprite)
+	tex := simra.NewTextTexture(text, fontsize, color, image.Rect(0, 0, int(sprite.GetScale().W), int(sprite.GetScale().H)))
 	sprite.ReplaceTexture(tex)
-
 }
 
 func (menu *menu) initialize() {
-	initTextSprite(&menu.menu, "menu",
+	initTextSprite(menu.simra, menu.menu, "menu",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*4/6,
 		60, color.RGBA{255, 0, 0, 255})
-	initTextSprite(&menu.start, "Start",
+	initTextSprite(menu.simra, menu.start, "Start",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*2/6,
 		60, color.RGBA{255, 0, 0, 255})
-	initTextSprite(&menu.howto, "How to play",
+	initTextSprite(menu.simra, menu.howto, "How to play",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*1/6,
 		60, color.RGBA{255, 0, 0, 255})
 	//simra.GetInstance().AddTouchListener(menu)
@@ -60,7 +58,7 @@ func (menu *menu) initialize() {
 func (menu *menu) Drive() {
 	// nop
 	if menu.nextScene != nil {
-		simra.GetInstance().SetScene(menu.nextScene)
+		menu.simra.SetScene(menu.nextScene)
 	}
 }
 

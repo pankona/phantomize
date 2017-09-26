@@ -9,7 +9,8 @@ import (
 )
 
 type howtoplay struct {
-	text      simra.Sprite
+	simra     simra.Simraer
+	text      simra.Spriter
 	nextScene simra.Driver
 }
 
@@ -17,41 +18,33 @@ type howtoplay struct {
 // This is called from simra.
 // simra.GetInstance().SetDesiredScreenSize should be called to determine
 // screen size of this scene.
-func (howtoplay *howtoplay) Initialize() {
-	simra.LogDebug("[IN]")
+func (howtoplay *howtoplay) Initialize(sim simra.Simraer) {
+	howtoplay.simra = sim
 
-	simra.GetInstance().SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
-
-	// initialize sprites
+	howtoplay.simra.SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
 	howtoplay.initialize()
-
-	simra.LogDebug("[OUT]")
 }
 
 func (howtoplay *howtoplay) initialize() {
-	howtoplay.text.W = config.ScreenWidth
-	howtoplay.text.H = 80
-	howtoplay.text.X = config.ScreenWidth / 2
-	howtoplay.text.Y = config.ScreenHeight / 2
-	simra.GetInstance().AddSprite(&howtoplay.text)
+	howtoplay.text.SetScale(config.ScreenWidth, 80)
+	howtoplay.text.SetPosition(config.ScreenWidth/2, config.ScreenHeight/2)
+	howtoplay.simra.AddSprite(howtoplay.text)
 
-	simra.GetInstance().AddTouchListener(howtoplay)
+	howtoplay.simra.AddTouchListener(howtoplay)
 
 	// temporary text (will be removed)
-	temporary := &simra.Sprite{}
-	temporary.W = config.ScreenWidth
-	temporary.H = 80
-	temporary.X = config.ScreenWidth / 2
-	temporary.Y = config.ScreenHeight * 2 / 5
-	simra.GetInstance().AddSprite(temporary)
+	temporary := howtoplay.simra.NewSprite()
+	temporary.SetScale(config.ScreenWidth, 80)
+	temporary.SetPosition(config.ScreenWidth/2, config.ScreenHeight*2/5)
+	howtoplay.simra.AddSprite(temporary)
 
 	var tex *simra.Texture
-	tex = simra.NewTextTexture("How To Play",
-		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(howtoplay.text.W), int(howtoplay.text.H)))
+	tex = howtoplay.simra.NewTextTexture("How To Play",
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(howtoplay.text.GetScale().W), int(howtoplay.text.GetScale().H)))
 	howtoplay.text.ReplaceTexture(tex)
 
-	tex = simra.NewTextTexture("(click to exit this page)",
-		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(temporary.W), int(temporary.H)))
+	tex = howtoplay.simra.NewTextTexture("(click to exit this page)",
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(temporary.GetScale().W), int(temporary.GetScale().H)))
 	temporary.ReplaceTexture(tex)
 
 }
@@ -61,7 +54,7 @@ func (howtoplay *howtoplay) initialize() {
 // This will be called 60 times per sec.
 func (howtoplay *howtoplay) Drive() {
 	if howtoplay.nextScene != nil {
-		simra.GetInstance().SetScene(howtoplay.nextScene)
+		howtoplay.simra.SetScene(howtoplay.nextScene)
 	}
 }
 

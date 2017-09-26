@@ -2,6 +2,7 @@ package scene
 
 import (
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/simlog"
 
 	"golang.org/x/mobile/asset"
 )
@@ -18,7 +19,7 @@ func (s *sound) play(assetName string) {
 	}
 	err = a.Play(resource, false, func(err error) {
 		if err != nil {
-			simra.LogError(err.Error())
+			simlog.Error(err.Error())
 		}
 	})
 	if err != nil {

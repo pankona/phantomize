@@ -9,11 +9,12 @@ import (
 )
 
 type charainfo struct {
-	icon        *simra.Sprite
-	sprite      [4]*simra.Sprite
-	recall      [2]*simra.Sprite
+	simra       simra.Simraer
+	icon        simra.Spriter
+	sprite      [4]simra.Spriter
+	recall      [2]simra.Spriter
 	recallBGTex *simra.Texture
-	displaying  *simra.Sprite
+	displaying  simra.Spriter
 	game        *game
 }
 
@@ -41,27 +42,27 @@ func (r *recallTouchListener) OnTouchEnd(x, y float32) {
 }
 
 func (ci *charainfo) initialize() {
-	ci.icon = simra.NewSprite()
-	ci.icon.X, ci.icon.Y = 500, 120
-	ci.icon.W, ci.icon.H = 200, 200
+	ci.icon = ci.simra.NewSprite()
+	ci.icon.SetPosition(500, 120)
+	ci.icon.SetScale(200, 200)
 
 	for i := 0; i < len(ci.sprite); i++ {
-		ci.sprite[i] = simra.NewSprite()
-		ci.sprite[i].X, ci.sprite[i].Y = 800, (float32)(165-(i*50))
-		ci.sprite[i].H, ci.sprite[i].W = 100, 300
+		ci.sprite[i] = ci.simra.NewSprite()
+		ci.sprite[i].SetPosition(800, 165-(i*50))
+		ci.sprite[i].SetScale(300, 100)
 	}
 
-	ci.recall[0] = simra.NewSprite()
-	ci.recall[0].X, ci.recall[0].Y = 500, 95
-	ci.recall[0].W, ci.recall[0].H = 150, 40
-	ci.recallBGTex = simra.NewImageTexture("cursor.png", image.Rect(0, 0, 30, 30))
+	ci.recall[0] = ci.simra.NewSprite()
+	ci.recall[0].SetPosition(500, 95)
+	ci.recall[0].SetScale(150, 40)
+	ci.recallBGTex = ci.simra.NewImageTexture("cursor.png", image.Rect(0, 0, 30, 30))
 
-	ci.recall[1] = simra.NewSprite()
-	ci.recall[1].X, ci.recall[1].Y = 500, 70
-	ci.recall[1].H, ci.recall[1].W = 100, 300
+	ci.recall[1] = ci.simra.NewSprite()
+	ci.recall[1].SetPosition(500, 70)
+	ci.recall[1].SetScale(300, 100)
 }
 
-func (ci *charainfo) isCtrlButtonSelected(s *simra.Sprite) bool {
+func (ci *charainfo) isCtrlButtonSelected(s simra.Spriter) bool {
 	ctrls := ci.game.ctrlButton
 	for i, _ := range ctrls {
 		if ctrls[i] == s {
@@ -71,18 +72,18 @@ func (ci *charainfo) isCtrlButtonSelected(s *simra.Sprite) bool {
 	return false
 }
 
-func (ci *charainfo) showUnitInfo(s *simra.Sprite, unittype string) {
-	simra.GetInstance().AddSprite(ci.icon)
+func (ci *charainfo) showUnitInfo(s simra.Spriter, unittype string) {
+	ci.simra.AddSprite(ci.icon)
 	for i := 0; i < len(ci.sprite); i++ {
-		simra.GetInstance().AddSprite(ci.sprite[i])
+		ci.simra.AddSprite(ci.sprite[i])
 	}
 
 	asset := ci.game.assetNameByCtrlButton(s)
-	tex := simra.NewImageTexture(asset, image.Rect(0, 0, 384, 384))
+	tex := ci.simra.NewImageTexture(asset, image.Rect(0, 0, 384, 384))
 	ci.icon.ReplaceTexture(tex)
 
-	u := getUnitByUnitType(unittype)
-	tex = simra.NewTextTexture(
+	u := getUnitByUnitType(ci.simra, unittype)
+	tex = ci.simra.NewTextTexture(
 		fmt.Sprintf("%s", unittype),
 		30, // fontsize
 		color.RGBA{255, 255, 255, 255},
@@ -90,7 +91,7 @@ func (ci *charainfo) showUnitInfo(s *simra.Sprite, unittype string) {
 	)
 	ci.sprite[0].ReplaceTexture(tex)
 
-	tex = simra.NewTextTexture(
+	tex = ci.simra.NewTextTexture(
 		fmt.Sprintf("HP: %d", u.hp),
 		30, // fontsize
 		color.RGBA{255, 255, 255, 255},
@@ -98,7 +99,7 @@ func (ci *charainfo) showUnitInfo(s *simra.Sprite, unittype string) {
 	)
 	ci.sprite[1].ReplaceTexture(tex)
 
-	tex = simra.NewTextTexture(
+	tex = ci.simra.NewTextTexture(
 		fmt.Sprintf("COST: %d", u.cost),
 		30, // fontsize
 		color.RGBA{255, 255, 255, 255},
@@ -106,7 +107,7 @@ func (ci *charainfo) showUnitInfo(s *simra.Sprite, unittype string) {
 	)
 	ci.sprite[2].ReplaceTexture(tex)
 
-	tex = simra.NewTextTexture(
+	tex = ci.simra.NewTextTexture(
 		fmt.Sprintf("SPEED: %0.1f", u.moveSpeed),
 		30, // fontsize
 		color.RGBA{255, 255, 255, 255},
@@ -115,17 +116,17 @@ func (ci *charainfo) showUnitInfo(s *simra.Sprite, unittype string) {
 	ci.sprite[3].ReplaceTexture(tex)
 }
 
-func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
-	simra.GetInstance().AddSprite(ci.icon)
+func (ci *charainfo) showUnitStatus(s simra.Spriter, u uniter) {
+	ci.simra.AddSprite(ci.icon)
 	for i := 0; i < len(ci.sprite); i++ {
-		simra.GetInstance().AddSprite(ci.sprite[i])
+		ci.simra.AddSprite(ci.sprite[i])
 	}
 
 	asset := ci.game.assetNameByUnitType(u.GetUnitType())
-	tex := simra.NewImageTexture(asset, image.Rect(0, 0, 384, 384))
+	tex := ci.simra.NewImageTexture(asset, image.Rect(0, 0, 384, 384))
 	ci.icon.ReplaceTexture(tex)
 
-	tex = simra.NewTextTexture(
+	tex = ci.simra.NewTextTexture(
 		fmt.Sprintf("%s", u.GetUnitType()),
 		30, // fontsize
 		color.RGBA{255, 255, 255, 255},
@@ -133,7 +134,7 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 	)
 	ci.sprite[0].ReplaceTexture(tex)
 
-	tex = simra.NewTextTexture(
+	tex = ci.simra.NewTextTexture(
 		fmt.Sprintf("HP: %d", u.GetHP()),
 		30, // fontsize
 		color.RGBA{255, 255, 255, 255},
@@ -141,7 +142,7 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 	)
 	ci.sprite[1].ReplaceTexture(tex)
 
-	tex = simra.NewTextTexture(
+	tex = ci.simra.NewTextTexture(
 		fmt.Sprintf("COST: %d", u.GetCost()),
 		30, // fontsize
 		color.RGBA{255, 255, 255, 255},
@@ -149,7 +150,7 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 	)
 	ci.sprite[2].ReplaceTexture(tex)
 
-	tex = simra.NewTextTexture(
+	tex = ci.simra.NewTextTexture(
 		fmt.Sprintf("SPEED: %0.1f", u.GetMoveSpeed()),
 		30, // fontsize
 		color.RGBA{255, 255, 255, 255},
@@ -159,15 +160,15 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 
 	// recall label only for players
 	if u.IsAlly() {
-		simra.GetInstance().AddSprite(ci.recall[0])
+		ci.simra.AddSprite(ci.recall[0])
 		ci.recall[0].ReplaceTexture(ci.recallBGTex)
 		ci.recall[0].AddTouchListener(&recallTouchListener{
 			unit: u,
 			game: ci.game,
 		})
 
-		simra.GetInstance().AddSprite(ci.recall[1])
-		tex = simra.NewTextTexture(
+		ci.simra.AddSprite(ci.recall[1])
+		tex = ci.simra.NewTextTexture(
 			"RECALL",
 			30, // fontsize
 			color.RGBA{255, 0, 0, 255},
@@ -178,13 +179,13 @@ func (ci *charainfo) showUnitStatus(s *simra.Sprite, u uniter) {
 }
 
 func (ci *charainfo) hideCharaInfo() {
-	simra.GetInstance().RemoveSprite(ci.icon)
+	ci.simra.RemoveSprite(ci.icon)
 	for i, _ := range ci.sprite {
-		simra.GetInstance().RemoveSprite(ci.sprite[i])
+		ci.simra.RemoveSprite(ci.sprite[i])
 	}
 	ci.recall[0].RemoveAllTouchListener()
-	simra.GetInstance().RemoveSprite(ci.recall[0])
-	simra.GetInstance().RemoveSprite(ci.recall[1])
+	ci.simra.RemoveSprite(ci.recall[0])
+	ci.simra.RemoveSprite(ci.recall[1])
 }
 
 func (ci *charainfo) OnEvent(i interface{}) {
@@ -196,7 +197,7 @@ func (ci *charainfo) OnEvent(i interface{}) {
 	switch c.commandtype {
 	case commandUpdateSelection:
 		switch selecting := c.data.(type) {
-		case *simra.Sprite:
+		case simra.Spriter:
 			if ci.isCtrlButtonSelected(selecting) {
 				ci.hideCharaInfo()
 				ci.showUnitInfo(selecting, ci.game.unitIDBySprite(selecting))

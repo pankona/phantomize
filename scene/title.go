@@ -12,7 +12,8 @@ import (
 
 // Title represents a scene object for Title
 type Title struct {
-	text      simra.Sprite
+	simra     simra.Simraer
+	text      simra.Spriter
 	nextScene simra.Driver
 	bgm       simra.Audioer
 	beep      asset.File
@@ -22,52 +23,43 @@ type Title struct {
 // This is called from simra.
 // simra.GetInstance().SetDesiredScreenSize should be called to determine
 // screen size of this scene.
-func (title *Title) Initialize() {
-	simra.LogDebug("[IN]")
-
-	simra.GetInstance().SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
-
-	// initialize sprites
+func (title *Title) Initialize(sim simra.Simraer) {
+	title.simra = sim
+	title.simra.SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
 	title.initialize()
-
-	simra.LogDebug("[OUT]")
 }
 
 func (title *Title) initialize() {
-	title.text.W = config.ScreenWidth
-	title.text.H = 80
-	title.text.X = config.ScreenWidth / 2
-	title.text.Y = config.ScreenHeight / 2
-	simra.GetInstance().AddSprite(&title.text)
-	tex := simra.NewTextTexture("phantomize",
-		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(title.text.W), int(title.text.H)))
+	title.text.SetScale(config.ScreenWidth, 80)
+	title.text.SetPosition(config.ScreenWidth/2, config.ScreenHeight/2)
+	title.simra.AddSprite(title.text)
+	tex := title.simra.NewTextTexture("phantomize",
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(title.text.GetScale().W), int(title.text.GetScale().H)))
 	title.text.ReplaceTexture(tex)
 
-	bg := simra.NewSprite()
-	bg.W = config.ScreenWidth
-	bg.H = config.ScreenHeight
-	bg.X = config.ScreenWidth / 2
-	bg.Y = config.ScreenHeight / 2
-	simra.GetInstance().AddSprite(bg)
-	tex = simra.NewImageTexture("title.png", image.Rect(0, 0, 1280, 720))
+	bg := title.simra.NewSprite()
+	bg.SetScale(config.ScreenWidth, config.ScreenHeight)
+	bg.SetPosition(config.ScreenWidth/2, config.ScreenHeight/2)
+	title.simra.AddSprite(bg)
+	tex = title.simra.NewImageTexture("title.png", image.Rect(0, 0, 1280, 720))
 	bg.ReplaceTexture(tex)
 
-	text2 := simra.NewSprite()
-	text2.W, text2.H = config.ScreenWidth, 80
-	text2.X, text2.Y = config.ScreenWidth/2, config.ScreenHeight/6*1
-	simra.GetInstance().AddSprite(text2)
-	tex = simra.NewTextTexture("tap to start!",
-		60, color.RGBA{255, 255, 255, 255}, image.Rect(0, 0, int(title.text.W), int(title.text.H)))
+	text2 := title.simra.NewSprite()
+	text2.SetScale(config.ScreenWidth, 80)
+	text2.SetPosition(config.ScreenWidth/2, config.ScreenHeight/6*1)
+	title.simra.AddSprite(text2)
+	tex = title.simra.NewTextTexture("tap to start!",
+		60, color.RGBA{255, 255, 255, 255}, image.Rect(0, 0, int(title.text.GetScale().W), int(title.text.GetScale().H)))
 	text2.ReplaceTexture(tex)
 
-	simra.GetInstance().AddTouchListener(title)
+	title.simra.AddTouchListener(title)
 
 	title.bgm = simra.NewAudio()
-	resource, err := asset.Open("bgm1.mp3")
+	_, err := asset.Open("bgm1.mp3")
 	if err != nil {
 		panic(err.Error())
 	}
-	title.bgm.Play(resource, true, func(err error) {})
+	//title.bgm.Play(resource, true, func(err error) {})
 
 	title.beep, err = asset.Open("start_game.mp3")
 	if err != nil {
@@ -84,7 +76,7 @@ func (title *Title) Drive() {
 		a.Play(title.beep, false, func(err error) {})
 
 		title.bgm.Stop()
-		simra.GetInstance().SetScene(title.nextScene)
+		title.simra.SetScene(title.nextScene)
 	}
 }
 

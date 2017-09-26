@@ -2,8 +2,6 @@ package scene
 
 import (
 	"image"
-
-	"github.com/pankona/gomo-simra/simra"
 )
 
 type player struct {
@@ -14,8 +12,8 @@ type player struct {
 
 func (u *player) Initialize() {
 	assetName := u.game.assetNameByUnitType(u.unittype)
-	simra.GetInstance().AddSprite(&u.sprite)
-	tex := simra.NewImageTexture(assetName,
+	u.simra.AddSprite(u.sprite)
+	tex := u.simra.NewImageTexture(assetName,
 		image.Rect(0, 0, 384, 384))
 	u.sprite.ReplaceTexture(tex)
 }
@@ -34,7 +32,7 @@ func (u *player) OnEvent(i interface{}) {
 			break
 		}
 
-		simra.GetInstance().RemoveSprite(&u.sprite)
+		u.simra.RemoveSprite(u.sprite)
 		killUnit(u, u.game.players)
 
 	default:

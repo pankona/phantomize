@@ -1,9 +1,8 @@
 package scene
 
 import (
+	"fmt"
 	"image"
-
-	"github.com/pankona/gomo-simra/simra"
 )
 
 type sampleUnit struct {
@@ -12,8 +11,8 @@ type sampleUnit struct {
 
 func (u *sampleUnit) Initialize() {
 	assetName := u.game.assetNameByUnitType(u.unittype)
-	simra.GetInstance().AddSprite(&u.sprite)
-	tex := simra.NewImageTexture(assetName,
+	u.simra.AddSprite(u.sprite)
+	tex := u.simra.NewImageTexture(assetName,
 		image.Rect(0, 0, 384, 384))
 	u.sprite.ReplaceTexture(tex)
 
@@ -52,6 +51,8 @@ func (u *sampleUnit) DoAction() {
 
 	case actionDead:
 		// i'm dead!
+		fmt.Println("@@@@@@@ dead!!")
+		u.game.pubsub.Unsubscribe(u.GetID())
 		killUnit(u, u.game.uniters)
 
 	default:

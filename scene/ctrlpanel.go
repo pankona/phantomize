@@ -11,7 +11,7 @@ const (
 	ctrlPanelHeight = 220
 )
 
-func (g *game) assetNameByCtrlButton(s *simra.Sprite) string {
+func (g *game) assetNameByCtrlButton(s simra.Spriter) string {
 	switch s {
 	case g.ctrlButton[0]:
 		return "ctrlbutton1.png"
@@ -24,25 +24,21 @@ func (g *game) assetNameByCtrlButton(s *simra.Sprite) string {
 }
 
 func (g *game) initCtrlPanel() {
-	g.ctrlPanel.W = config.ScreenWidth
-	g.ctrlPanel.H = ctrlPanelHeight
-	g.ctrlPanel.X = config.ScreenWidth / 2
-	g.ctrlPanel.Y = g.ctrlPanel.H / 2
-	simra.GetInstance().AddSprite(&g.ctrlPanel)
+	g.ctrlPanel.SetScale(config.ScreenWidth, ctrlPanelHeight)
+	g.ctrlPanel.SetPosition(config.ScreenWidth/2, g.ctrlPanel.GetScale().H/2)
+	g.simra.AddSprite(g.ctrlPanel)
 
 	var tex *simra.Texture
-	tex = simra.NewImageTexture("panel.png", image.Rect(0, 0, 1280, 240))
+	tex = g.simra.NewImageTexture("panel.png", image.Rect(0, 0, 1280, 240))
 	g.ctrlPanel.ReplaceTexture(tex)
 
-	g.ctrlButton = make([]*simra.Sprite, 3)
+	g.ctrlButton = make([]simra.Spriter, 3)
 	for i := range g.ctrlButton {
-		g.ctrlButton[i] = simra.NewSprite()
-		g.ctrlButton[i].W = 64
-		g.ctrlButton[i].H = 64
-		g.ctrlButton[i].X = (float32)(1000 + (64+50)*(i%3))
-		g.ctrlButton[i].Y = (float32)(44 + (64+5)*2 - (64+5)*(i/3))
-		simra.GetInstance().AddSprite(g.ctrlButton[i])
-		tex = simra.NewImageTexture(g.assetNameByCtrlButton(g.ctrlButton[i]),
+		g.ctrlButton[i] = g.simra.NewSprite()
+		g.ctrlButton[i].SetScale(64, 64)
+		g.ctrlButton[i].SetPosition(1000+(64+50)*(i%3), 44+(64+5)*2-(64+5)*(i/3))
+		g.simra.AddSprite(g.ctrlButton[i])
+		tex = g.simra.NewImageTexture(g.assetNameByCtrlButton(g.ctrlButton[i]),
 			image.Rect(0, 0, 384, 384))
 		g.ctrlButton[i].ReplaceTexture(tex)
 

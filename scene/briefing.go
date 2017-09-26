@@ -11,7 +11,8 @@ import (
 
 // briefing represents a scene object for briefing
 type briefing struct {
-	text         simra.Sprite
+	simra        simra.Simraer
+	text         simra.Spriter
 	currentStage int
 	nextScene    simra.Driver
 }
@@ -20,34 +21,28 @@ type briefing struct {
 // This is called from simra.
 // simra.GetInstance().SetDesiredScreenSize should be called to determine
 // screen size of this scene.
-func (briefing *briefing) Initialize() {
-	simra.LogDebug("[IN]")
+func (briefing *briefing) Initialize(sim simra.Simraer) {
+	briefing.simra = sim
 
-	simra.GetInstance().SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
-
-	// initialize sprites
+	briefing.simra.SetDesiredScreenSize(config.ScreenWidth, config.ScreenHeight)
 	briefing.initialize()
-
-	simra.LogDebug("[OUT]")
 }
 
 func (briefing *briefing) initialize() {
-	initTextSprite(&briefing.text, "briefing for stage "+strconv.Itoa(briefing.currentStage),
+	initTextSprite(briefing.simra, briefing.text, "briefing for stage "+strconv.Itoa(briefing.currentStage),
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*4/6,
 		60, color.RGBA{255, 0, 0, 255})
 
 	// temporary text (will be removed)
-	temporary := &simra.Sprite{}
-	temporary.W = config.ScreenWidth
-	temporary.H = 80
-	temporary.X = config.ScreenWidth / 2
-	temporary.Y = config.ScreenHeight * 2 / 5
-	simra.GetInstance().AddSprite(temporary)
-	tex := simra.NewTextTexture("(click to go to next scene)",
-		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(temporary.W), int(temporary.H)))
+	temporary := briefing.simra.NewSprite()
+	temporary.SetScale(config.ScreenWidth, 80)
+	temporary.SetPosition(config.ScreenWidth/2, config.ScreenHeight*2/5)
+	briefing.simra.AddSprite(temporary)
+	tex := briefing.simra.NewTextTexture("(click to go to next scene)",
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, temporary.GetScale().W, temporary.GetScale().H))
 	temporary.ReplaceTexture(tex)
 
-	simra.GetInstance().AddTouchListener(briefing)
+	briefing.simra.AddTouchListener(briefing)
 }
 
 // Drive is called from simra.
@@ -56,7 +51,7 @@ func (briefing *briefing) initialize() {
 func (briefing *briefing) Drive() {
 	// nop
 	if briefing.nextScene != nil {
-		simra.GetInstance().SetScene(briefing.nextScene)
+		briefing.simra.SetScene(briefing.nextScene)
 	}
 }
 

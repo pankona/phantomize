@@ -11,8 +11,7 @@ func moveToTarget(u *unitBase, target uniter) {
 	dx, dy := tx-ux, ty-uy
 	newx := (float64)(u.moveSpeed) / getDistance(ux, uy, tx, ty) * (float64)(dx)
 	newy := (float64)(u.moveSpeed) / getDistance(ux, uy, tx, ty) * (float64)(dy)
-	u.sprite.X += (float32)(newx)
-	u.sprite.Y += (float32)(newy)
+	u.sprite.SetPosition(u.sprite.GetPosition().X+(int)(newx), u.sprite.GetPosition().Y+(int)(newy))
 }
 
 func canAttackToTarget(u *unitBase, target uniter) bool {

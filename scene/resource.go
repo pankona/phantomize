@@ -9,30 +9,31 @@ import (
 )
 
 type resource struct {
+	simra   simra.Simraer
 	balance int
-	sprite  *simra.Sprite
+	sprite  simra.Spriter
 	game    *game
 }
 
 func (r *resource) initialize() {
-	r.sprite = simra.NewSprite()
-	simra.GetInstance().AddSprite(r.sprite)
+	r.sprite = r.simra.NewSprite()
+	r.simra.AddSprite(r.sprite)
 
 	resstr := fmt.Sprintf("$ %d", r.balance)
-	tex := simra.NewTextTexture(
+	tex := r.simra.NewTextTexture(
 		resstr,
 		40, // fontsize
 		color.RGBA{255, 255, 255, 255},
 		image.Rect(0, 0, 100, 80),
 	)
 	r.sprite.ReplaceTexture(tex)
-	r.sprite.X, r.sprite.Y = 100, 100
-	r.sprite.W, r.sprite.H = 100, 80
+	r.sprite.SetPosition(100, 100)
+	r.sprite.SetScale(100, 80)
 }
 
 func (r *resource) updateResourceInfo() {
 	resstr := fmt.Sprintf("$ %d", r.balance)
-	tex := simra.NewTextTexture(
+	tex := r.simra.NewTextTexture(
 		resstr,
 		40, // fontsize
 		color.RGBA{255, 255, 255, 255},
