@@ -45,6 +45,6 @@ you can summon players with following way:
 
 * only linux and OSX is supported. Sorry to say that phantomize doesn't work on windows.
 
-# credits
+## credits
 
 sounds: [maoudamashii.jokersounds.com](http://maoudamashii.jokersounds.com/)
