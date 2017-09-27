@@ -39,11 +39,11 @@ you can summon players with following way:
 * if an enemy is down, it gains your money a little.
 * summoned unit can be "recalled". recall gains money that is used for summoning the unit.
   * to recall, click the summoned unit.
-  * then press "RECALL" button on unit icon on charactor information, that is placed on center-bottom.
+  * then press "RECALL" button on unit icon on charactor information.
 
 ## limitation
 
-* only linux is supported. this doesn't work on osx or windows.
+* only linux and OSX is supported. Sorry to say that phantomize doesn't work on windows.
 
 # credits
 
