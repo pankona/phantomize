@@ -1,10 +1,10 @@
 package scene
 
 import (
-	"image"
 	"image/color"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/image"
 	"github.com/pankona/phantomize/scene/config"
 )
 
@@ -40,11 +40,11 @@ func (howtoplay *howtoplay) initialize() {
 
 	var tex *simra.Texture
 	tex = howtoplay.simra.NewTextTexture("How To Play",
-		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(howtoplay.text.GetScale().W), int(howtoplay.text.GetScale().H)))
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, float32(howtoplay.text.GetScale().W), float32(howtoplay.text.GetScale().H)))
 	howtoplay.text.ReplaceTexture(tex)
 
 	tex = howtoplay.simra.NewTextTexture("(click to exit this page)",
-		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(temporary.GetScale().W), int(temporary.GetScale().H)))
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, float32(temporary.GetScale().W), float32(temporary.GetScale().H)))
 	temporary.ReplaceTexture(tex)
 
 }

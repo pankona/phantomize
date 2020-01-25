@@ -2,10 +2,10 @@ package scene
 
 import (
 	"fmt"
-	"image"
 	"image/color"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/image"
 )
 
 type charainfo struct {
@@ -48,7 +48,7 @@ func (ci *charainfo) initialize() {
 
 	for i := 0; i < len(ci.sprite); i++ {
 		ci.sprite[i] = ci.simra.NewSprite()
-		ci.sprite[i].SetPosition(800, 165-(i*50))
+		ci.sprite[i].SetPosition(800, float32(165-(i*50)))
 		ci.sprite[i].SetScale(300, 100)
 	}
 

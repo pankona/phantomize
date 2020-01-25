@@ -2,10 +2,10 @@ package scene
 
 import (
 	"fmt"
-	"image"
 	"image/color"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/image"
 )
 
 type resource struct {

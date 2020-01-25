@@ -1,12 +1,12 @@
 package scene
 
 import (
-	"image"
 	"image/color"
 
 	"golang.org/x/mobile/asset"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/image"
 	"github.com/pankona/phantomize/scene/config"
 )
 
@@ -34,7 +34,7 @@ func (title *Title) initialize() {
 	title.text.SetPosition(config.ScreenWidth/2, config.ScreenHeight/2)
 	title.simra.AddSprite(title.text)
 	tex := title.simra.NewTextTexture("phantomize",
-		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(title.text.GetScale().W), int(title.text.GetScale().H)))
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, title.text.GetScale().W, title.text.GetScale().H))
 	title.text.ReplaceTexture(tex)
 
 	bg := title.simra.NewSprite()
@@ -49,7 +49,7 @@ func (title *Title) initialize() {
 	text2.SetPosition(config.ScreenWidth/2, config.ScreenHeight/6*1)
 	title.simra.AddSprite(text2)
 	tex = title.simra.NewTextTexture("tap to start!",
-		60, color.RGBA{255, 255, 255, 255}, image.Rect(0, 0, int(title.text.GetScale().W), int(title.text.GetScale().H)))
+		60, color.RGBA{255, 255, 255, 255}, image.Rect(0, 0, title.text.GetScale().W, title.text.GetScale().H))
 	text2.ReplaceTexture(tex)
 
 	title.simra.AddTouchListener(title)

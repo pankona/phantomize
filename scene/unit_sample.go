@@ -2,7 +2,8 @@ package scene
 
 import (
 	"fmt"
-	"image"
+
+	"github.com/pankona/gomo-simra/simra/image"
 )
 
 type sampleUnit struct {

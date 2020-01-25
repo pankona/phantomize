@@ -1,10 +1,10 @@
 package scene
 
 import (
-	"image"
 	"image/color"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/image"
 	"github.com/pankona/phantomize/scene/config"
 )
 

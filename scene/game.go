@@ -1,13 +1,13 @@
 package scene
 
 import (
-	"image"
 	"image/color"
 	"strconv"
 
 	"golang.org/x/mobile/asset"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/image"
 	"github.com/pankona/gomo-simra/simra/simlog"
 	"github.com/pankona/phantomize/scene/config"
 )
@@ -300,7 +300,7 @@ func (g *game) showCongratulation() {
 	sprite.SetPosition(config.ScreenWidth/2, config.ScreenHeight/2)
 	g.simra.AddSprite(sprite)
 	tex := g.simra.NewTextTexture("You won! Congratulation!",
-		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(sprite.GetScale().W), int(sprite.GetScale().H)))
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, float32(sprite.GetScale().W), float32(sprite.GetScale().H)))
 	sprite.ReplaceTexture(tex)
 
 	sprite.AddTouchListener(&gameoverTouchListener{game: g})
@@ -312,7 +312,7 @@ func (g *game) showLose() {
 	sprite.SetPosition(config.ScreenWidth/2, config.ScreenHeight/2)
 	g.simra.AddSprite(sprite)
 	tex := g.simra.NewTextTexture("You lose...",
-		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, int(sprite.GetScale().W), int(sprite.GetScale().H)))
+		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, float32(sprite.GetScale().W), float32(sprite.GetScale().H)))
 	sprite.ReplaceTexture(tex)
 
 	sprite.AddTouchListener(&gameoverTouchListener{game: g})
