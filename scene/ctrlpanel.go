@@ -1,9 +1,8 @@
 package scene
 
 import (
-	"image"
-
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/image"
 	"github.com/pankona/phantomize/scene/config"
 )
 
@@ -36,7 +35,7 @@ func (g *game) initCtrlPanel() {
 	for i := range g.ctrlButton {
 		g.ctrlButton[i] = g.simra.NewSprite()
 		g.ctrlButton[i].SetScale(64, 64)
-		g.ctrlButton[i].SetPosition(1000+(64+50)*(i%3), 44+(64+5)*2-(64+5)*(i/3))
+		g.ctrlButton[i].SetPosition(float32(1000+(64+50)*(i%3)), float32(44+(64+5)*2-(64+5)*(i/3)))
 		g.simra.AddSprite(g.ctrlButton[i])
 		tex = g.simra.NewImageTexture(g.assetNameByCtrlButton(g.ctrlButton[i]),
 			image.Rect(0, 0, 384, 384))

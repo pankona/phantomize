@@ -2,9 +2,9 @@ package scene
 
 import (
 	"fmt"
-	"image"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/image"
 	"github.com/pankona/gomo-simra/simra/simlog"
 )
 
@@ -98,7 +98,7 @@ func (u *unitBase) SetID(id string) {
 
 func (u *unitBase) SetPosition(x, y float32) {
 	// FIXME: don't cast to int
-	u.sprite.SetPosition((int)(x), (int)(y))
+	u.sprite.SetPosition(x, y)
 }
 
 func (u *unitBase) GetPosition() (float32, float32) {

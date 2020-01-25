@@ -11,14 +11,14 @@ func moveToTarget(u *unitBase, target uniter) {
 	dx, dy := tx-ux, ty-uy
 	newx := (float64)(u.moveSpeed) / getDistance(ux, uy, tx, ty) * (float64)(dx)
 	newy := (float64)(u.moveSpeed) / getDistance(ux, uy, tx, ty) * (float64)(dy)
-	u.sprite.SetPosition(u.sprite.GetPosition().X+(int)(newx), u.sprite.GetPosition().Y+(int)(newy))
+	u.sprite.SetPosition(u.sprite.GetPosition().X+float32(newx), u.sprite.GetPosition().Y+float32(newy))
 }
 
 func canAttackToTarget(u *unitBase, target uniter) bool {
 	ux, uy := u.GetPosition()
 	tx, ty := target.GetPosition()
 
-	if (float64)(u.attackinfo.attackRange) >= getDistance(ux, uy, tx, ty) {
+	if float64(u.attackinfo.attackRange) >= getDistance(ux, uy, tx, ty) {
 		return true
 	}
 	return false
@@ -26,7 +26,7 @@ func canAttackToTarget(u *unitBase, target uniter) bool {
 
 func getDistance(ax, ay, bx, by float32) float64 {
 	dx, dy := ax-bx, ay-by
-	return math.Sqrt((float64)(dx*dx + dy*dy))
+	return math.Sqrt(float64(dx*dx + dy*dy))
 }
 
 func getDistanceBetweenUnit(u1, u2 uniter) float64 {

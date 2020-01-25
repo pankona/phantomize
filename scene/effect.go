@@ -2,10 +2,10 @@ package scene
 
 import (
 	"fmt"
-	"image"
 	"sync"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/image"
 	"github.com/pankona/gomo-simra/simra/simlog"
 )
 
@@ -29,7 +29,7 @@ func (e *effect) initialize() {
 	animationSet := simra.NewAnimationSet()
 	for i := 0; i < numOfAnimation; i++ {
 		animationSet.AddTexture(e.simra.NewImageTexture(resource,
-			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
+			image.Rect(float32(w*i), 0, float32((w*(i+1))-1), float32(h))))
 	}
 	animationSet.SetInterval(6)
 	e.animations[resource] = animationSet
@@ -42,7 +42,7 @@ func (e *effect) initialize() {
 	animationSet = simra.NewAnimationSet()
 	for i := 0; i < numOfAnimation; i++ {
 		animationSet.AddTexture(e.simra.NewImageTexture(resource,
-			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
+			image.Rect(float32(w*i), 0, float32((w*(i+1))-1), float32(h))))
 	}
 	animationSet.SetInterval(6)
 	e.animations[resource] = animationSet
@@ -55,7 +55,7 @@ func (e *effect) initialize() {
 	animationSet = simra.NewAnimationSet()
 	for i := 0; i < numOfAnimation; i++ {
 		animationSet.AddTexture(e.simra.NewImageTexture(resource,
-			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
+			image.Rect(float32(w*i), 0, float32((w*(i+1))-1), float32(h))))
 	}
 	animationSet.SetInterval(6)
 	e.animations[resource] = animationSet
@@ -68,7 +68,7 @@ func (e *effect) initialize() {
 	animationSet = simra.NewAnimationSet()
 	for i := 0; i < numOfAnimation; i++ {
 		animationSet.AddTexture(e.simra.NewImageTexture(resource,
-			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
+			image.Rect(float32(w*i), 0, float32((w*(i+1))-1), float32(h))))
 	}
 	animationSet.SetInterval(6)
 	e.animations[resource] = animationSet
@@ -80,11 +80,11 @@ func (e *effect) initialize() {
 	animationSet = simra.NewAnimationSet()
 	for i := 0; i < 5; i++ {
 		animationSet.AddTexture(e.simra.NewImageTexture(resource,
-			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
+			image.Rect(float32(w*i), 0, float32((w*(i+1))-1), float32(h))))
 	}
 	for i := 0; i < 3; i++ {
 		animationSet.AddTexture(e.simra.NewImageTexture(resource,
-			image.Rect((int)(w)*i, h, ((int)(w)*(i+1))-1, int(h))))
+			image.Rect(float32(w*i), float32(h), float32((w*(i+1))-1), float32(h))))
 	}
 	animationSet.SetInterval(6)
 	e.animations[resource] = animationSet
@@ -96,11 +96,11 @@ func (e *effect) initialize() {
 	animationSet = simra.NewAnimationSet()
 	for i := 0; i < 6; i++ {
 		animationSet.AddTexture(e.simra.NewImageTexture(resource,
-			image.Rect((int)(w)*i, 0, ((int)(w)*(i+1))-1, int(h))))
+			image.Rect(float32(w*i), 0, (float32(w*(i+1))-1), float32(h))))
 	}
 	for i := 0; i < 6; i++ {
 		animationSet.AddTexture(e.simra.NewImageTexture(resource,
-			image.Rect((int)(w)*i, h, ((int)(w)*(i+1))-1, int(h))))
+			image.Rect(float32(w*i), float32(h), (float32(w*(i+1))-1), float32(h))))
 	}
 	animationSet.SetInterval(6)
 	e.animations[resource] = animationSet
@@ -126,7 +126,7 @@ func (e *effect) OnEvent(i interface{}) {
 		sprite.SetScale(512/3, 528/4)
 		x, y := p.GetPosition()
 		// FIXME: actually cast into int is not needed
-		sprite.SetPosition((int)(x-10), (int)(y+20))
+		sprite.SetPosition(float32(x-10), float32(y+20))
 
 		animationSet := e.animations["smoke.png"]
 		sprite.AddAnimationSet("smoke.png", animationSet)
@@ -190,7 +190,7 @@ func (e *effect) OnEvent(i interface{}) {
 		sprite.SetScale(512/3, 528/4)
 		x, y := p.GetPosition()
 		// FIXME: actually cast into int is not needed
-		sprite.SetPosition((int)(x-10), (int)(y+20))
+		sprite.SetPosition(float32(x-10), float32(y+20))
 
 		animationSet := e.animations["smoke.png"]
 		sprite.AddAnimationSet("smoke.png", animationSet)
@@ -220,7 +220,7 @@ func (e *effect) OnEvent(i interface{}) {
 		sprite := e.simra.NewSprite()
 		sprite.SetScale(64, 64)
 		// FIXME: actually cast into int is not needed
-		sprite.SetPosition((int)(tx), (int)(ty))
+		sprite.SetPosition(float32(tx), float32(ty))
 		var atkeffect string
 		switch p.GetUnitType() {
 		case "player1":

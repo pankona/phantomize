@@ -1,10 +1,10 @@
 package scene
 
 import (
-	"image"
 	"image/color"
 
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/image"
 	"github.com/pankona/phantomize/scene/config"
 )
 
@@ -28,12 +28,10 @@ func (menu *menu) Initialize(sim simra.Simraer) {
 }
 
 func initTextSprite(simra simra.Simraer, sprite simra.Spriter, text string, w, h, x, y float32, fontsize float64, color color.RGBA) {
-	// FIXME: don't cast to int
-	sprite.SetScale((int)(w), (int)(h))
-	// FIXME: don't cast to int
-	sprite.SetPosition((int)(x), (int)(y))
+	sprite.SetScale(w, h)
+	sprite.SetPosition(x, y)
 	simra.AddSprite(sprite)
-	tex := simra.NewTextTexture(text, fontsize, color, image.Rect(0, 0, int(sprite.GetScale().W), int(sprite.GetScale().H)))
+	tex := simra.NewTextTexture(text, fontsize, color, image.Rect(0, 0, sprite.GetScale().W, sprite.GetScale().H))
 	sprite.ReplaceTexture(tex)
 }
 

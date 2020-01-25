@@ -17,3 +17,12 @@ mobile-install: mobile
 clean:
 	rm -f $(OUT)
 	rm -f $(APK)
+
+build-on-docker:
+	docker run \
+		-it \
+		-v $(CURDIR):/app \
+		-v phantomize-go-module-tmp:/go \
+		-w /app \
+		pankona/gomo-simra \
+		make mobile

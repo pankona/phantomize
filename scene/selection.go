@@ -1,9 +1,8 @@
 package scene
 
 import (
-	"image"
-
 	"github.com/pankona/gomo-simra/simra"
+	"github.com/pankona/gomo-simra/simra/image"
 	"github.com/pankona/gomo-simra/simra/simlog"
 )
 

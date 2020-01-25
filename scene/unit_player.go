@@ -1,8 +1,6 @@
 package scene
 
-import (
-	"image"
-)
+import "github.com/pankona/gomo-simra/simra/image"
 
 type player struct {
 	*unitBase
