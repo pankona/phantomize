@@ -30,6 +30,7 @@ func (title *Title) Initialize(sim simra.Simraer) {
 }
 
 func (title *Title) initialize() {
+	title.text = title.simra.NewSprite()
 	title.text.SetScale(config.ScreenWidth, 80)
 	title.text.SetPosition(config.ScreenWidth/2, config.ScreenHeight/2)
 	title.simra.AddSprite(title.text)
@@ -72,8 +73,8 @@ func (title *Title) initialize() {
 // This will be called 60 times per sec.
 func (title *Title) Drive() {
 	if title.nextScene != nil {
-		a := simra.NewAudio()
-		a.Play(title.beep, false, func(err error) {})
+		//a := simra.NewAudio()
+		//a.Play(title.beep, false, func(err error) {})
 
 		title.bgm.Stop()
 		title.simra.SetScene(title.nextScene)

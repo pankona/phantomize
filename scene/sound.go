@@ -1,30 +1,23 @@
 package scene
 
-import (
-	"github.com/pankona/gomo-simra/simra"
-	"github.com/pankona/gomo-simra/simra/simlog"
-
-	"golang.org/x/mobile/asset"
-)
-
 type sound struct {
 	game *game
 }
 
 func (s *sound) play(assetName string) {
-	a := simra.NewAudio()
-	resource, err := asset.Open(assetName)
-	if err != nil {
-		panic(err.Error())
-	}
-	err = a.Play(resource, false, func(err error) {
-		if err != nil {
-			simlog.Error(err.Error())
-		}
-	})
-	if err != nil {
-		panic(err.Error())
-	}
+	//a := simra.NewAudio()
+	//resource, err := asset.Open(assetName)
+	//if err != nil {
+	//	panic(err.Error())
+	//}
+	//err = a.Play(resource, false, func(err error) {
+	//	if err != nil {
+	//		simlog.Error(err.Error())
+	//	}
+	//})
+	//if err != nil {
+	//	panic(err.Error())
+	//}
 }
 
 func (s *sound) OnEvent(i interface{}) {

@@ -80,6 +80,7 @@ func (g *game) updateGameState(newState gameState) {
 }
 
 func (g *game) initField() {
+	g.field = g.simra.NewSprite()
 	g.field.SetScale(config.ScreenWidth, config.ScreenHeight)
 	g.field.SetPosition(config.ScreenWidth/2, config.ScreenHeight/2)
 	g.simra.AddSprite(g.field)
@@ -244,11 +245,11 @@ func (g *game) initialize() {
 	g.updateGameState(gameStateInitial)
 
 	g.bgm = simra.NewAudio()
-	resource, err := asset.Open("bgm2.mp3")
+	_, err := asset.Open("bgm2.mp3")
 	if err != nil {
 		panic(err.Error())
 	}
-	g.bgm.Play(resource, true, func(err error) {})
+	//g.bgm.Play(resource, true, func(err error) {})
 
 	g.eventqueue <- newCommand(commandGameStarted, nil)
 }

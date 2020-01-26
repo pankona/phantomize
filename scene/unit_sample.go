@@ -12,6 +12,7 @@ type sampleUnit struct {
 
 func (u *sampleUnit) Initialize() {
 	assetName := u.game.assetNameByUnitType(u.unittype)
+	u.sprite = u.simra.NewSprite()
 	u.simra.AddSprite(u.sprite)
 	tex := u.simra.NewImageTexture(assetName,
 		image.Rect(0, 0, 384, 384))
