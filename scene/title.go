@@ -56,11 +56,11 @@ func (title *Title) initialize() {
 	title.simra.AddTouchListener(title)
 
 	title.bgm = simra.NewAudio()
-	_, err := asset.Open("bgm1.mp3")
+	resource, err := asset.Open("bgm1.mp3")
 	if err != nil {
 		panic(err.Error())
 	}
-	//title.bgm.Play(resource, true, func(err error) {})
+	title.bgm.Play(resource, true, func(err error) {})
 
 	title.beep, err = asset.Open("start_game.mp3")
 	if err != nil {
@@ -73,8 +73,8 @@ func (title *Title) initialize() {
 // This will be called 60 times per sec.
 func (title *Title) Drive() {
 	if title.nextScene != nil {
-		//a := simra.NewAudio()
-		//a.Play(title.beep, false, func(err error) {})
+		a := simra.NewAudio()
+		a.Play(title.beep, false, func(err error) {})
 
 		title.bgm.Stop()
 		title.simra.SetScene(title.nextScene)
