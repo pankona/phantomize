@@ -245,11 +245,11 @@ func (g *game) initialize() {
 	g.updateGameState(gameStateInitial)
 
 	g.bgm = simra.NewAudio()
-	_, err := asset.Open("bgm2.mp3")
+	resource, err := asset.Open("bgm2.mp3")
 	if err != nil {
 		panic(err.Error())
 	}
-	//g.bgm.Play(resource, true, func(err error) {})
+	g.bgm.Play(resource, true, func(err error) {})
 
 	g.eventqueue <- newCommand(commandGameStarted, nil)
 }
