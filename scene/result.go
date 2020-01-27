@@ -32,9 +32,12 @@ func (r *result) Initialize(sim simra.Simraer) {
 }
 
 func (r *result) initialize() {
+	r.text = r.simra.NewSprite()
 	initTextSprite(r.simra, r.text, "Thank you for playing!",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*4/6,
 		60, color.RGBA{255, 0, 0, 255})
+
+	r.again = r.simra.NewSprite()
 	initTextSprite(r.simra, r.again, "try again?",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*2/6,
 		60, color.RGBA{255, 0, 0, 255})
@@ -43,11 +46,11 @@ func (r *result) initialize() {
 	r.again.AddTouchListener(&again{result: r})
 
 	r.bgm = simra.NewAudio()
-	resource, err := asset.Open("bgm3.mp3")
+	_, err := asset.Open("bgm3.mp3")
 	if err != nil {
 		panic(err.Error())
 	}
-	r.bgm.Play(resource, true, func(err error) {})
+	//r.bgm.Play(resource, true, func(err error) {})
 
 	r.beep, err = asset.Open("start_game.mp3")
 	if err != nil {
@@ -61,8 +64,8 @@ func (r *result) initialize() {
 func (r *result) Drive() {
 	// nop
 	if r.nextScene != nil {
-		a := simra.NewAudio()
-		a.Play(r.beep, false, func(err error) {})
+		//a := simra.NewAudio()
+		//a.Play(r.beep, false, func(err error) {})
 
 		r.bgm.Stop()
 		r.simra.SetScene(r.nextScene)

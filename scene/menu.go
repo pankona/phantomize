@@ -36,15 +36,21 @@ func initTextSprite(simra simra.Simraer, sprite simra.Spriter, text string, w, h
 }
 
 func (menu *menu) initialize() {
+	menu.menu = menu.simra.NewSprite()
 	initTextSprite(menu.simra, menu.menu, "menu",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*4/6,
 		60, color.RGBA{255, 0, 0, 255})
+
+	menu.start = menu.simra.NewSprite()
 	initTextSprite(menu.simra, menu.start, "Start",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*2/6,
 		60, color.RGBA{255, 0, 0, 255})
+
+	menu.howto = menu.simra.NewSprite()
 	initTextSprite(menu.simra, menu.howto, "How to play",
 		config.ScreenWidth, 80, config.ScreenWidth/2, config.ScreenHeight*1/6,
 		60, color.RGBA{255, 0, 0, 255})
+
 	//simra.GetInstance().AddTouchListener(menu)
 	menu.start.AddTouchListener(&startListener{menu: menu})
 	menu.howto.AddTouchListener(&howToPlayListener{menu: menu})

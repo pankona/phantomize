@@ -23,6 +23,7 @@ func (g *game) assetNameByCtrlButton(s simra.Spriter) string {
 }
 
 func (g *game) initCtrlPanel() {
+	g.ctrlPanel = g.simra.NewSprite()
 	g.ctrlPanel.SetScale(config.ScreenWidth, ctrlPanelHeight)
 	g.ctrlPanel.SetPosition(config.ScreenWidth/2, g.ctrlPanel.GetScale().H/2)
 	g.simra.AddSprite(g.ctrlPanel)
