@@ -21,6 +21,8 @@ github.com/pankona/gomo-simra v0.0.0-20170925110720-98b25e5c202c h1:5wwzQsMPkscZ
 github.com/pankona/gomo-simra v0.0.0-20170925110720-98b25e5c202c/go.mod h1:MQcZt+fX08LBQcK292CvZVZxMoouTNsRXbe3tIYKVfo=
 github.com/pankona/gomo-simra v0.0.0-20200125135430-1506802f663c h1:A/L6ZuyqUINKyMWzHsP51ueDohKJ4e6LGjO5t3+IB5c=
 github.com/pankona/gomo-simra v0.0.0-20200125135430-1506802f663c/go.mod h1:qIxtl9dNALa18VVHGotylg629YLRhJruFQjEbTO8L4g=
+github.com/pankona/gomo-simra v0.0.0-20200127134526-b1186c71a93a h1:8WlmZr+cyTcweOHfr3Dk5Io1YexNL6H+GBwhIflROJM=
+github.com/pankona/gomo-simra v0.0.0-20200127134526-b1186c71a93a/go.mod h1:iIXCW8eopo86ZP9IC9Y4pg+TvGgwfXFaRQpBda5CipM=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
 golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
 golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=

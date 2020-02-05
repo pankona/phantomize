@@ -1,6 +1,4 @@
 
-<a href="https://app.zenhub.com/workspace/o/pankona/phantomize/boards?repos=90622123"><img src="https://raw.githubusercontent.com/ZenHubIO/support/master/zenhub-badge.png"></a>
-
 # phantomize
 
 a game like free place tower diffence written in Go
