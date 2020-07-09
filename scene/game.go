@@ -300,7 +300,7 @@ func (g *game) showCongratulation() {
 	sprite.SetScale(config.ScreenWidth, 80)
 	sprite.SetPosition(config.ScreenWidth/2, config.ScreenHeight/2)
 	g.simra.AddSprite(sprite)
-	tex := g.simra.NewTextTexture("You won! Congratulation!",
+	tex := g.simra.NewTextTexture("You won! Congratulations!",
 		60, color.RGBA{255, 0, 0, 255}, image.Rect(0, 0, float32(sprite.GetScale().W), float32(sprite.GetScale().H)))
 	sprite.ReplaceTexture(tex)
 
